@@ -13,8 +13,8 @@
 		</div>
 
 		<div class="ml-auto flex items-center gap-2">
-			<Button href={resolve('/auth/login')} variant="outline">Login</Button>
-			<Button href={resolve('/auth/register')}>Create Account</Button>
+			<Button href={resolve('/auth/login')} variant="outline" class="w-18">Login</Button>
+			<Button href={resolve('/auth/register')} class="w-18">Register</Button>
 		</div>
 	</div>
 </nav>

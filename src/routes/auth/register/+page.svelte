@@ -9,7 +9,18 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<div class="flex flex-1 items-center justify-center px-4 py-10">
+<svelte:head>
+	<title>Curiosift - Register</title>
+	<meta name="description" content="Register to your CurioSift account" />
+	<meta
+		name="keywords"
+		content="register,Curiosift,research, curiosity, science, AI, bioinformatics, computational
+		bology, data analysis, technology, education"
+	/>
+	<meta name="author" content="CurioSift" />
+</svelte:head>
+
+<div class="flex flex-1 items-center justify-center px-4 py-8 md:py-16">
 	<div class="w-full max-w-md">
 		<form method="post" action="?/signUpEmail" use:enhance>
 			<Field.Group>
