@@ -1,0 +1,1 @@
+export { default as PaperItem } from './paper-item.svelte';
