@@ -7,6 +7,7 @@
 	import { Textarea } from '@/lib/components/ui/textarea';
 
 	let { form }: { form: ActionData } = $props();
+	let loading = $state(false);
 </script>
 
 <svelte:head>
@@ -22,7 +23,18 @@
 
 <div class="flex flex-1 items-center justify-center px-4 py-8 md:py-16">
 	<div class="w-full max-w-md">
-		<form method="post" action="?/signUpEmail" use:enhance>
+		<form
+			method="post"
+			action="?/signUpEmail"
+			use:enhance={() => {
+				loading = true;
+				form = null; // reset form
+				return async ({ update }) => {
+					await update();
+					loading = false;
+				};
+			}}
+		>
 			<Field.Group>
 				<Field.Set>
 					<Field.Legend class="!text-lg">Create an Account</Field.Legend>
@@ -77,9 +89,13 @@
 						</Field.Field>
 					</Field.Group>
 				</Field.Set>
-				<Field.Field orientation="horizontal" class="justify-end mt-2">
-					<p style="color: red" class="text-sm">{form?.message ?? ''}</p>
-					<Button type="submit">Submit</Button>
+				{#if form?.message}
+					<p style="color: red" class="text-sm mt-2">{form?.message}</p>
+				{/if}
+				<Field.Field orientation="horizontal" class="justify-start mt-2">
+					<Button type="submit" disabled={loading}>
+						{loading ? 'Submitting...' : 'Submit'}
+					</Button>
 				</Field.Field>
 			</Field.Group>
 		</form>
