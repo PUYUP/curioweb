@@ -4,8 +4,8 @@
 </script>
 
 <nav class="navbar">
-	<div class="max-w-5xl mx-auto py-2 px-4 flex items-center gap-3">
-		<div class="logo">
+	<div class="max-w-7xl mx-auto py-2 px-4 flex items-center gap-3">
+		<div class="logo -ml-2">
 			<a href="/" aria-label="Go to home page">
 				<img src={logo} alt="Curiosift" class="h-12 sm:h-16 w-auto" />
 			</a>

@@ -9,7 +9,7 @@
 	import type { PaperSummary } from '@/lib/types/interfaces';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import Icon from 'mdi-svelte';
-	import { mdiBrain, mdiSendCheck, mdiTrendingUp } from '@mdi/js';
+	import { mdiBrain, mdiTrendingUp } from '@mdi/js';
 	import { Textarea } from '@/lib/components/ui/textarea';
 	import { AreaChart } from 'layerchart';
 	import { curveNatural } from 'd3-shape';
@@ -62,12 +62,12 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	];
 
 	const chartData = [
-		{ date: new Date('2024-01-01'), desktop: 73 },
-		{ date: new Date('2024-02-01'), desktop: 98 },
-		{ date: new Date('2024-03-01'), desktop: 123 },
-		{ date: new Date('2024-04-01'), desktop: 140 },
-		{ date: new Date('2024-05-01'), desktop: 209 },
-		{ date: new Date('2024-06-01'), desktop: 220 }
+		{ date: new Date('2024-01-01'), desktop: 105 },
+		{ date: new Date('2024-02-01'), desktop: 120 },
+		{ date: new Date('2024-03-01'), desktop: 150 },
+		{ date: new Date('2024-04-01'), desktop: 165 },
+		{ date: new Date('2024-05-01'), desktop: 205 },
+		{ date: new Date('2024-06-01'), desktop: 230 }
 	];
 	const chartConfig = {
 		desktop: { label: 'Score', color: 'var(--chart-1)' }
@@ -111,8 +111,8 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 
 			<div class="max-w-2xl mx-auto">
 				<p class="text-neutral-700 text-base sm:text-xl">
-					Elevate how you learn. We sift out the core ideas from the latest research, turning them
-					into engaging questions. Answer them, and let our AI evaluate your insights.
+					Elevate how you learn. We distill the core ideas from the latest research into engaging
+					insights. Dive deeper, expand on them, and let our AI evaluate your understanding.
 				</p>
 			</div>
 		</div>
@@ -201,7 +201,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 									<PaperItem paper={summary} sample={true} />
 								</div>
 
-								<div class="block">
+								<div class="block mt-4">
 									<div class="h-16 w-[1px] bg-[#38b9fc] mx-auto relative"></div>
 
 									{#if i % 2 === 0}
@@ -238,15 +238,12 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 
 		<div class="w-full mx-auto mt-6 child-width">
 			<Textarea
-				placeholder="Let's elaborate the paper based on your insights..."
-				class="min-h-26 text-xl"
+				placeholder="Read both papers, connect the key ideas, and expand on them using your knowledge."
+				class="min-h-26 !text-base"
 			/>
 
 			<div class="flex justify-center mt-6">
-				<Button size="lg">
-					<Icon path={mdiSendCheck} />
-					Submit Insights
-				</Button>
+				<Button size="lg">Submit & Analyze</Button>
 			</div>
 		</div>
 
@@ -261,7 +258,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 				<div class="flex w-full items-start gap-2 text-sm">
 					<div class="grid gap-2">
 						<div class="flex items-center gap-2 leading-none font-medium">
-							Your insights grow by 5.2% this month <Icon path={mdiTrendingUp} />
+							Your insights grew by 5.2% this month <Icon path={mdiTrendingUp} />
 						</div>
 						<div class="text-muted-foreground flex items-center gap-2 leading-none">
 							January - June 2024
@@ -270,7 +267,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 				</div>
 			</Card.Header>
 			<Card.Content>
-				<Chart.Container config={chartConfig} class="h-[200px] w-full">
+				<Chart.Container config={chartConfig} class="h-[160px] w-full">
 					<AreaChart
 						data={chartData}
 						x="date"

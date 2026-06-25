@@ -57,9 +57,9 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.17.4",
 		"@mdi/js": "^7.4.47",
 		"@tailwindcss/vite": "^4.3.1",
-		"better-sqlite3": "^12.10.0",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
 		"marked": "^18.0.5",

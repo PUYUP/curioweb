@@ -2,6 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 	import { Navbar } from '$lib/components/blocks/navbar/index.js';
+	import { Footer } from '@/lib/components/blocks/footer';
 
 	let { children } = $props();
 </script>
@@ -15,3 +16,5 @@
 <main class="main">
 	{@render children()}
 </main>
+
+<Footer />
