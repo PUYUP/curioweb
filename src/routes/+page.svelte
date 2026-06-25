@@ -24,6 +24,7 @@
 		{
 			sample: true,
 			title: 'Bahaya Jalan Pintas di Balik Simulasi Kenaikan Air Laut',
+			categories: ['Computer Science'],
 			sources: [
 				{
 					url: 'https://example.com',
@@ -44,6 +45,7 @@ Walau masih diuji di skenario terkontrol, ini jadi *wake-up call*. Pakai metode 
 			sample: true,
 			title:
 				'Exact vs approximate second-order derivatives in vertically-integrated ice sheet models',
+			categories: ['Biomedical'],
 			sources: [
 				{
 					url: 'https://example.com',
@@ -153,12 +155,12 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 					</div>
 					<Empty.Title class="mb-2">My Preferences</Empty.Title>
 					<Empty.Description
-						class="text-lg"
+						class="text-xl leading-8 italic"
 						style="font-family: Newsreader, Georgia, 'Times New Roman', Times, serif;"
 					>
-						Exploring the intersection of Computer Science and Biological Sciences through
+						"Exploring the intersection of Computer Science and Biological Sciences through
 						artificial intelligence, bioinformatics, computational biology, data analysis, and
-						technology-driven approaches.
+						technology-driven approaches"
 					</Empty.Description>
 				</Empty.Header>
 				<Button variant="outline">Change</Button>
@@ -171,7 +173,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 			<Carousel.Root
 				opts={{ align: 'start' }}
 				setApi={(emblaApi) => (api = emblaApi)}
-				class="w-full px-4 md:px-0"
+				class="w-full px-0 md:px-0"
 			>
 				<Carousel.Content>
 					{#each summaries as summary, i}
@@ -197,7 +199,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 									</div>
 								</div>
 
-								<div class="flex-1 px-2 pt-4">
+								<div class="flex-1 px-0.5 md:px-2 pt-4">
 									<PaperItem paper={summary} sample={true} />
 								</div>
 
@@ -258,7 +260,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 				<div class="flex w-full items-start gap-2 text-sm">
 					<div class="grid gap-2">
 						<div class="flex items-center gap-2 leading-none font-medium">
-							Your insights grew by 5.2% this month <Icon path={mdiTrendingUp} />
+							Your knowledges grew by 5.2% this month <Icon path={mdiTrendingUp} />
 						</div>
 						<div class="text-muted-foreground flex items-center gap-2 leading-none">
 							January - June 2024
@@ -314,12 +316,24 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		border-top: 10px solid #38b9fc;
 	}
 
+	:global(.carousel-prev-button),
+	:global(.carousel-next-button) {
+		background-color: #38b9fc;
+	}
+
+	:global(.carousel-prev-button svg),
+	:global(.carousel-next-button svg) {
+		color: white;
+		width: 18px;
+		height: 18px;
+	}
+
 	:global(.carousel-prev-button) {
-		left: -6px;
+		left: -10px;
 	}
 
 	:global(.carousel-next-button) {
-		right: -6px;
+		right: -10px;
 	}
 
 	@media (min-width: 768px) {

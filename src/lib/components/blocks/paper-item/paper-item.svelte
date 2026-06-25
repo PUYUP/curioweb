@@ -20,7 +20,16 @@
 
 <Card class="h-full">
 	<CardHeader>
-		{#if sample}<Badge variant="destructive" class="mb-2">Sample</Badge>{/if}
+		<div class="flex gap-2 flex-wrap">
+			{#if sample}<Badge variant="destructive" class="mb-2">Sample</Badge>{/if}
+			{#if paper.categories.length > 0}
+				<div class="flex space-x-2">
+					{#each paper.categories as category}
+						<Badge variant="secondary">{category}</Badge>
+					{/each}
+				</div>
+			{/if}
+		</div>
 		{#if showTitle}<CardTitle class="text-lg">{paper.title}</CardTitle>{/if}
 	</CardHeader>
 

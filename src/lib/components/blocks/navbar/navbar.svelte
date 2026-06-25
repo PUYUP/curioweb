@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import logo from '$lib/assets/logo.png';
 	import Button from '../../ui/button/button.svelte';
+	import { resolve } from '$app/paths';
 </script>
 
 <nav class="navbar">
@@ -12,7 +13,7 @@
 		</div>
 
 		<div class="ml-auto">
-			<Button>Subscribe</Button>
+			<Button href={resolve('/auth/login')}>Subscribe</Button>
 		</div>
 	</div>
 </nav>

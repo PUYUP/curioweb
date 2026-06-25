@@ -51,7 +51,7 @@
 				</div>
 			</div>
 
-			<p class="text-xs text-muted-foreground mt-6 md:mt-0">© 2026 Curiosift</p>
+			<p class="text-base text-muted-foreground mt-6 md:mt-0">© 2026 Curiosift</p>
 		</div>
 	</div>
 </footer>
