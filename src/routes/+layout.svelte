@@ -13,7 +13,7 @@
 
 <Navbar />
 
-<main class="main">
+<main class="main flex-1">
 	{@render children()}
 </main>
 

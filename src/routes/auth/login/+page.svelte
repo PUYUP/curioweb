@@ -1,33 +1,45 @@
 <script lang="ts">
+	import * as Field from '$lib/components/ui/field/index.js';
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
+	import { Input } from '@/lib/components/ui/input';
+	import { Button } from '@/lib/components/ui/button';
 
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<h1>Login</h1>
-<form method="post" action="?/signInEmail" use:enhance>
-	<label>
-		Email
-		<input type="email" name="email" />
-	</label>
-	<label>
-		Password
-		<input type="password" name="password" />
-	</label>
-	<label>
-		Name (for registration)
-		<input name="name" />
-	</label>
-	<button>Login</button>
-	<button formaction="?/signUpEmail">Register</button>
-</form>
-<p style="color: red">{form?.message ?? ''}</p>
+<div class="flex flex-1 items-center justify-center px-4 py-10">
+	<div class="w-full max-w-md">
+		<form method="post" action="?/signInEmail" use:enhance>
+			<Field.Group>
+				<Field.Set>
+					<Field.Legend class="!text-lg">Welcome back!</Field.Legend>
+					<Field.Description>
+						Continue your learning journey of discovery with Curiosift.
+					</Field.Description>
+					<Field.Group class="mt-4">
+						<Field.Field>
+							<Field.Label for="email">Email Address</Field.Label>
+							<Input id="email" name="email" type="email" placeholder="my@email.com" required />
+						</Field.Field>
 
-<hr />
-
-<form method="post" action="?/signInSocial" use:enhance>
-	<input type="hidden" name="provider" value="github" />
-	<input type="hidden" name="callbackURL" value="/demo/better-auth" />
-	<button>Sign in with GitHub</button>
-</form>
+						<Field.Field>
+							<Field.Label for="password">Password</Field.Label>
+							<Input
+								id="password"
+								name="password"
+								type="password"
+								placeholder="Password"
+								required
+							/>
+						</Field.Field>
+					</Field.Group>
+				</Field.Set>
+				<Field.Field orientation="horizontal" class="justify-end mt-2">
+					<p style="color: red" class="text-sm">{form?.message ?? ''}</p>
+					<Button type="submit">Submit</Button>
+				</Field.Field>
+			</Field.Group>
+		</form>
+	</div>
+</div>

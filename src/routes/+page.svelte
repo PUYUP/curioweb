@@ -64,12 +64,13 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	];
 
 	const chartData = [
-		{ date: new Date('2024-01-01'), desktop: 105 },
-		{ date: new Date('2024-02-01'), desktop: 120 },
-		{ date: new Date('2024-03-01'), desktop: 150 },
-		{ date: new Date('2024-04-01'), desktop: 165 },
-		{ date: new Date('2024-05-01'), desktop: 205 },
-		{ date: new Date('2024-06-01'), desktop: 230 }
+		{ date: new Date('2024-6-01'), desktop: 0 },
+		{ date: new Date('2024-7-01'), desktop: 105 },
+		{ date: new Date('2024-8-01'), desktop: 120 },
+		{ date: new Date('2024-9-01'), desktop: 150 },
+		{ date: new Date('2024-10-01'), desktop: 165 },
+		{ date: new Date('2024-11-01'), desktop: 205 },
+		{ date: new Date('2024-12-01'), desktop: 230 }
 	];
 	const chartConfig = {
 		desktop: { label: 'Score', color: 'var(--chart-1)' }

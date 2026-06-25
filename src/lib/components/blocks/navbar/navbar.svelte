@@ -12,8 +12,9 @@
 			</a>
 		</div>
 
-		<div class="ml-auto">
-			<Button href={resolve('/auth/login')}>Subscribe</Button>
+		<div class="ml-auto flex items-center gap-2">
+			<Button href={resolve('/auth/login')} variant="outline">Login</Button>
+			<Button href={resolve('/auth/register')}>Create Account</Button>
 		</div>
 	</div>
 </nav>
