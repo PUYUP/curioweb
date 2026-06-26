@@ -1,33 +1,32 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { _actions } from './+layout.server';
-import { getProfileByUserId } from '@/lib/server/db/factories/profle.factory';
+import { upsertProfile } from '@/lib/server/db/factories/profle.factory';
 
 export const load: PageServerLoad = async ({ locals }) => {
-    if (locals.user?.id) {
-        const profile = await getProfileByUserId(locals.user.id);
 
-        if (profile && profile.interest.trim() == '') {
-            return redirect(302, '/dashboard/onboarding');
-        }
-    }
 };
 
 export const actions: Actions = {
-    signOut: async (event) => {
-        await _actions.signOut(event);
-        return redirect(302, '/auth/login');
-    },
-
     // update profile
     updateProfile: async ({ request, locals }) => {
         const data = await request.formData();
         const interest = data.get('interest')?.toString() ?? '';
+        const languageCode = data.get('languageCode')?.toString() ?? '';
 
         if (!interest || interest.trim() === '') {
             return fail(400, { message: 'Interest is required' });
         }
 
-        console.log(locals.user);
+        if (!languageCode || languageCode.trim() === '') {
+            return fail(400, { message: 'Language is required' });
+        }
+
+        if (!locals.user) {
+            return fail(401, { message: 'Unauthorized' });
+        }
+
+        await upsertProfile(locals.user.id, { interest, language_code: languageCode });
+
+        return redirect(302, '/dashboard');
     }
 };

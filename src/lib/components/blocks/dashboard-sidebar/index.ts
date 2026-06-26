@@ -1,0 +1,1 @@
+export { default as Sidebar } from './dashboard-sidebar.svelte';

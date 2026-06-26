@@ -5,7 +5,6 @@
 	import type { ActionData } from './$types';
 	import { Input } from '@/lib/components/ui/input';
 	import { Button } from '@/lib/components/ui/button';
-	import { Textarea } from '@/lib/components/ui/textarea';
 	import { signInWithGoogle } from '@/lib/auth-client';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ChevronRightIcon, GoogleIcon } from '@hugeicons/core-free-icons';
@@ -67,7 +66,7 @@
 						<Separator class="flex-1" />
 					</div>
 
-					<Field.Group class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<Field.Group class="grid grid-cols-1 gap-4">
 						<Field.Field>
 							<Field.Label for="name">Full Name*</Field.Label>
 							<Input id="name" name="name" placeholder="John Doe" required />
@@ -101,21 +100,6 @@
 						</Field.Field>
 					</Field.Group>
 				</Field.Set>
-				<Field.Separator />
-				<Field.Set>
-					<Field.Group>
-						<Field.Field>
-							<Field.Label for="interest">What you interested in*</Field.Label>
-							<Textarea
-								id="interest"
-								name="interest"
-								placeholder="Tell us, we'll use it to recommend papers for you"
-								class="resize-none"
-							/>
-						</Field.Field>
-					</Field.Group>
-				</Field.Set>
-
 				<Field.Field orientation="horizontal" class="justify-between mt-2 items-center">
 					<Button type="submit" disabled={loading}>
 						{loading ? 'Submitting...' : 'Submit'}

@@ -8,6 +8,7 @@ export const load: PageServerLoad = (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/dashboard');
 	}
+
 	return {};
 };
 
@@ -18,14 +19,9 @@ export const actions: Actions = {
 		const password = formData.get('password')?.toString() ?? '';
 		const repeatPassword = formData.get('repeat-password')?.toString() ?? '';
 		const name = formData.get('name')?.toString() ?? '';
-		const interest = formData.get('interest')?.toString() ?? '';
 
 		if (password !== repeatPassword) {
 			return fail(400, { message: 'Passwords do not match' });
-		}
-
-		if (!interest || interest.trim().length === 0) {
-			return fail(400, { message: 'Interest are required' });
 		}
 
 		try {

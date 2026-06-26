@@ -11,6 +11,7 @@ export const profile = sqliteTable('profile', {
         .unique()
         .references(() => user.id, { onDelete: 'cascade' }),
     interest: text('interest').notNull(),
+    languageCode: text('language_code').notNull().default('en'),
     createdAt: integer('created_at', { mode: 'timestamp_ms' })
         .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
         .notNull(),
