@@ -15,5 +15,11 @@ export const auth = betterAuth({
 	],
 	logger: {
 		level: 'debug'
+	},
+	socialProviders: {
+		google: {
+			clientId: env.GOOGLE_CLIENT_ID as string,
+			clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+		}
 	}
 });

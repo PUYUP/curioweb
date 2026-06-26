@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import pubmed from '$lib/assets/sources/pubmed-logo.png';
 	import arxiv from '$lib/assets/sources/arxiv-logo.png';
@@ -18,6 +19,9 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 	import type { CarouselAPI } from '$lib/components/ui/carousel/context.js';
+
+	import { Navbar } from '$lib/components/blocks/navbar/index.js';
+	import { Footer } from '$lib/components/blocks/footer/index.js';
 
 	// sample paper summary
 	const summaries: PaperSummary[] = [
@@ -103,6 +107,8 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	/>
 	<meta name="author" content="CurioSift" />
 </svelte:head>
+
+<Navbar />
 
 <div class="max-w-5xl mx-auto px-4">
 	<div class="flex items-center justify-center">
@@ -307,6 +313,8 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		</Card.Root>
 	</div>
 </div>
+
+<Footer />
 
 <style>
 	.arrow-down {
