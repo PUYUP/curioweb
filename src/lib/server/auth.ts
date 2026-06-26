@@ -25,7 +25,7 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				after: async (user) => {
-					await upsertProfile(user.id, { interest: '', language_code: 'en' });
+					await upsertProfile(user.id, { interest: '', languageCode: 'en' });
 				}
 			}
 		}

@@ -25,7 +25,7 @@ export const actions: Actions = {
             return fail(401, { message: 'Unauthorized' });
         }
 
-        await upsertProfile(locals.user.id, { interest, language_code: languageCode });
+        await upsertProfile(locals.user.id, { interest, languageCode });
 
         return redirect(302, '/dashboard');
     }

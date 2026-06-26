@@ -2,8 +2,8 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { resolve } from '$app/paths';
-	import { HugeiconsIcon } from '@hugeicons/svelte';
-	import { UserIcon } from '@hugeicons/core-free-icons';
+	import Icon from 'mdi-svelte';
+	import { mdiHomeOutline, mdiTrendingUp, mdiAccount, mdiArchiveOutline } from '@mdi/js';
 
 	let { user }: { user: any } = $props();
 
@@ -20,26 +20,68 @@
 			window.location.href = result.url;
 		}
 	};
+
+	// Menu items.
+	const items = [
+		{
+			title: 'Home',
+			url: '/dashboard',
+			icon: mdiHomeOutline,
+			badge: ''
+		},
+		{
+			title: 'Challenge',
+			url: '#',
+			icon: mdiTrendingUp,
+			badge: '1 new'
+		},
+		{
+			title: 'Archives',
+			url: '#',
+			icon: mdiArchiveOutline,
+			badge: ''
+		}
+	];
 </script>
 
 <Sidebar.Root>
 	<Sidebar.Header class="p-4">
-		<div class="flex justify-center flex-col items-center mb-4">
+		<div class="flex justify-start flex-row items-center mb-2 gap-2">
 			{#if user.image}
-				<enhanced:img src={user.image} alt={user.name} class="w-16 h-16 mb-4 rounded-full" />
+				<enhanced:img src={user.image} alt={user.name} class="w-12 h-12 flex-none rounded-full" />
 			{:else}
-				<div class="w-16 h-16 mb-4 flex items-center justify-center bg-neutral-200 rounded-full">
-					<HugeiconsIcon icon={UserIcon} class="size-4" />
+				<div
+					class="w-12 h-12 flex items-center justify-center flex-none bg-neutral-200 rounded-full"
+				>
+					<Icon path={mdiAccount} class="size-6" />
 				</div>
 			{/if}
-			<p>{user.name}</p>
-			<p class="text-sm text-neutral-600">{user.email}</p>
+			<div class="block">
+				<p class="text-sm line-clamp-1 mb-0.5">{user.name}</p>
+				<p class="text-xs text-neutral-600 line-clamp-1">{user.email}</p>
+			</div>
 		</div>
 	</Sidebar.Header>
 
 	<Sidebar.Content>
-		<Sidebar.Group />
-		<Sidebar.Group />
+		<Sidebar.Menu>
+			{#each items as item (item.title)}
+				<Sidebar.MenuItem class="!px-2">
+					<Sidebar.MenuButton>
+						{#snippet child({ props })}
+							<a href={item.url} {...props}>
+								<Icon path={item.icon} size="1.25rem" />
+								<span>{item.title}</span>
+							</a>
+						{/snippet}
+					</Sidebar.MenuButton>
+
+					{#if item.badge.trim() != ''}
+						<Sidebar.MenuBadge>{item.badge}</Sidebar.MenuBadge>
+					{/if}
+				</Sidebar.MenuItem>
+			{/each}
+		</Sidebar.Menu>
 	</Sidebar.Content>
 	<Sidebar.Footer class="p-4">
 		<div class="flex justify-center w-full">

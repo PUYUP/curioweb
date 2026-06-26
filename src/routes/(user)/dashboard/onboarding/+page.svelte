@@ -27,10 +27,17 @@
 </script>
 
 <div class="p-4 w-full md:w-12/12 lg:w-7/12 xl:w-6/12">
-	<div class="block text-lg font-bold">Last step! Complete your interests.</div>
-	<div class="mt-0 text-sm text-neutral-600">
-		We need some information about your interests to create your personalized papers.
-	</div>
+	{#if !profile || profile.interest.trim() === ''}
+		<div class="block text-lg font-bold">Last step! Complete your interests.</div>
+		<div class="mt-0 text-sm text-neutral-600">
+			We need some information about your interests to create your personalized papers.
+		</div>
+	{:else}
+		<div class="block text-lg font-bold">Update your interests.</div>
+		<div class="mt-0 text-sm text-neutral-600">
+			Update your interests to get personalized papers.
+		</div>
+	{/if}
 
 	<form
 		method="POST"

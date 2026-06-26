@@ -312,6 +312,15 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 			</Card.Content>
 		</Card.Root>
 	</div>
+
+	<div
+		class="text-2xl md:text-3xl lg:text-3xl xl:text-3xl heading py-4 md:py-12 pb-14 md:pb-20 text-center leading-8 md:leading-12 lg:leading-12 px-2 md:px-4"
+	>
+		&quot;Knowledge <strong class="underline text-[#38b9fc]">isn't copied it is built</strong>. Read
+		research papers, connect ideas across disciplines,
+		<strong class="underline">evaluate the evidence</strong>, and write your own insights.
+		<strong class="underline">We help you think, not think for you.</strong>&quot;
+	</div>
 </div>
 
 <Footer />
@@ -354,5 +363,9 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		:global(.carousel-next-button) {
 			display: none;
 		}
+	}
+
+	.heading {
+		font-family: newsreader, serif;
 	}
 </style>
