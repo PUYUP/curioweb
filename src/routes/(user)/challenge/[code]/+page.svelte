@@ -3,9 +3,7 @@
 	import type { PageServerData } from './$types';
 	import type { PaperSummary } from '@/lib/types/interfaces';
 	import { Textarea } from '@/lib/components/ui/textarea';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
-	import type { CarouselAPI } from '$lib/components/ui/carousel/context.js';
 	import { PaperItem } from '@/lib/components/blocks/paper-item';
 
 	let { data }: { data: PageServerData } = $props();
@@ -54,12 +52,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		}
 	];
 
-	let buttonHeight = $state(0);
-	let headerHeight = $state(0);
-	let api = $state<CarouselAPI>();
-	const count = $derived(api ? api.scrollSnapList().length : 0);
 	let textValue = $state('');
-	let current = $state(0);
 	let width = $state(0);
 	let height = $state(0);
 	let orientation = $derived(width > 1280 ? 'vertical' : 'horizontal') as 'vertical' | 'horizontal';
@@ -72,7 +65,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 <!-- Bind the window dimensions directly -->
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 
-<div class="mx-auto w-full pt-0 md:pt-0 lg:py-6 px-4">
+<div class="mx-auto w-full pt-0 md:pt-0 lg:py-0 px-4">
 	<table class="mb-2">
 		<tbody>
 			<tr class="flex gap-4 py-0.5">
@@ -90,12 +83,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	<div class="grid grid-cols-1 xl:grid-cols-1 gap-6">
 		<div class="flex gap-6">
 			{#key orientation}
-				<Carousel.Root
-					opts={{ align: 'start' }}
-					setApi={(emblaApi) => (api = emblaApi)}
-					orientation={'horizontal'}
-					class="w-full"
-				>
+				<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
 					<Carousel.Content>
 						{#each summaries as summary, i}
 							<Carousel.Item class="basis-full lg:basis-1/2">
@@ -127,10 +115,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 				</div>
 
 				<!-- Button absolute di dalam textarea, tidak kena scroll -->
-				<div
-					class="relative mt-auto py-4 flex justify-between items-center"
-					bind:clientHeight={buttonHeight}
-				>
+				<div class="relative mt-auto py-4 flex justify-between items-center">
 					<Button size="lg">Submit & Analyze</Button>
 					<div class="ml-auto text-xs text-neutral-500 flex flex-col">
 						<p>Characters: {textValue.length}</p>
@@ -142,14 +127,6 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 </div>
 
 <style>
-	.arrow-down {
-		width: 0;
-		height: 0;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 10px solid #38b9fc;
-	}
-
 	:global(.carousel-prev-button),
 	:global(.carousel-next-button) {
 		background-color: #38b9fc;
@@ -171,10 +148,6 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	}
 
 	@media (min-width: 1024px) {
-		.child-width {
-			width: calc(50% + 1.5rem - 10px);
-		}
-
 		:global(.carousel-prev-button),
 		:global(.carousel-next-button) {
 			display: none;
