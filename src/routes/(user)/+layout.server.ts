@@ -9,7 +9,7 @@ export const load: LayoutServerLoad = async ({ locals, fetch }) => {
     const profile = await getProfileByUserId(locals.user.id);
 
     const params = new URLSearchParams({
-        limit: '5',
+        limit: '3',
         offset: '0'
     });
 

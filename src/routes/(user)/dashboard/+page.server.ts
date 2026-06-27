@@ -22,8 +22,6 @@ export const actions: Actions = {
         if (!interest || interest.trim() === '') {
             return fail(400, { message: 'Interest is required' });
         }
-
-        console.log(locals.user);
     },
 
     signOut: async (event) => {
