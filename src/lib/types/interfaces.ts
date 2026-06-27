@@ -10,3 +10,8 @@ export interface Source {
     url: string;
     title: string;
 }
+
+export interface ChallengeFilter {
+    limit: number;
+    offset: number;
+}

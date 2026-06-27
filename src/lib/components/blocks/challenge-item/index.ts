@@ -1,0 +1,1 @@
+export { default as ChallengeItem } from './challenge-item.svelte';

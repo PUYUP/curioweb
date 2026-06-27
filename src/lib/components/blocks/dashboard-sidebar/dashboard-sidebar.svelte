@@ -3,7 +3,13 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { resolve } from '$app/paths';
 	import Icon from 'mdi-svelte';
-	import { mdiHomeOutline, mdiTrendingUp, mdiAccount, mdiArchiveOutline } from '@mdi/js';
+	import {
+		mdiHomeOutline,
+		mdiTrendingUp,
+		mdiAccount,
+		mdiArchiveOutline,
+		mdiCreditCardOutline
+	} from '@mdi/js';
 
 	let { user }: { user: any } = $props();
 
@@ -30,15 +36,15 @@
 			badge: ''
 		},
 		{
-			title: 'Challenge',
-			url: '#',
-			icon: mdiTrendingUp,
-			badge: '1 new'
+			title: 'Archives',
+			url: '/challenge',
+			icon: mdiArchiveOutline,
+			badge: ''
 		},
 		{
-			title: 'Archives',
+			title: 'Billing',
 			url: '#',
-			icon: mdiArchiveOutline,
+			icon: mdiCreditCardOutline,
 			badge: ''
 		}
 	];
@@ -48,16 +54,16 @@
 	<Sidebar.Header class="p-4">
 		<div class="flex justify-start flex-row items-center mb-2 gap-2">
 			{#if user.image}
-				<enhanced:img src={user.image} alt={user.name} class="w-12 h-12 flex-none rounded-full" />
+				<enhanced:img src={user.image} alt={user.name} class="w-10 h-10 flex-none rounded-full" />
 			{:else}
 				<div
-					class="w-12 h-12 flex items-center justify-center flex-none bg-neutral-200 rounded-full"
+					class="w-10 h-10 flex items-center justify-center flex-none bg-neutral-200 rounded-full"
 				>
 					<Icon path={mdiAccount} class="size-6" />
 				</div>
 			{/if}
 			<div class="block">
-				<p class="text-sm line-clamp-1 mb-0.5">{user.name}</p>
+				<p class="text-sm line-clamp-1 mb-0.5 font-semibold">{user.name}</p>
 				<p class="text-xs text-neutral-600 line-clamp-1">{user.email}</p>
 			</div>
 		</div>

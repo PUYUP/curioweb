@@ -4,7 +4,8 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { enhance } from '$app/forms';
 	import languages from '$lib/assets/data/ISO-639-1-language.json';
-	import type { ActionData, LayoutServerData } from '../$types';
+	import type { LayoutServerData } from '../../$types';
+	import type { ActionData } from '../$types';
 
 	let loading = $state(false);
 	let interest = $state('');
@@ -26,7 +27,7 @@
 	});
 </script>
 
-<div class="p-4 w-full md:w-12/12 lg:w-7/12 xl:w-6/12">
+<div class="p-4 w-full md:w-12/12 lg:w-7/12 xl:w-6/12 mx-auto">
 	{#if !profile || profile.interest.trim() === ''}
 		<div class="block text-lg font-bold">Last step! Complete your interests.</div>
 		<div class="mt-0 text-sm text-neutral-600">

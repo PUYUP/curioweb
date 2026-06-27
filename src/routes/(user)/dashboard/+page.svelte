@@ -1,34 +1,64 @@
 <script lang="ts">
 	import * as Card from '@/lib/components/ui/card/index.js';
-	import type { LayoutServerData } from './$types';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import * as Item from '$lib/components/ui/item/index.js';
+
 	import { Button } from '@/lib/components/ui/button';
 	import languages from '@/lib/assets/data/ISO-639-1-language.json';
+	import ChallengeItem from '@/lib/components/blocks/challenge-item/challenge-item.svelte';
+	import type { LayoutServerData } from '../$types';
+	import { Badge } from '@/lib/components/ui/badge';
 
-	let { data }: { data: LayoutServerData } = $props();
+	const { data }: { data: LayoutServerData } = $props();
+
 	const profile = $derived(data ? data.profile : null);
 	const language = $derived(languages.find((l) => l.code === profile?.languageCode)?.name);
+	const challenges = $derived(data ? data?.challenges : []);
 </script>
 
 <svelte:head>
 	<title>{data.user.name} - Dashboard</title>
 </svelte:head>
 
-<div class="flex flex-col p-4 w-full md:max-w-xl">
-	<Card.Root>
-		<Card.Header>
-			<Card.Title class="flex justify-between items-center">
-				<div class="flex flex-col gap-1">
-					<span class="font-semibold">Your Interests</span>
-					<span class="text-xs text-neutral-600">Prefered language: {language}</span>
-				</div>
+<div class="flex flex-col p-4 w-full w-full md:w-full lg:w-12/12 xl:w-6/12">
+	<div class="block">
+		<div class="flex w-full mb-4 justify-between">
+			<div class="flex flex-col gap-1">
+				<span class="font-semibold">Your Interests</span>
+				<span class="text-xs text-neutral-500">Prefered language: {language}</span>
+			</div>
 
-				<Button variant="outline" href="/dashboard/onboarding" size="sm">Change</Button>
-			</Card.Title>
-		</Card.Header>
-		<Card.Content>
-			<p class="interest-content text-lg">{profile?.interest || 'No interests added'}</p>
-		</Card.Content>
-	</Card.Root>
+			<Button variant="outline" href="/dashboard/onboarding" size="sm">Change</Button>
+		</div>
+
+		<p class="interest-content text-lg">{profile?.interest || 'No interests added'}</p>
+	</div>
+
+	<div class="mt-6 md:mt-10">
+		<div class="flex justify-between items-center mb-4">
+			<span class="text-sm font-semibold">Newest Challenges</span>
+			<Badge>2 new</Badge>
+		</div>
+		<div class="flex flex-col gap-4">
+			{#each challenges as challenge}
+				<ChallengeItem {challenge} />
+			{:else}
+				<div class="flex w-full flex-col gap-4 [--radius:1rem]">
+					<Item.Root variant="muted">
+						<Item.Media>
+							<Spinner />
+						</Item.Media>
+						<Item.Content>
+							<Item.Title class="line-clamp-1">Generating challenges...</Item.Title>
+						</Item.Content>
+						<Item.Content class="flex-none justify-end">
+							<span class="text-sm tabular-nums">10 queue</span>
+						</Item.Content>
+					</Item.Root>
+				</div>
+			{/each}
+		</div>
+	</div>
 </div>
 
 <style>

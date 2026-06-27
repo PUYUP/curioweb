@@ -1,10 +1,17 @@
 <script lang="ts">
 	import '../../app.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import AppSidebar from '@/lib/components/blocks/dashboard-sidebar/dashboard-sidebar.svelte';
+	import type { LayoutServerData } from './$types';
+	import DashboardNavbar from '@/lib/components/blocks/dashboard-navbar/dashboard-navbar.svelte';
 
-	let { children } = $props();
+	let { children, data }: { children: any; data: LayoutServerData } = $props();
 </script>
 
-<main class="main flex-1">
-	{@render children()}
-</main>
+<Sidebar.Provider>
+	<AppSidebar user={data.user} />
+	<main class="main flex-1">
+		<DashboardNavbar />
+		{@render children?.()}
+	</main>
+</Sidebar.Provider>

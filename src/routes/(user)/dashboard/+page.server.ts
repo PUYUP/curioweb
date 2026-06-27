@@ -1,9 +1,9 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { _actions } from './+layout.server';
 import { getProfileByUserId } from '@/lib/server/db/factories/profle.factory';
+import { auth } from '$lib/server/auth';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, fetch }) => {
     if (locals.user?.id) {
         const profile = await getProfileByUserId(locals.user.id);
 
@@ -14,11 +14,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-    signOut: async (event) => {
-        await _actions.signOut(event);
-        return redirect(302, '/auth/login');
-    },
-
     // update profile
     updateProfile: async ({ request, locals }) => {
         const data = await request.formData();
@@ -29,5 +24,12 @@ export const actions: Actions = {
         }
 
         console.log(locals.user);
+    },
+
+    signOut: async (event) => {
+        await auth.api.signOut({
+            headers: event.request.headers
+        });
+        return redirect(302, '/auth/login');
     }
 };
