@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { Button } from '@/lib/components/ui/button';
-	import type { PageServerData } from './$types';
+	import type { ActionData, PageServerData } from './$types';
 	import type { PaperSummary } from '@/lib/types/interfaces';
 	import { Textarea } from '@/lib/components/ui/textarea';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 	import { PaperItem } from '@/lib/components/blocks/paper-item';
+	import { page } from '$app/state';
+	import { enhance } from '$app/forms';
 
-	let { data }: { data: PageServerData } = $props();
+	let { code } = page.params;
+	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
 	// sample paper summary
 	const summaries: PaperSummary[] = [
@@ -52,9 +55,10 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		}
 	];
 
-	let textValue = $state('');
-	let width = $state(0);
-	let height = $state(0);
+	let saving = $state<boolean>(false);
+	let textValue = $state<string>('');
+	let width = $state<number>(0);
+	let height = $state<number>(0);
 	let orientation = $derived(width > 1280 ? 'vertical' : 'horizontal') as 'vertical' | 'horizontal';
 
 	function handleInput() {
@@ -64,6 +68,9 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 
 <!-- Bind the window dimensions directly -->
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
+<svelte:head>
+	<title>{code}</title>
+</svelte:head>
 
 <div class="mx-auto w-full pt-0 md:pt-0 lg:py-0 px-4">
 	<table class="mb-2">
@@ -103,7 +110,19 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 		</div>
 
 		<div class="w-full py-1">
-			<div class="flex flex-col relative h-full">
+			<form
+				method="post"
+				action="?/submit"
+				class="flex flex-col relative h-full"
+				use:enhance={() => {
+					form = null;
+					saving = true;
+					return async ({ update }) => {
+						await update();
+						saving = false;
+					};
+				}}
+			>
 				<!-- Wrapper relative untuk textarea + button -->
 				<div class="relative flex-1 min-h-0">
 					<Textarea
@@ -111,17 +130,30 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 						class="h-full w-full !text-base"
 						bind:value={textValue}
 						oninput={handleInput}
+						name="content"
 					/>
 				</div>
 
 				<!-- Button absolute di dalam textarea, tidak kena scroll -->
-				<div class="relative mt-auto py-4 flex justify-between items-center">
-					<Button size="lg">Submit & Analyze</Button>
-					<div class="ml-auto text-xs text-neutral-500 flex flex-col">
-						<p>Characters: {textValue.length}</p>
+				<div class="relative mt-auto py-4">
+					{#if form?.message}
+						<p style="color: red" class="text-xs mb-2">{form?.message}</p>
+					{/if}
+
+					<div class="flex justify-between items-center">
+						<Button type="submit" size="lg" disabled={saving}>
+							{#if saving}
+								Saving...
+							{:else}
+								Submit & Analyze
+							{/if}
+						</Button>
+						<div class="ml-auto text-xs text-neutral-500 flex flex-col">
+							<p>Characters: {textValue.length}</p>
+						</div>
 					</div>
 				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 </div>
