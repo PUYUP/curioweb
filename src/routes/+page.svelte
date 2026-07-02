@@ -217,7 +217,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 												rotate: -30deg;
 												top: -25px;
 												z-index: 0;
-												opacity: 0.1;
+												opacity: 0.08;
 											"
 										>
 											A
@@ -233,7 +233,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 												top: -35px;
 												right: 45px;
 												z-index: 0;
-												opacity: 0.1;
+												opacity: 0.08;
 											"
 										>
 											Z
