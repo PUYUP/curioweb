@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import logo from '$lib/assets/logo.png';
+	import logo from '$lib/assets/atlanize-logo.png';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { MenuIcon } from '@hugeicons/core-free-icons';
@@ -16,7 +16,7 @@
 
 	<div class="ml-auto">
 		<a href={resolve('/dashboard')}>
-			<img src={logo} alt="Curiosift Logo" class="h-8 w-auto" />
+			<img src={logo} alt="ATLANIZE Logo" class="h-8 w-auto" />
 		</a>
 	</div>
 </nav>

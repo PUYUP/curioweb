@@ -95,17 +95,17 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 </script>
 
 <svelte:head>
-	<title>Curiosift - Sifting Breakthroughs, Challenging Your Curiosity</title>
+	<title>ATLANIZE - Sifting Breakthroughs, Challenging Your Curiosity</title>
 	<meta
 		name="description"
-		content="Discover the latest research and challenge your curiosity with CurioSift."
+		content="Discover the latest research and challenge your curiosity with ATLANIZE."
 	/>
 	<meta
 		name="keywords"
 		content="research, curiosity, science, AI, bioinformatics, computational
 		bology, data analysis, technology, education"
 	/>
-	<meta name="author" content="CurioSift" />
+	<meta name="author" content="ATLANIZE" />
 </svelte:head>
 
 <Navbar />
@@ -206,7 +206,40 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 									</div>
 								</div>
 
-								<div class="flex-1 px-0.5 md:px-2 pt-4">
+								<div class="flex-1 px-0.5 md:px-2 pt-4 relative">
+									{#if i % 2 === 0}
+										<div
+											class="jargon"
+											style="
+												position: absolute;
+												font-size: 220px;
+												font-weight: 700;
+												rotate: -30deg;
+												top: -25px;
+												z-index: 0;
+												opacity: 0.1;
+											"
+										>
+											A
+										</div>
+									{:else}
+										<div
+											class="jargon"
+											style="
+												position: absolute;
+												font-size: 220px;
+												font-weight: 700;
+												rotate: 30deg;
+												top: -35px;
+												right: 45px;
+												z-index: 0;
+												opacity: 0.1;
+											"
+										>
+											Z
+										</div>
+									{/if}
+
 									<PaperItem paper={summary} sample={true} />
 								</div>
 

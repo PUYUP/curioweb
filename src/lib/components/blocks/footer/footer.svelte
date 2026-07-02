@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from 'mdi-svelte';
 	import { mdiGithub, mdiLinkedin, mdiTwitter } from '@mdi/js';
-	import logo from '$lib/assets/logo.png';
+	import logo from '$lib/assets/atlanize-logo.png';
 	import { Separator } from '@/lib/components/ui/separator/index.js';
 </script>
 
@@ -10,7 +10,7 @@
 		<div class="flex items-center md:items-start justify-between flex-col md:flex-row">
 			<div class="block ml-0 md:-ml-2 mt-0 md:-mt-2 mb-6 md:mb-0">
 				<a href="/" aria-label="Go to home page">
-					<img src={logo} alt="Curiosift" class="h-14 w-auto" />
+					<img src={logo} alt="ATLANIZE" class="h-12 w-auto" />
 				</a>
 			</div>
 
@@ -51,7 +51,7 @@
 				</div>
 			</div>
 
-			<p class="text-base text-muted-foreground mt-6 md:mt-0">© 2026 Curiosift</p>
+			<p class="text-base text-muted-foreground mt-6 md:mt-0">© 2026 ATLANIZE</p>
 		</div>
 	</div>
 </footer>

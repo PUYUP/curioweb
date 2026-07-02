@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import logo from '$lib/assets/logo.png';
+	import logo from '$lib/assets/atlanize-logo.png';
 	import Button from '../../ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 </script>
@@ -8,7 +8,7 @@
 	<div class="max-w-7xl mx-auto py-2 px-4 flex items-center gap-3">
 		<div class="logo -ml-2">
 			<a href="/" aria-label="Go to home page">
-				<img src={logo} alt="Curiosift" class="h-12 sm:h-16 w-auto" />
+				<img src={logo} alt="ATLANIZE" class="h-8 sm:h-12 w-auto" />
 			</a>
 		</div>
 

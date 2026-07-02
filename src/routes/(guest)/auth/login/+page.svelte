@@ -15,14 +15,14 @@
 </script>
 
 <svelte:head>
-	<title>Curiosift - Login</title>
-	<meta name="description" content="Login to your CurioSift account" />
+	<title>ATLANIZE - Login</title>
+	<meta name="description" content="Login to your ATLANIZE account" />
 	<meta
 		name="keywords"
-		content="login,Curiosift,research, curiosity, science, AI, bioinformatics, computational
+		content="login,ATLANIZE,research, curiosity, science, AI, bioinformatics, computational
 		bology, data analysis, technology, education"
 	/>
-	<meta name="author" content="CurioSift" />
+	<meta name="author" content="ATLANIZE" />
 </svelte:head>
 
 <div class="flex flex-1 items-center justify-center px-4 py-8 md:py-24">
@@ -43,7 +43,7 @@
 				<Field.Set>
 					<Field.Legend class="!text-lg">Welcome back!</Field.Legend>
 					<Field.Description>
-						Continue your learning journey of discovery with Curiosift.
+						Continue your learning journey of discovery with ATLANIZE.
 					</Field.Description>
 
 					<button onclick={signInWithGoogle} type="button" class="cursor-pointer">
