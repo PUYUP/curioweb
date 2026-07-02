@@ -9,7 +9,7 @@ import { upsertProfile } from './db/factories/profle.factory';
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
 	secret: env.BETTER_AUTH_SECRET,
-	database: drizzleAdapter(db, { provider: 'sqlite' }),
+	database: drizzleAdapter(db, { provider: 'pg' }),
 	emailAndPassword: { enabled: true },
 	plugins: [
 		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
@@ -28,6 +28,11 @@ export const auth = betterAuth({
 					await upsertProfile(user.id, { interest: '', languageCode: 'en' });
 				}
 			}
+		}
+	},
+	advanced: {
+		database: {
+			generateId: false // Tells Better Auth to let Postgres/ORM handle the ID
 		}
 	}
 });

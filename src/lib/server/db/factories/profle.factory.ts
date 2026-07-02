@@ -8,7 +8,8 @@ import { eq } from "drizzle-orm/sql";
 // --------
 
 export const getProfileByUserId = async (userId: string) => {
-    return db.select().from(profile).where(eq(profile.userId, userId)).get();
+    const res = await db.select().from(profile).where(eq(profile.userId, userId)).limit(1);
+    return res.length > 0 ? res[0] : null;
 }
 
 // --------
