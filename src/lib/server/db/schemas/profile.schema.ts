@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
 import { sql } from 'drizzle-orm';
 
@@ -11,6 +11,7 @@ export const profile = pgTable('profile', {
         .unique()
         .references(() => user.id, { onDelete: 'cascade' }),
     interest: text('interest').notNull(),
+    interestEmbedding: vector('interest_embedding', { dimensions: 1024 }),
     languageCode: text('language_code').notNull().default('en'),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()

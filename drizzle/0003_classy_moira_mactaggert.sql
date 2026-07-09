@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ALTER COLUMN "interest_embedding" SET DATA TYPE vector(1024);

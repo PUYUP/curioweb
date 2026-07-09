@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ADD COLUMN "interest_embedding" vector(768);

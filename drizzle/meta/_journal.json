@@ -15,6 +15,20 @@
       "when": 1782973296010,
       "tag": "0001_calm_baron_strucker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783043414776,
+      "tag": "0002_old_colleen_wing",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783089557746,
+      "tag": "0003_classy_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }
