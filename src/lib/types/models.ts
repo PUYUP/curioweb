@@ -4,7 +4,7 @@ export interface ProfileData {
 }
 
 export interface PaperData {
-    url: string;
+    pdfUrl: string;
     title: string;
 }
 
@@ -15,6 +15,10 @@ export interface ChallengeData {
     targetDate: string;
     status: ChallengeStatus;
     code: string;
+    papers: {
+        title: string;
+        pdfUrl: string;
+    }[];
 }
 
 export interface ChallengeResponse extends ChallengeData {

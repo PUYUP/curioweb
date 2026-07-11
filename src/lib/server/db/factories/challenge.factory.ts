@@ -2,9 +2,23 @@ import type { ChallengeStatus, ChallengeData, ChallengeResponse } from "@/lib/ty
 import { db } from "../index.js";
 import { challenges, challengePapers } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
-import { and, eq, desc } from "drizzle-orm/sql";
+import { and, eq, desc, sql } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
 import type { ChallengeFilter } from "@/lib/types/interfaces.js";
+import { getTableColumns } from "drizzle-orm";
+
+// Aggregate expression yang dipakai bersama: rangkum papers jadi array {title, pdfUrl}
+const papersAgg = sql<{ title: string; pdfUrl: string }[]>`
+    coalesce(
+        json_agg(
+            json_build_object(
+                'title', ${papers.title},
+                'pdfUrl', ${papers.pdfUrl}
+            )
+        ) filter (where ${papers.id} is not null),
+        '[]'
+    )
+`.as("papers");
 
 class ChallengeFactory {
     /**
@@ -87,12 +101,19 @@ class ChallengeFactory {
      */
     async getByUserId(userId: string, filter: ChallengeFilter = { limit: 10, offset: 0 }) {
         try {
-            const results = await db.select()
+            const results = await db.select({
+                ...getTableColumns(challenges),
+                papers: papersAgg,
+            })
                 .from(challenges)
+                .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
+                .leftJoin(papers, eq(challengePapers.paperId, papers.id))
                 .where(eq(challenges.userId, userId))
+                .groupBy(challenges.id)
+                .orderBy(desc(challenges.createdAt))
                 .limit(filter.limit)
-                .offset(filter.offset)
-                .orderBy(desc(challenges.createdAt));
+                .offset(filter.offset);
+
             return results;
         } catch (error) {
             if (error instanceof Error) {

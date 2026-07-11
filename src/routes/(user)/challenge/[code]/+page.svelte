@@ -51,11 +51,11 @@
 				{#key orientation}
 					<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
 						<Carousel.Content>
-							{#each data.challenge.papers as summary, i}
+							{#each data.challenge.papers as challenge, i}
 								<Carousel.Item class="basis-full lg:basis-1/2">
 									<div class="flex flex-col relative h-full">
 										<div class="flex-1 px-0.5 py-1">
-											<PaperItem paper={{ ...summary.paper }} sample={false} />
+											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
 										</div>
 									</div>
 								</Carousel.Item>

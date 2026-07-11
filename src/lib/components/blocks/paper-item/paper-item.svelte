@@ -7,10 +7,12 @@
 
 	const {
 		paper,
+		challenge,
 		sample = false,
 		showTitle = false
 	} = $props<{
 		paper: PaperSummary;
+		challenge: any;
 		sample?: boolean;
 		showTitle?: boolean;
 	}>();
@@ -39,20 +41,22 @@
 		</div>
 	</CardContent>
 
-	<CardFooter class="mt-auto">
-		<div class="source pt-2">
-			<div class="text-xs italic text-neutral-500 mb-2">Read full paper:</div>
-			<ol class="list-decimal pl-3">
-				{#if paper.pdfUrl}
+	{#if paper.pdfUrl}
+		<CardFooter class="mt-auto">
+			<div class="source pt-2">
+				<div class="text-xs italic text-neutral-500 mb-2">Read full paper:</div>
+				<ol class="list-decimal pl-3">
 					<li>
 						<a href={paper.pdfUrl} class="text-blue-500 line-clamp-2" target="_blank">
 							{paper.title} &nearr;
+
+							<Badge>{challenge.status}</Badge>
 						</a>
 					</li>
-				{/if}
-			</ol>
-		</div>
-	</CardFooter>
+				</ol>
+			</div>
+		</CardFooter>
+	{/if}
 </Card>
 
 <style>

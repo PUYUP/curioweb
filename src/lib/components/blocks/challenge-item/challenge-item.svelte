@@ -31,11 +31,14 @@
 				{/if}
 			</Item.Media>
 			<Item.Content>
-				<Item.Title class="pt-1">{challenge.code}</Item.Title>
+				<Item.Title class="pt-1 text-base">{challenge.code}</Item.Title>
 				<div class="block">
 					<ol class="list-decimal pl-4">
-						<li class="text-xs text-neutral-500">A simple item with title and description.</li>
-						<li class="text-xs text-neutral-500">A simple item with title and description.</li>
+						{#each challenge.papers as paper}
+							<li class="text-xs text-neutral-500">
+								<div class="block line-clamp-1">{paper.title}</div>
+							</li>
+						{/each}
 					</ol>
 				</div>
 			</Item.Content>

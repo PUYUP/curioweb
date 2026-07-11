@@ -27,41 +27,20 @@
 	const summaries: PaperSummary[] = [
 		{
 			sample: true,
+			pdfUrl: null,
 			title: 'Bahaya Jalan Pintas di Balik Simulasi Kenaikan Air Laut',
-			categories: ['Computer Science'],
-			sources: [
-				{
-					url: 'https://example.com',
-					title:
-						'Germination capacity of pistachio (Pistacia vera L.) seeds related to genotypic variation and phytochemical contents'
-				},
-				{
-					url: 'https://example.com',
-					title:
-						'Performance and Interpretability of Convolutional, Transformer, and Hybrid Deep Learning Models in Colorectal Histology Classification'
-				}
-			],
-			content: `Ternyata model prediksi es mencair yang sering dipakai nyimpen *plot twist*. Sekilas, metode *shortcut* (SOSA) dan metode presisi (AD) kelihatan ngasih hasil mirip. Tapi pas dibedah matematis, metode *shortcut* ini sering meremehkan sensitivitas sistem. Efeknya, kondisi es seolah-olah terlihat jauh lebih stabil dan pasti dari realitanya.
+			fieldsOfStudy: ['Computer Science'],
+			abstract: `Ternyata model prediksi es mencair yang sering dipakai nyimpen *plot twist*. Sekilas, metode *shortcut* (SOSA) dan metode presisi (AD) kelihatan ngasih hasil mirip. Tapi pas dibedah matematis, metode *shortcut* ini sering meremehkan sensitivitas sistem. Efeknya, kondisi es seolah-olah terlihat jauh lebih stabil dan pasti dari realitanya.
 
 Walau masih diuji di skenario terkontrol, ini jadi *wake-up call*. Pakai metode kalkulasi yang akurat bakal ngasih proyeksi kenaikan air laut yang lebih valid. Ini krusial banget buat kebijakan mitigasi perubahan iklim dan tata ruang wilayah pesisir biar kita nggak kebobolan di masa depan.`
 		},
 		{
 			sample: true,
+			pdfUrl: null,
 			title:
 				'Exact vs approximate second-order derivatives in vertically-integrated ice sheet models',
-			categories: ['Biomedical'],
-			sources: [
-				{
-					url: 'https://example.com',
-					title: 'JEDEL: Zero-Shot DNA-Encoded Library Design for Early-Stage Drug Discovery'
-				},
-				{
-					url: 'https://example.com',
-					title:
-						'Identifying structural design principles shaping the computational abilities of recurrent neural networks'
-				}
-			],
-			content: `Evolusi capit kepiting itu *mindblowing* banget! Ternyata banyak bentuk capit yang beda jauh tapi performanya bisa sama persis (*many-to-one mapping*). Kepiting yang beda spesies dan gak berkerabat bisa berevolusi punya capit mirip kalau tantangan habitatnya sama. Alam tuh kayak punya banyak *cheat* buat nyelesaiin satu masalah!
+			fieldsOfStudy: ['Biomedical'],
+			abstract: `Evolusi capit kepiting itu *mindblowing* banget! Ternyata banyak bentuk capit yang beda jauh tapi performanya bisa sama persis (*many-to-one mapping*). Kepiting yang beda spesies dan gak berkerabat bisa berevolusi punya capit mirip kalau tantangan habitatnya sama. Alam tuh kayak punya banyak *cheat* buat nyelesaiin satu masalah!
 
 Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super ketat. Peneliti ngebongkar rahasia ini pake *CT-scan 3D* dan simulasi biomekanik. Kerennya, riset ini gak cuma berguna buat biologi, tapi bisa jadi inspirasi buat desain alat biomimetik masa depan. *OP* banget kan alam kita?`
 		}

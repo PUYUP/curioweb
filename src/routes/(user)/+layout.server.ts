@@ -21,5 +21,9 @@ export const load: LayoutServerLoad = async ({ locals, fetch }) => {
         }
     });
 
-    return { user: locals.user, profile, challenges: await challenges.json() };
+    return {
+        user: locals.user,
+        profile: profile,
+        challenges: await challenges.json(),
+    };
 };

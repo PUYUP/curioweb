@@ -2,7 +2,7 @@ export interface PaperSummary {
     title: string;
     pdfUrl: string | null;
     abstract: string;
-    fieldsOfStudy: string[];
+    fieldsOfStudy?: string[] | [];
     sample?: boolean;
 }
 
