@@ -35,13 +35,18 @@
 		<table class="mb-2">
 			<tbody>
 				<tr class="flex gap-4 py-0.5">
-					<td class="text-sm flex-none w-14">Code</td>
+					<td class="text-sm flex-none w-24">Code</td>
 					<td class="text-sm font-semibold">: {data.challenge.code}</td>
 				</tr>
 
 				<tr class="flex gap-4 py-0.5">
-					<td class="text-sm flex-none w-14">Status</td>
+					<td class="text-sm flex-none w-24">Status</td>
 					<td class="text-sm font-semibold">: {data.challenge.status}</td>
+				</tr>
+
+				<tr class="flex gap-4 py-0.5">
+					<td class="text-sm flex-none w-24">Received on</td>
+					<td class="text-sm font-semibold">: {data.challenge.createdAt.toLocaleDateString()}</td>
 				</tr>
 			</tbody>
 		</table>
