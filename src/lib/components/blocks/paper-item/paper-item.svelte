@@ -12,7 +12,7 @@
 		showTitle = false
 	} = $props<{
 		paper: PaperSummary;
-		challenge: any;
+		challenge?: any;
 		sample?: boolean;
 		showTitle?: boolean;
 	}>();
