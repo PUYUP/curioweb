@@ -11,50 +11,6 @@
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
-	// sample paper summary
-	const summaries: PaperSummary[] = [
-		{
-			sample: true,
-			title: 'Bahaya Jalan Pintas di Balik Simulasi Kenaikan Air Laut',
-			categories: ['Computer Science'],
-			sources: [
-				{
-					url: 'https://example.com',
-					title:
-						'Germination capacity of pistachio (Pistacia vera L.) seeds related to genotypic variation and phytochemical contents'
-				},
-				{
-					url: 'https://example.com',
-					title:
-						'Performance and Interpretability of Convolutional, Transformer, and Hybrid Deep Learning Models in Colorectal Histology Classification'
-				}
-			],
-			content: `Ternyata model prediksi es mencair yang sering dipakai nyimpen *plot twist*. Sekilas, metode *shortcut* (SOSA) dan metode presisi (AD) kelihatan ngasih hasil mirip. Tapi pas dibedah matematis, metode *shortcut* ini sering meremehkan sensitivitas sistem. Efeknya, kondisi es seolah-olah terlihat jauh lebih stabil dan pasti dari realitanya.
-
-Walau masih diuji di skenario terkontrol, ini jadi *wake-up call*. Pakai metode kalkulasi yang akurat bakal ngasih proyeksi kenaikan air laut yang lebih valid. Ini krusial banget buat kebijakan mitigasi perubahan iklim dan tata ruang wilayah pesisir biar kita nggak kebobolan di masa depan.`
-		},
-		{
-			sample: true,
-			title:
-				'Exact vs approximate second-order derivatives in vertically-integrated ice sheet models',
-			categories: ['Biomedical'],
-			sources: [
-				{
-					url: 'https://example.com',
-					title: 'JEDEL: Zero-Shot DNA-Encoded Library Design for Early-Stage Drug Discovery'
-				},
-				{
-					url: 'https://example.com',
-					title:
-						'Identifying structural design principles shaping the computational abilities of recurrent neural networks'
-				}
-			],
-			content: `Evolusi capit kepiting itu *mindblowing* banget! Ternyata banyak bentuk capit yang beda jauh tapi performanya bisa sama persis (*many-to-one mapping*). Kepiting yang beda spesies dan gak berkerabat bisa berevolusi punya capit mirip kalau tantangan habitatnya sama. Alam tuh kayak punya banyak *cheat* buat nyelesaiin satu masalah!
-
-Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super ketat. Peneliti ngebongkar rahasia ini pake *CT-scan 3D* dan simulasi biomekanik. Kerennya, riset ini gak cuma berguna buat biologi, tapi bisa jadi inspirasi buat desain alat biomimetik masa depan. *OP* banget kan alam kita?`
-		}
-	];
-
 	let saving = $state<boolean>(false);
 	let textValue = $state<string>('');
 	let width = $state<number>(0);
@@ -72,91 +28,95 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	<title>{code}</title>
 </svelte:head>
 
-<div class="mx-auto w-full pt-0 md:pt-0 lg:py-0 px-4">
-	<table class="mb-2">
-		<tbody>
-			<tr class="flex gap-4 py-0.5">
-				<td class="text-sm flex-none w-14">Code</td>
-				<td class="text-sm font-semibold">: RE-149592</td>
-			</tr>
+{#if !data || !data.challenge}
+	<p>Loading...</p>
+{:else}
+	<div class="mx-auto w-full pt-0 md:pt-0 lg:py-0 px-4">
+		<table class="mb-2">
+			<tbody>
+				<tr class="flex gap-4 py-0.5">
+					<td class="text-sm flex-none w-14">Code</td>
+					<td class="text-sm font-semibold">: {data.challenge.code}</td>
+				</tr>
 
-			<tr class="flex gap-4 py-0.5">
-				<td class="text-sm flex-none w-14">Status</td>
-				<td class="text-sm font-semibold">: In Progress</td>
-			</tr>
-		</tbody>
-	</table>
+				<tr class="flex gap-4 py-0.5">
+					<td class="text-sm flex-none w-14">Status</td>
+					<td class="text-sm font-semibold">: {data.challenge.status}</td>
+				</tr>
+			</tbody>
+		</table>
 
-	<div class="grid grid-cols-1 xl:grid-cols-1 gap-6">
-		<div class="flex gap-6">
-			{#key orientation}
-				<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
-					<Carousel.Content>
-						{#each summaries as summary, i}
-							<Carousel.Item class="basis-full lg:basis-1/2">
-								<div class="flex flex-col relative h-full">
-									<div class="flex-1 px-0.5 py-1">
-										<PaperItem paper={summary} sample={true} />
+		<div class="grid grid-cols-1 xl:grid-cols-1 gap-6">
+			<div class="flex gap-6">
+				{#key orientation}
+					<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
+						<Carousel.Content>
+							{#each data.challenge.papers as summary, i}
+								<Carousel.Item class="basis-full lg:basis-1/2">
+									<div class="flex flex-col relative h-full">
+										<div class="flex-1 px-0.5 py-1">
+											<PaperItem paper={{ ...summary.paper }} sample={false} />
+										</div>
 									</div>
-								</div>
-							</Carousel.Item>
-						{/each}
-					</Carousel.Content>
+								</Carousel.Item>
+							{/each}
+						</Carousel.Content>
 
-					<Carousel.Previous class="carousel-prev-button" />
-					<Carousel.Next class="carousel-next-button" />
-				</Carousel.Root>
-			{/key}
-		</div>
+						<Carousel.Previous class="carousel-prev-button" />
+						<Carousel.Next class="carousel-next-button" />
+					</Carousel.Root>
+				{/key}
+			</div>
 
-		<div class="w-full py-1">
-			<form
-				method="post"
-				action="?/submit"
-				class="flex flex-col relative h-full"
-				use:enhance={() => {
-					form = null;
-					saving = true;
-					return async ({ update }) => {
-						await update();
-						saving = false;
-					};
-				}}
-			>
-				<!-- Wrapper relative untuk textarea + button -->
-				<div class="relative flex-1 min-h-0">
-					<Textarea
-						placeholder="Read both papers, connect the key ideas, and expand on them using your knowledge."
-						class="h-full w-full !text-base"
-						bind:value={textValue}
-						oninput={handleInput}
-						name="content"
-					/>
-				</div>
+			<div class="w-full py-1">
+				<form
+					method="post"
+					action="?/submit"
+					class="flex flex-col relative h-full"
+					use:enhance={() => {
+						form = null;
+						saving = true;
+						return async ({ update }) => {
+							await update();
+							saving = false;
+						};
+					}}
+				>
+					<!-- Wrapper relative untuk textarea + button -->
+					<div class="relative flex-1 min-h-0">
+						<Textarea
+							placeholder="Read both papers, connect the key ideas, and expand on them using your knowledge."
+							class="h-full w-full !text-base"
+							bind:value={textValue}
+							oninput={handleInput}
+							name="content"
+						/>
+					</div>
 
-				<!-- Button absolute di dalam textarea, tidak kena scroll -->
-				<div class="relative mt-auto py-4">
-					{#if form?.message}
-						<p style="color: red" class="text-xs mb-2">{form?.message}</p>
-					{/if}
+					<!-- Button absolute di dalam textarea, tidak kena scroll -->
+					<div class="relative mt-auto py-4">
+						{#if form?.message}
+							<p style="color: red" class="text-xs mb-2">{form?.message}</p>
+						{/if}
 
-					<div class="flex justify-between items-center">
-						<Button type="submit" size="lg" disabled={saving}>
-							{#if saving}
-								Saving...
-							{:else}
-								Submit & Analyze
-							{/if}
-						</Button>
-						<div class="ml-auto text-xs text-neutral-500 flex flex-col">
-							<p>Characters: {textValue.length}</p>
+						<div class="flex justify-between items-center">
+							<Button type="submit" size="lg" disabled={saving}>
+								{#if saving}
+									Saving...
+								{:else}
+									Submit & Analyze
+								{/if}
+							</Button>
+							<div class="ml-auto text-xs text-neutral-500 flex flex-col">
+								<p>Characters: {textValue.length}</p>
+							</div>
 						</div>
 					</div>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	:global(.carousel-prev-button),

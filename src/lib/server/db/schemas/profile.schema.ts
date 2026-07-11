@@ -1,12 +1,12 @@
-import { pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, vector, uuid } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
 import { sql } from 'drizzle-orm';
 
 export const profile = pgTable('profile', {
-    id: text('id')
+    id: uuid('id')
         .primaryKey()
         .default(sql`gen_random_uuid()`),
-    userId: text('user_id')
+    userId: uuid('user_id')
         .notNull()
         .unique()
         .references(() => user.id, { onDelete: 'cascade' }),

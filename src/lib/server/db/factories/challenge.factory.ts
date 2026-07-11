@@ -1,6 +1,7 @@
 import type { ChallengeStatus, ChallengeData, ChallengeResponse } from "@/lib/types/models.js";
 import { db } from "../index.js";
-import { challenges } from "../schemas/challenge.schema.js";
+import { challenges, challengePapers } from "../schemas/challenge.schema.js";
+import { papers } from "../schemas/paper.schema.js";
 import { and, eq, desc } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
 import type { ChallengeFilter } from "@/lib/types/interfaces.js";
@@ -57,12 +58,26 @@ class ChallengeFactory {
      * @returns Challenge object
      */
     async getByCode(code: string) {
-        const challenge = db.select()
+        const results = await db.select()
             .from(challenges)
-            .where(eq(challenges.code, code))
-            .get();
+            .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
+            .leftJoin(papers, eq(challengePapers.paperId, papers.id))
+            .where(eq(challenges.code, code));
 
-        return challenge ?? null;
+        if (results.length === 0) return null;
+
+        const challenge = results[0].challenges;
+        const mappedPapers = results
+            .filter((r) => r.challenge_papers !== null && r.papers !== null)
+            .map((r) => ({
+                ...r.challenge_papers!,
+                paper: r.papers!
+            }));
+
+        return {
+            ...challenge,
+            papers: mappedPapers
+        };
     }
 
     /**

@@ -1,14 +1,9 @@
 export interface PaperSummary {
     title: string;
-    sources: Source[];
-    content: string;
-    categories: string[];
+    pdfUrl: string | null;
+    abstract: string;
+    fieldsOfStudy: string[];
     sample?: boolean;
-}
-
-export interface Source {
-    url: string;
-    title: string;
 }
 
 export interface ChallengeFilter {

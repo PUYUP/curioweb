@@ -1,11 +1,25 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { challengeFactory } from '@/lib/server/db/factories/challenge.factory';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, params }) => {
     if (!locals.user) {
         return redirect(302, '/auth/login');
     }
-    return { user: locals.user };
+
+    // getting challenge
+    const challenge = await challengeFactory.getByCode(params.code);
+    console.log(JSON.stringify(challenge, null, 2));
+    if (!challenge) {
+        return fail(404, { message: 'Challenge not found' });
+    }
+
+    // checking authorization
+    if (challenge.userId !== locals.user.id) {
+        return fail(403, { message: 'Forbidden' });
+    }
+
+    return { user: locals.user, challenge: challenge };
 };
 
 export const actions: Actions = {

@@ -1,6 +1,6 @@
 import type { ProfileData } from "@/lib/types/models";
 import { db } from "../index";
-import { profile } from "../schemas/schema";
+import { profile } from "../schemas/profile.schema";
 import { eq } from "drizzle-orm/sql";
 
 // --------

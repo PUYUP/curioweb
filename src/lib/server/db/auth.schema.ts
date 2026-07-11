@@ -1,9 +1,9 @@
-import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 import { sql } from "drizzle-orm";
 
 export const user = pgTable('user', {
-	id: text('id').primaryKey().default(sql`gen_random_uuid()`),
+	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('email_verified').default(false).notNull(),
@@ -13,7 +13,7 @@ export const user = pgTable('user', {
 });
 
 export const session = pgTable('session', {
-	id: text('id').primaryKey().default(sql`gen_random_uuid()`),
+	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	expiresAt: timestamp('expires_at').notNull(),
 	token: text('token').notNull().unique(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -26,7 +26,7 @@ export const session = pgTable('session', {
 });
 
 export const account = pgTable('account', {
-	id: text('id').primaryKey().default(sql`gen_random_uuid()`),
+	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	accountId: text('account_id').notNull(),
 	providerId: text('provider_id').notNull(),
 	userId: text('user_id')
@@ -44,7 +44,7 @@ export const account = pgTable('account', {
 });
 
 export const verification = pgTable('verification', {
-	id: text('id').primaryKey().default(sql`gen_random_uuid()`),
+	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	identifier: text('identifier').notNull(),
 	value: text('value').notNull(),
 	expiresAt: timestamp('expires_at').notNull(),
