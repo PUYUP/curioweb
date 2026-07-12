@@ -5,7 +5,7 @@
 	import Icon from 'mdi-svelte';
 	import {
 		mdiHomeOutline,
-		mdiTrendingUp,
+		mdiConnection,
 		mdiAccount,
 		mdiArchiveOutline,
 		mdiCreditCardOutline
@@ -39,6 +39,12 @@
 			title: 'Archives',
 			url: '/challenge',
 			icon: mdiArchiveOutline,
+			badge: ''
+		},
+		{
+			title: 'Integrations',
+			url: '#',
+			icon: mdiConnection,
 			badge: ''
 		},
 		{
