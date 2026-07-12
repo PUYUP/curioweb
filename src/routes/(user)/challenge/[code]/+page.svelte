@@ -41,7 +41,7 @@
 
 				<tr class="flex gap-4 py-0.5">
 					<td class="text-sm flex-none w-24">Status</td>
-					<td class="text-sm font-semibold">: {data.challenge.status}</td>
+					<td class="text-sm font-semibold uppercase">: {data.challenge.status}</td>
 				</tr>
 
 				<tr class="flex gap-4 py-0.5">
@@ -56,7 +56,7 @@
 				{#key orientation}
 					<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
 						<Carousel.Content>
-							{#each data.challenge.papers as challenge, i}
+							{#each data.challenge.challenge_papers as challenge, i}
 								<Carousel.Item class="basis-full lg:basis-1/2">
 									<div class="flex flex-col relative h-full">
 										<div class="flex-1 px-0.5 py-1">

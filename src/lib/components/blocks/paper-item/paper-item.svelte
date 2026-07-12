@@ -3,7 +3,6 @@
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
 	import type { PaperSummary } from '@/lib/types/interfaces';
 	import Badge from '../../ui/badge/badge.svelte';
-	import CardFooter from '../../ui/card/card-footer.svelte';
 
 	const {
 		paper,
@@ -17,7 +16,11 @@
 		showTitle?: boolean;
 	}>();
 
-	const htmlContent = $derived(marked.parse(paper.abstract ?? ''));
+	const htmlContent = $derived(
+		marked.parse(
+			(challenge.processingResult ? challenge.processingResult[0].results : paper.abstract) ?? ''
+		)
+	);
 </script>
 
 <Card class="h-full">
@@ -33,6 +36,19 @@
 			{/if}
 		</div>
 		{#if showTitle}<CardTitle class="text-lg">{paper.title}</CardTitle>{/if}
+
+		{#if paper.pdfUrl}
+			<div class="source pt-2">
+				<ol class="list-decimal pl-3">
+					<li>
+						<a href={paper.pdfUrl} class="text-blue-500 line-clamp-3 text-sm" target="_blank">
+							<Badge variant="destructive" class="uppercase">{challenge.status}</Badge>
+							{paper.title} &nearr;
+						</a>
+					</li>
+				</ol>
+			</div>
+		{/if}
 	</CardHeader>
 
 	<CardContent>
@@ -40,23 +56,6 @@
 			{@html htmlContent}
 		</div>
 	</CardContent>
-
-	{#if paper.pdfUrl}
-		<CardFooter class="mt-auto">
-			<div class="source pt-2">
-				<div class="text-xs italic text-neutral-500 mb-2">Read full paper:</div>
-				<ol class="list-decimal pl-3">
-					<li>
-						<a href={paper.pdfUrl} class="text-blue-500 line-clamp-2" target="_blank">
-							{paper.title} &nearr;
-
-							<Badge>{challenge.status}</Badge>
-						</a>
-					</li>
-				</ol>
-			</div>
-		</CardFooter>
-	{/if}
 </Card>
 
 <style>

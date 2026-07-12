@@ -4,6 +4,7 @@ export interface PaperSummary {
     abstract: string;
     fieldsOfStudy?: string[] | [];
     sample?: boolean;
+    processingResult?: any[];
 }
 
 export interface ChallengeFilter {

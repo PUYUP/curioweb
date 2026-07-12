@@ -34,7 +34,7 @@
 				<Item.Title class="pt-1 text-base">{challenge.code}</Item.Title>
 				<div class="block">
 					<ol class="list-decimal pl-4">
-						{#each challenge.papers as paper}
+						{#each challenge.challenge_papers as paper}
 							<li class="text-xs text-neutral-500">
 								<div class="block line-clamp-1">{paper.title}</div>
 							</li>

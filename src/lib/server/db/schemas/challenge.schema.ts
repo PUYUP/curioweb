@@ -6,7 +6,8 @@ import {
     numeric,
     unique,
     index,
-    check
+    check,
+    jsonb
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { user } from '../auth.schema';
@@ -40,6 +41,9 @@ export const challengePapers = pgTable('challenge_papers', {
         .notNull()
         .references(() => challenges.id, { onDelete: 'cascade' }),
     paperId: uuid('paper_id').notNull(),
+
+    // processing information
+    processingResult: jsonb('processing_result'),
     relevanceScore: numeric('relevance_score', { precision: 3, scale: 2 }),
     relevanceLabel: text('relevance_label', { enum: ['closest', 'farthest'] }),
     status: text('status').default('unread').notNull(),

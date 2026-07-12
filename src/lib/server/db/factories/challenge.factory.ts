@@ -90,7 +90,7 @@ class ChallengeFactory {
 
         return {
             ...challenge,
-            papers: mappedPapers
+            challenge_papers: mappedPapers
         };
     }
 
@@ -103,7 +103,7 @@ class ChallengeFactory {
         try {
             const results = await db.select({
                 ...getTableColumns(challenges),
-                papers: papersAgg,
+                challenge_papers: papersAgg,
             })
                 .from(challenges)
                 .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))

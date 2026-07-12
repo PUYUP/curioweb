@@ -15,7 +15,7 @@ export interface ChallengeData {
     targetDate: string;
     status: ChallengeStatus;
     code: string;
-    papers: {
+    challenge_papers: {
         title: string;
         pdfUrl: string;
     }[];
