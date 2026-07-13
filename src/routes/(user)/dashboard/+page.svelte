@@ -44,7 +44,6 @@
 		<div class="block order-1 xl:order-2">
 			<div class="flex justify-between items-center mb-4">
 				<span class="text-sm font-semibold">Newest Challenges</span>
-				<Badge>2 new</Badge>
 			</div>
 			<div class="flex flex-col gap-4">
 				{#each challenges as challenge}

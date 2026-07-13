@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Item from '$lib/components/ui/item/index.js';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Icon from 'mdi-svelte';
 	import {
 		mdiProgressCheck,
@@ -31,7 +32,12 @@
 				{/if}
 			</Item.Media>
 			<Item.Content>
-				<Item.Title class="pt-1 text-base">{challenge.code}</Item.Title>
+				<Item.Title class="pt-1 text-base">
+					{challenge.code}
+					{#if challenge.status === 'pending'}
+						<Badge variant="secondary" class="bg-[#38b9fc] text-white">New</Badge>
+					{/if}
+				</Item.Title>
 				<div class="block">
 					<ol class="list-decimal pl-4">
 						{#each challenge.challenge_papers as paper}
