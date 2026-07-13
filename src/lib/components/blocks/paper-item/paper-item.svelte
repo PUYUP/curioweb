@@ -18,7 +18,7 @@
 
 	const htmlContent = $derived(
 		marked.parse(
-			(challenge.processingResult
+			(challenge?.processingResult && challenge.processingResult.length > 0
 				? `### <p class="mb-2 pb-2">${challenge.processingResult[0].background}</p>\n${challenge.processingResult[0].results}`
 				: paper.abstract) ?? ''
 		)

@@ -2,7 +2,7 @@ import type { ChallengeStatus, ChallengeData, ChallengeResponse } from "@/lib/ty
 import { db } from "../index.js";
 import { challenges, challengePapers } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
-import { and, eq, desc, sql, isNotNull } from "drizzle-orm/sql";
+import { and, eq, desc, sql, isNotNull, count, gt } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
 import type { ChallengeFilter } from "@/lib/types/interfaces.js";
 import { getTableColumns } from "drizzle-orm";
@@ -108,13 +108,9 @@ class ChallengeFactory {
                 .from(challenges)
                 .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
                 .leftJoin(papers, eq(challengePapers.paperId, papers.id))
-                .where(
-                    and(
-                        eq(challenges.userId, userId),
-                        isNotNull(challengePapers.processingResult)
-                    )
-                )
+                .where(eq(challenges.userId, userId))
                 .groupBy(challenges.id)
+                .having(gt(count(challengePapers.processingResult), 1))
                 .orderBy(desc(challenges.createdAt))
                 .limit(filter.limit)
                 .offset(filter.offset);
