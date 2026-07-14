@@ -1,8 +1,18 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
+	import {
+		Card,
+		CardContent,
+		CardFooter,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import type { PaperSummary } from '@/lib/types/interfaces';
 	import Badge from '../../ui/badge/badge.svelte';
+	import Icon from 'mdi-svelte';
+	import { mdiShimmer } from '@mdi/js';
+	import { handleShowSummary } from '$lib/state.svelte';
 
 	const {
 		paper,
@@ -19,10 +29,14 @@
 	const htmlContent = $derived(
 		marked.parse(
 			(challenge?.summary && challenge.summary.results.length > 0
-				? `### <p class="mb-2 pb-2">${challenge.summary.results[0].background}</p>\n${challenge.summary.results[0].results}`
+				? `<p class="mb-2 pb-2"><span class="font-normal border-b-3 border-yellow-400 bg-yellow-300">Background:</span> ${challenge.summary.results[0].background}</p>\n<p class="mb-2 pb-2"><span class="font-normal border-b-3 border-green-400 bg-green-300">Results:</span> ${challenge.summary.results[0].results}</p>`
 				: paper.abstract) ?? ''
 		)
 	);
+
+	const showSummaryHandler = async (results: any) => {
+		handleShowSummary(results);
+	};
 </script>
 
 <Card class="h-full">
@@ -58,6 +72,15 @@
 			{@html htmlContent}
 		</div>
 	</CardContent>
+
+	{#if challenge?.summary && challenge.summary.results.length > 0}
+		<CardFooter class="mt-auto">
+			<Button variant="link" onclick={() => showSummaryHandler(challenge.summary.results)}>
+				<Icon path={mdiShimmer} color={'#666'} class="size-4" />
+				Read Full Summary
+			</Button>
+		</CardFooter>
+	{/if}
 </Card>
 
 <style>

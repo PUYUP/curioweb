@@ -1,12 +1,29 @@
 <script lang="ts">
 	import { Button } from '@/lib/components/ui/button';
 	import type { ActionData, PageServerData } from './$types';
-	import type { PaperSummary } from '@/lib/types/interfaces';
 	import { Textarea } from '@/lib/components/ui/textarea';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 	import { PaperItem } from '@/lib/components/blocks/paper-item';
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
+	import { sharedState } from '@/lib/state.svelte';
+	import * as Drawer from '$lib/components/ui/drawer/index.js';
+
+	let drawerOpen = $state<boolean>(false);
+
+	$effect(() => {
+		if (sharedState.summary && sharedState.summary.length > 0) {
+			drawerOpen = true;
+		}
+	});
+
+	function handleDrawerOpenChange(open: boolean) {
+		drawerOpen = open;
+		if (!open) {
+			// Bersihkan summary begitu drawer ditutup (tombol close, overlay, swipe, atau Escape)
+			sharedState.summary = null;
+		}
+	}
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -121,6 +138,63 @@
 			</div>
 		</div>
 	</div>
+
+	<Drawer.Root direction="right" open={drawerOpen} onOpenChange={handleDrawerOpenChange}>
+		<Drawer.Content class="fixed flex w-full max-w-lg flex-col after:hidden">
+			<div class="flex h-full flex-col overflow-hidden">
+				<Drawer.Header class="text-left">
+					<Drawer.Title>Full Summaries</Drawer.Title>
+				</Drawer.Header>
+
+				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
+					{#each sharedState.summary ?? [] as item, i}
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-yellow-300 bg-yellow-200">1. Background</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['background']}</p>
+						</div>
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-blue-300 bg-blue-200">2. Methods</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['methods']}</p>
+						</div>
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-green-300 bg-green-200">3. Results</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['results']}</p>
+						</div>
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-teal-300 bg-teal-200">4. Conclusion</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['conclusions']}</p>
+						</div>
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-red-300 bg-red-200">5. Limitations</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['limitations']}</p>
+						</div>
+						<div class="flex flex-col mb-6">
+							<p class="text-base font-semibold mb-2 underline">
+								<span class="border-b-3 border-purple-300 bg-purple-200">6. Future Work</span>
+							</p>
+							<p class="text-base text-neutral-800 leading-6">{item['future_works']}</p>
+						</div>
+					{/each}
+				</div>
+
+				<Drawer.Footer>
+					<Drawer.Close>
+						<Button variant="outline" class="w-full">Close</Button>
+					</Drawer.Close>
+				</Drawer.Footer>
+			</div>
+		</Drawer.Content>
+	</Drawer.Root>
 {/if}
 
 <style>
@@ -142,6 +216,10 @@
 
 	:global(.carousel-next-button) {
 		right: -10px;
+	}
+
+	.prose :global(p) {
+		font-family: Newsreader, Georgia, 'Times New Roman', Times, serif;
 	}
 
 	@media (min-width: 1024px) {
