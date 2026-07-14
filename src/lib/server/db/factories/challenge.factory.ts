@@ -1,6 +1,6 @@
-import type { ChallengeStatus, ChallengeData, ChallengeResponse } from "@/lib/types/models.js";
+import type { ChallengeStatus, ChallengeData, ChallengeResponse, ChallengeResponseData, SaveDraftInput } from "@/lib/types/models.js";
 import { db } from "../index.js";
-import { challenges, challengePapers } from "../schemas/challenge.schema.js";
+import { challenges, challengePapers, challengeResponses, challengePaperSummaries } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
 import { and, eq, desc, sql, isNotNull, count, gt } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
@@ -72,26 +72,31 @@ class ChallengeFactory {
      * @returns Challenge object
      */
     async getByCode(code: string) {
-        const results = await db.select()
-            .from(challenges)
-            .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
-            .leftJoin(papers, eq(challengePapers.paperId, papers.id))
-            .where(eq(challenges.code, code));
+        try {
+            const results = await db.select()
+                .from(challenges)
+                .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
+                .leftJoin(papers, eq(challengePapers.paperId, papers.id))
+                .leftJoin(challengePaperSummaries, eq(challengePapers.id, challengePaperSummaries.challengePaperId))
+                .where(eq(challenges.code, code));
 
-        if (results.length === 0) return null;
+            if (results.length === 0) return null;
 
-        const challenge = results[0].challenges;
-        const mappedPapers = results
-            .filter((r) => r.challenge_papers !== null && r.papers !== null)
-            .map((r) => ({
-                ...r.challenge_papers!,
-                paper: r.papers!
-            }));
+            const challenge = results[0].challenges;
+            const mappedPapers = results
+                .filter((r) => r.challenge_papers !== null && r.papers !== null)
+                .map((r) => ({
+                    ...r.challenge_papers!,
+                    paper: r.papers!,
+                    summary: r.challenge_paper_summaries!,
+                }))
+                .sort((a: any, b: any) => parseFloat(b.relevanceScore) - parseFloat(a.relevanceScore));
 
-        return {
-            ...challenge,
-            challenge_papers: mappedPapers
-        };
+            return { ...challenge, challenge_papers: mappedPapers };
+        } catch (error) {
+            console.log(error, error instanceof Error ? error.cause : undefined);
+            throw new Error("Failed to get challenge", { cause: error });
+        }
     }
 
     /**
@@ -108,9 +113,10 @@ class ChallengeFactory {
                 .from(challenges)
                 .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
                 .leftJoin(papers, eq(challengePapers.paperId, papers.id))
+                .leftJoin(challengePaperSummaries, eq(challengePapers.id, challengePaperSummaries.challengePaperId))
                 .where(eq(challenges.userId, userId))
                 .groupBy(challenges.id)
-                .having(gt(count(challengePapers.processingResult), 1))
+                .having(gt(count(challengePaperSummaries.results), 1))
                 .orderBy(desc(challenges.createdAt))
                 .limit(filter.limit)
                 .offset(filter.offset);
@@ -149,6 +155,38 @@ class ChallengeFactory {
                 throw new Error("Failed to update challenge", { cause: error });
             } else {
                 throw new Error("Failed to update challenge");
+            }
+        }
+    }
+
+    /**
+     * Draft challenge response
+     * @param values ChallengeResponse data
+     * @returns ChallengeResponse object
+     */
+    async draftAnswer(values: SaveDraftInput) {
+        try {
+            const [result] = await db.insert(challengeResponses)
+                .values({
+                    answerText: values.answerText,
+                    userId: values.userId,
+                    challengeId: values.challengeId,
+                    status: 'draft',
+                })
+                .onConflictDoUpdate({
+                    target: [challengeResponses.challengeId, challengeResponses.userId],
+                    set: {
+                        answerText: values.answerText,
+                        updatedAt: new Date(),
+                    }
+                })
+                .returning();
+            return result;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error("Failed to draft challenge response", { cause: error });
+            } else {
+                throw new Error("Failed to draft challenge response");
             }
         }
     }

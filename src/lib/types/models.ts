@@ -24,3 +24,18 @@ export interface ChallengeData {
 export interface ChallengeResponse extends ChallengeData {
     papers: PaperData[];
 }
+
+export const CHALLENGE_RESPONSE_STATUSES = ['draft', 'submitted', 'evaluated'] as const;
+export type ChallengeResponseStatus = typeof CHALLENGE_RESPONSE_STATUSES[number];
+
+export interface ChallengeResponseData {
+    challengeId: string;
+    userId: string;
+    answerText: string;
+    status: ChallengeResponseStatus;
+    startedAt: Date;
+    updatedAt: Date;
+    submittedAt: Date;
+}
+
+export type SaveDraftInput = Pick<ChallengeResponseData, 'userId' | 'challengeId' | 'answerText'>; 
