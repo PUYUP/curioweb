@@ -5,15 +5,35 @@
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
 	import { PaperItem } from '@/lib/components/blocks/paper-item';
 	import { page } from '$app/state';
-	import { enhance } from '$app/forms';
+	import { applyAction, deserialize, enhance } from '$app/forms';
 	import { sharedState } from '@/lib/state.svelte';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import { Badge } from '@/lib/components/ui/badge';
+	import { onDestroy } from 'svelte';
 
+	let { code } = page.params;
+	let { data, form }: { data: PageServerData; form: ActionData } = $props();
+
+	let saving = $state<boolean>(false);
+	let textValue = $state<string>('');
+	let width = $state<number>(0);
+	let height = $state<number>(0);
+	let orientation = $derived(width > 1280 ? 'vertical' : 'horizontal') as 'vertical' | 'horizontal';
 	let drawerOpen = $state<boolean>(false);
+
+	// --- Auto-draft state ---
+	let draftTimer: ReturnType<typeof setTimeout> | undefined;
+	let draftStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle');
+	let lastSavedValue = $state<string>('');
+	const DRAFT_DEBOUNCE_MS = 3000;
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
 			drawerOpen = true;
+		}
+
+		if (data.answer) {
+			textValue = data.answer.answerText || '';
 		}
 	});
 
@@ -25,18 +45,58 @@
 		}
 	}
 
-	let { code } = page.params;
-	let { data, form }: { data: PageServerData; form: ActionData } = $props();
+	function scheduleDraftSave() {
+		// Batalkan timer sebelumnya tiap kali user mengetik lagi
+		if (draftTimer) clearTimeout(draftTimer);
+		draftTimer = setTimeout(() => {
+			saveDraft();
+		}, DRAFT_DEBOUNCE_MS);
+	}
 
-	let saving = $state<boolean>(false);
-	let textValue = $state<string>('');
-	let width = $state<number>(0);
-	let height = $state<number>(0);
-	let orientation = $derived(width > 1280 ? 'vertical' : 'horizontal') as 'vertical' | 'horizontal';
+	async function saveDraft() {
+		// Jangan bentrok dengan submit manual, dan jangan save kalau isi tidak berubah
+		if (saving) return;
+		if (textValue === lastSavedValue) return;
+		if (textValue.trim().length === 0) return;
+
+		draftStatus = 'saving';
+
+		try {
+			const formData = new FormData();
+			formData.set('content', textValue);
+
+			const response = await fetch('?/draft', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = deserialize(await response.text());
+
+			if (result.type === 'success' || result.type === 'failure') {
+				await applyAction(result);
+			}
+
+			if (result.type === 'success') {
+				lastSavedValue = textValue;
+				draftStatus = 'saved';
+			} else {
+				draftStatus = 'error';
+			}
+		} catch (e) {
+			console.error('Auto-draft gagal:', e);
+			draftStatus = 'error';
+		}
+	}
 
 	function handleInput() {
 		window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+		draftStatus = 'idle';
+		scheduleDraftSave();
 	}
+
+	onDestroy(() => {
+		if (draftTimer) clearTimeout(draftTimer);
+	});
 </script>
 
 <!-- Bind the window dimensions directly -->
@@ -96,11 +156,14 @@
 					action="?/submit"
 					class="flex flex-col relative h-full"
 					use:enhance={() => {
+						if (draftTimer) clearTimeout(draftTimer); // batalkan draft pending saat submit manual
 						form = null;
 						saving = true;
 						return async ({ update }) => {
 							await update();
 							saving = false;
+							lastSavedValue = textValue;
+							draftStatus = 'idle';
 						};
 					}}
 				>
@@ -117,9 +180,9 @@
 
 					<!-- Button absolute di dalam textarea, tidak kena scroll -->
 					<div class="relative mt-auto py-4">
-						{#if form?.message}
+						<!-- {#if form?.message}
 							<p style="color: red" class="text-xs mb-2">{form?.message}</p>
-						{/if}
+						{/if} -->
 
 						<div class="flex justify-between items-center">
 							<Button type="submit" size="lg" disabled={saving}>
@@ -129,7 +192,17 @@
 									Submit & Analyze
 								{/if}
 							</Button>
-							<div class="ml-auto text-xs text-neutral-500 flex flex-col">
+							<div class="ml-auto flex flex-row items-center gap-2 text-xs text-neutral-500">
+								{#if data.answer && data.answer.status == 'draft'}
+									<Badge variant="default" class="bg-blue-500 text-white">Draft</Badge>
+								{/if}
+								{#if draftStatus === 'saving'}
+									<span class="italic">Saving draft...</span>
+								{:else if draftStatus === 'saved'}
+									<span class="italic text-green-600">Draft saved</span>
+								{:else if draftStatus === 'error'}
+									<span class="italic text-red-500">Failed to save draft</span>
+								{/if}
 								<p>Characters: {textValue.length}</p>
 							</div>
 						</div>

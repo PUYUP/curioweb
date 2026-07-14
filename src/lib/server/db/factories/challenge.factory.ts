@@ -190,6 +190,33 @@ class ChallengeFactory {
             }
         }
     }
+
+    /**
+     * Getting answer by challenge code
+     */
+    async getAnswerByCode(code: string, userId: string) {
+        try {
+            const [result] = await db.select({
+                ...getTableColumns(challengeResponses),
+                challengeCode: challenges.code
+            })
+                .from(challengeResponses)
+                .leftJoin(challenges, eq(challengeResponses.challengeId, challenges.id))
+                .where(
+                    and(
+                        eq(challenges.code, code),
+                        eq(challengeResponses.userId, userId)
+                    )
+                );
+            return result;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error("Failed to get answer", { cause: error });
+            } else {
+                throw new Error("Failed to get answer");
+            }
+        }
+    }
 }
 
 export const challengeFactory = new ChallengeFactory();

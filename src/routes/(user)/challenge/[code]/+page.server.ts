@@ -24,8 +24,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     }
 
     const challenge = await getChallenge(params.code, locals.user.id);
+    const answer = await challengeFactory.getAnswerByCode(params.code, locals.user.id);
 
-    return { user: locals.user, challenge: challenge };
+    return { user: locals.user, challenge: challenge, answer: answer };
 };
 
 export const actions: Actions = {
@@ -33,6 +34,7 @@ export const actions: Actions = {
         if (!locals.user) {
             return redirect(302, '/auth/login');
         }
+
         const formData = await request.formData();
         const content = formData.get('content');
 
@@ -56,4 +58,28 @@ export const actions: Actions = {
             return fail(500, { message: 'Internal Server Error' });
         }
     },
+
+    draft: async ({ request, params, locals }) => {
+        if (!locals.user) {
+            return redirect(302, '/auth/login');
+        }
+
+        const formData = await request.formData();
+        const content = formData.get('content')?.toString() ?? '';
+
+        const challenge = await getChallenge(params.code, locals.user.id);
+        const payload: SaveDraftInput = {
+            userId: locals.user.id,
+            challengeId: challenge.id,
+            answerText: content,
+        };
+
+        try {
+            const answer = await challengeFactory.draftAnswer(payload);
+            return { message: 'success', answer: answer };
+        } catch (error) {
+            console.error(error);
+            return fail(500, { message: 'Internal Server Error' });
+        }
+    }
 };
