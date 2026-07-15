@@ -1,6 +1,6 @@
 import type { ChallengeStatus, ChallengeData, ChallengeResponse, ChallengeResponseData, SaveDraftInput } from "@/lib/types/models.js";
 import { db } from "../index.js";
-import { challenges, challengePapers, challengeResponses, challengePaperSummaries } from "../schemas/challenge.schema.js";
+import { challenges, challengePapers, challengeResponses, paperSummaries } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
 import { and, eq, desc, sql, isNotNull, count, gt } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
@@ -77,7 +77,7 @@ class ChallengeFactory {
                 .from(challenges)
                 .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
                 .leftJoin(papers, eq(challengePapers.paperId, papers.id))
-                .leftJoin(challengePaperSummaries, eq(challengePapers.id, challengePaperSummaries.challengePaperId))
+                .leftJoin(paperSummaries, eq(challengePapers.id, paperSummaries.challengePaperId))
                 .where(eq(challenges.code, code));
 
             if (results.length === 0) return null;
@@ -88,7 +88,7 @@ class ChallengeFactory {
                 .map((r) => ({
                     ...r.challenge_papers!,
                     paper: r.papers!,
-                    summary: r.challenge_paper_summaries!,
+                    summary: r.paper_summaries!,
                 }))
                 .sort((a: any, b: any) => parseFloat(b.relevanceScore) - parseFloat(a.relevanceScore));
 
@@ -113,10 +113,10 @@ class ChallengeFactory {
                 .from(challenges)
                 .leftJoin(challengePapers, eq(challenges.id, challengePapers.challengeId))
                 .leftJoin(papers, eq(challengePapers.paperId, papers.id))
-                .leftJoin(challengePaperSummaries, eq(challengePapers.id, challengePaperSummaries.challengePaperId))
+                .leftJoin(paperSummaries, eq(challengePapers.id, paperSummaries.challengePaperId))
                 .where(eq(challenges.userId, userId))
                 .groupBy(challenges.id)
-                .having(gt(count(challengePaperSummaries.results), 1))
+                .having(gt(count(paperSummaries.results), 1))
                 .orderBy(desc(challenges.createdAt))
                 .limit(filter.limit)
                 .offset(filter.offset);

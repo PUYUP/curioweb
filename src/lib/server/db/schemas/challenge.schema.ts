@@ -66,7 +66,7 @@ export const challengePapers = pgTable('challenge_papers', {
     )
 ]);
 
-export const challengePaperSummaries = pgTable('challenge_paper_summaries', {
+export const paperSummaries = pgTable('paper_summaries', {
     id: uuid('id').primaryKey().defaultRandom(),
 
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
@@ -76,9 +76,9 @@ export const challengePaperSummaries = pgTable('challenge_paper_summaries', {
     finishedAt: timestamp('finished_at', { withTimezone: true, mode: 'date' }),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' }),
 
-    challengeId: uuid('challenge_id').notNull().references(() => challenges.id),
     paperId: uuid('paper_id').notNull().references(() => papers.id),
-    challengePaperId: uuid('challenge_paper_id').notNull().references(() => challengePapers.id),
+    challengeId: uuid('challenge_id').references(() => challenges.id),
+    challengePaperId: uuid('challenge_paper_id').references(() => challengePapers.id),
 
     results: jsonb('results'),
     tool: text('tool'),
