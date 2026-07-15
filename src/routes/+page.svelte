@@ -74,7 +74,7 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 </script>
 
 <svelte:head>
-	<title>ATLANIZE - Sifting Breakthroughs, Challenging Your Curiosity</title>
+	<title>ATLANIZE - Sifting Journals Challenging Curiosity</title>
 	<meta
 		name="description"
 		content="Discover the latest research and challenge your curiosity with ATLANIZE."
@@ -93,14 +93,14 @@ Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super k
 	<div class="flex items-center justify-center">
 		<div class="w-full text-center py-6 pb-14 sm:py-12 md:py-24">
 			<h1 class="text-4xl sm:text-6xl font-bold mb-4 sm:mb-12">
-				<span class="text-[#072e5f] block mb-2"><u class="italic">Sifting</u> Breakthroughs</span>
-				<span class="text-[#38b9fc] block">Challenge Your <u class="italic">Curiosity</u></span>
+				<span class="text-[#072e5f] block mb-2"><u class="italic">Sifting</u> Journals</span>
+				<span class="text-[#38b9fc] block">Challenging <u class="italic">Curiosity</u></span>
 			</h1>
 
 			<div class="max-w-2xl mx-auto">
 				<p class="text-neutral-700 text-base sm:text-xl">
-					Elevate how you learn. We distill the core ideas from the latest research into engaging
-					insights. Dive deeper, expand on them, and let our AI evaluate your understanding.
+					Elevate how you learn. We distill latest research based on your interests into engaging
+					insights. Dive deeper, expand on them, and let AI evaluate and improve your understanding.
 				</p>
 			</div>
 		</div>
