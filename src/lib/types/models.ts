@@ -21,21 +21,17 @@ export interface ChallengeData {
     }[];
 }
 
-export interface ChallengeResponse extends ChallengeData {
-    papers: PaperData[];
-}
+export const ANSWERS_STATUSES = ['draft', 'submitted', 'evaluated'] as const;
+export type AnswerStatus = typeof ANSWERS_STATUSES[number];
 
-export const CHALLENGE_RESPONSE_STATUSES = ['draft', 'submitted', 'evaluated'] as const;
-export type ChallengeResponseStatus = typeof CHALLENGE_RESPONSE_STATUSES[number];
-
-export interface ChallengeResponseData {
+export interface AnswerData {
     challengeId: string;
     userId: string;
     answerText: string;
-    status: ChallengeResponseStatus;
+    status: AnswerStatus;
     startedAt: Date;
     updatedAt: Date;
     submittedAt: Date;
 }
 
-export type SaveDraftInput = Pick<ChallengeResponseData, 'userId' | 'challengeId' | 'answerText'>; 
+export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'answerText'>; 

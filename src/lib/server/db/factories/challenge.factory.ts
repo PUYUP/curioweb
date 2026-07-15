@@ -1,8 +1,8 @@
-import type { ChallengeStatus, ChallengeData, ChallengeResponse, ChallengeResponseData, SaveDraftInput } from "@/lib/types/models.js";
+import type { ChallengeStatus, ChallengeData, SaveDraftInput } from "@/lib/types/models.js";
 import { db } from "../index.js";
-import { challenges, challengePapers, challengeResponses, paperSummaries } from "../schemas/challenge.schema.js";
+import { challenges, challengePapers, answers, paperSummaries } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
-import { and, eq, desc, sql, isNotNull, count, gt } from "drizzle-orm/sql";
+import { and, eq, desc, sql, count, gt } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
 import type { ChallengeFilter } from "@/lib/types/interfaces.js";
 import { getTableColumns } from "drizzle-orm";
@@ -160,13 +160,13 @@ class ChallengeFactory {
     }
 
     /**
-     * Draft challenge response
-     * @param values ChallengeResponse data
-     * @returns ChallengeResponse object
+     * Draft answer
+     * @param values answer data
+     * @returns answer object
      */
     async draftAnswer(values: SaveDraftInput) {
         try {
-            const [result] = await db.insert(challengeResponses)
+            const [result] = await db.insert(answers)
                 .values({
                     answerText: values.answerText,
                     userId: values.userId,
@@ -174,7 +174,7 @@ class ChallengeFactory {
                     status: 'draft',
                 })
                 .onConflictDoUpdate({
-                    target: [challengeResponses.challengeId, challengeResponses.userId],
+                    target: [answers.challengeId, answers.userId],
                     set: {
                         answerText: values.answerText,
                         updatedAt: new Date(),
@@ -184,9 +184,9 @@ class ChallengeFactory {
             return result;
         } catch (error) {
             if (error instanceof Error) {
-                throw new Error("Failed to draft challenge response", { cause: error });
+                throw new Error("Failed to draft answer", { cause: error });
             } else {
-                throw new Error("Failed to draft challenge response");
+                throw new Error("Failed to draft answer");
             }
         }
     }
@@ -197,15 +197,15 @@ class ChallengeFactory {
     async getAnswerByCode(code: string, userId: string) {
         try {
             const [result] = await db.select({
-                ...getTableColumns(challengeResponses),
+                ...getTableColumns(answers),
                 challengeCode: challenges.code
             })
-                .from(challengeResponses)
-                .leftJoin(challenges, eq(challengeResponses.challengeId, challenges.id))
+                .from(answers)
+                .leftJoin(challenges, eq(answers.challengeId, challenges.id))
                 .where(
                     and(
                         eq(challenges.code, code),
-                        eq(challengeResponses.userId, userId)
+                        eq(answers.userId, userId)
                     )
                 );
             return result;

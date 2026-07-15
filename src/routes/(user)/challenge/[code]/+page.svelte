@@ -25,7 +25,7 @@
 	let draftTimer: ReturnType<typeof setTimeout> | undefined;
 	let draftStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle');
 	let lastSavedValue = $state<string>('');
-	const DRAFT_DEBOUNCE_MS = 3000;
+	const DRAFT_DEBOUNCE_MS = 1500;
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {

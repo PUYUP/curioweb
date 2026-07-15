@@ -55,7 +55,7 @@
 
 		{#if paper.pdfUrl}
 			<div class="source pt-2">
-				<ol class="list-decimal pl-3">
+				<ol class="list-none pl-0">
 					<li>
 						<a href={paper.pdfUrl} class="text-blue-500 line-clamp-3 text-sm" target="_blank">
 							<Badge variant="destructive" class="uppercase">{challenge.status}</Badge>

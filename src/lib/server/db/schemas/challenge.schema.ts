@@ -13,7 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { user } from '../auth.schema';
-import { CHALLENGE_RESPONSE_STATUSES } from '@/lib/types/models';
+import { ANSWERS_STATUSES } from '@/lib/types/models';
 import { papers } from './paper.schema';
 
 export const answerStatusEnum = pgEnum('answer_status', ['DRAFT', 'SUBMITTED', 'EVALUATED']);
@@ -87,8 +87,8 @@ export const paperSummaries = pgTable('paper_summaries', {
     status: text('status'),
 });
 
-export const challengeResponses = pgTable(
-    'challenge_responses',
+export const answers = pgTable(
+    'answers',
     {
         id: uuid('id').primaryKey().defaultRandom(),
         challengeId: uuid('challenge_id').notNull(),
@@ -96,7 +96,7 @@ export const challengeResponses = pgTable(
         answerText: text('answer_text'),
         embedding: vector('embedding', { dimensions: 1024 }),
 
-        status: text('status', { enum: CHALLENGE_RESPONSE_STATUSES }).notNull(),
+        status: text('status', { enum: ANSWERS_STATUSES }).notNull(),
         startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' })
             .notNull()
             .defaultNow(),
@@ -116,7 +116,7 @@ export const challengeResponses = pgTable(
         ),
 
         // 4. Index HNSW untuk optimasi pencarian Cosine Similarity
-        index('challenge_responses_embedding_idx').using(
+        index('answers_embedding_idx').using(
             'hnsw',
             table.embedding.op('vector_cosine_ops')
         ),
