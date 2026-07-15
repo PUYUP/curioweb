@@ -27,11 +27,11 @@ export type AnswerStatus = typeof ANSWERS_STATUSES[number];
 export interface AnswerData {
     challengeId: string;
     userId: string;
-    answerText: string;
+    content: string;
     status: AnswerStatus;
     startedAt: Date;
     updatedAt: Date;
     submittedAt: Date;
 }
 
-export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'answerText'>; 
+export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content'>; 

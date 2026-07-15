@@ -93,9 +93,8 @@ export const answers = pgTable(
         id: uuid('id').primaryKey().defaultRandom(),
         challengeId: uuid('challenge_id').notNull(),
         userId: uuid('user_id').notNull(),
-        answerText: text('answer_text'),
-        embedding: vector('embedding', { dimensions: 1024 }),
-
+        content: text('content').notNull(),
+        chunks: jsonb('chunks'),
         status: text('status', { enum: ANSWERS_STATUSES }).notNull(),
         startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' })
             .notNull()
@@ -113,12 +112,6 @@ export const answers = pgTable(
         unique('unique_user_challenge').on(
             table.challengeId,
             table.userId
-        ),
-
-        // 4. Index HNSW untuk optimasi pencarian Cosine Similarity
-        index('answers_embedding_idx').using(
-            'hnsw',
-            table.embedding.op('vector_cosine_ops')
         ),
     ]
 );

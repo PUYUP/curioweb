@@ -33,7 +33,7 @@
 		}
 
 		if (data.answer) {
-			textValue = data.answer.answerText || '';
+			textValue = data.answer.content || '';
 		}
 	});
 

@@ -47,7 +47,7 @@ export const actions: Actions = {
         const payload: SaveDraftInput = {
             userId: locals.user.id,
             challengeId: challenge.id,
-            answerText: content,
+            content: content,
         };
 
         try {
@@ -71,7 +71,7 @@ export const actions: Actions = {
         const payload: SaveDraftInput = {
             userId: locals.user.id,
             challengeId: challenge.id,
-            answerText: content,
+            content: content,
         };
 
         try {

@@ -168,7 +168,7 @@ class ChallengeFactory {
         try {
             const [result] = await db.insert(answers)
                 .values({
-                    answerText: values.answerText,
+                    content: values.content,
                     userId: values.userId,
                     challengeId: values.challengeId,
                     status: 'draft',
@@ -176,7 +176,7 @@ class ChallengeFactory {
                 .onConflictDoUpdate({
                     target: [answers.challengeId, answers.userId],
                     set: {
-                        answerText: values.answerText,
+                        content: values.content,
                         updatedAt: new Date(),
                     }
                 })
