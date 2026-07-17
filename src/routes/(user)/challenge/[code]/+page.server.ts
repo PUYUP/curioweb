@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { challengeFactory } from '@/lib/server/db/factories/challenge.factory';
-import type { SaveDraftInput } from '@/lib/types/models';
+import type { SaveAnswerInput, SaveDraftInput } from '@/lib/types/models';
 
 const getChallenge = async (code: string, userId: string) => {
     // getting challenge
@@ -44,14 +44,15 @@ export const actions: Actions = {
         }
 
         const challenge = await getChallenge(params.code, locals.user.id);
-        const payload: SaveDraftInput = {
+        const payload: SaveAnswerInput = {
             userId: locals.user.id,
             challengeId: challenge.id,
             content: content,
+            status: 'submitted',
         };
 
         try {
-            const answer = await challengeFactory.draftAnswer(payload);
+            const answer = await challengeFactory.saveAnswer(payload);
             return { message: 'success', answer: answer };
         } catch (error) {
             console.error(error);
@@ -68,14 +69,15 @@ export const actions: Actions = {
         const content = formData.get('content')?.toString() ?? '';
 
         const challenge = await getChallenge(params.code, locals.user.id);
-        const payload: SaveDraftInput = {
+        const payload: SaveAnswerInput = {
             userId: locals.user.id,
             challengeId: challenge.id,
             content: content,
+            status: 'draft',
         };
 
         try {
-            const answer = await challengeFactory.draftAnswer(payload);
+            const answer = await challengeFactory.saveAnswer(payload);
             return { message: 'success', answer: answer };
         } catch (error) {
             console.error(error);

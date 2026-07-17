@@ -8,7 +8,8 @@
 		mdiConnection,
 		mdiAccount,
 		mdiArchiveOutline,
-		mdiCreditCardOutline
+		mdiCreditCardOutline,
+		mdiNoteOutline
 	} from '@mdi/js';
 
 	let { user }: { user: any } = $props();
@@ -33,6 +34,12 @@
 			title: 'Home',
 			url: '/dashboard',
 			icon: mdiHomeOutline,
+			badge: ''
+		},
+		{
+			title: 'Research Logs',
+			url: '/logs',
+			icon: mdiNoteOutline,
 			badge: ''
 		},
 		{

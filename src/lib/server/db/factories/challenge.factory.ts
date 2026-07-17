@@ -1,4 +1,4 @@
-import type { ChallengeStatus, ChallengeData, SaveDraftInput } from "@/lib/types/models.js";
+import type { ChallengeStatus, ChallengeData, SaveDraftInput, SaveAnswerInput } from "@/lib/types/models.js";
 import { db } from "../index.js";
 import { challenges, challengePapers, answers, paperSummaries } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
@@ -160,23 +160,24 @@ class ChallengeFactory {
     }
 
     /**
-     * Draft answer
+     * Save answer
      * @param values answer data
      * @returns answer object
      */
-    async draftAnswer(values: SaveDraftInput) {
+    async saveAnswer(values: SaveAnswerInput) {
         try {
             const [result] = await db.insert(answers)
                 .values({
                     content: values.content,
                     userId: values.userId,
                     challengeId: values.challengeId,
-                    status: 'draft',
+                    status: values.status,
                 })
                 .onConflictDoUpdate({
                     target: [answers.challengeId, answers.userId],
                     set: {
                         content: values.content,
+                        status: values.status,
                         updatedAt: new Date(),
                     }
                 })

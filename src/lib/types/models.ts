@@ -34,4 +34,5 @@ export interface AnswerData {
     submittedAt: Date;
 }
 
-export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content'>; 
+export type SaveAnswerInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content' | 'status'>;
+export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content'>;

@@ -10,6 +10,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { Badge } from '@/lib/components/ui/badge';
 	import { onDestroy } from 'svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -97,6 +98,28 @@
 	onDestroy(() => {
 		if (draftTimer) clearTimeout(draftTimer);
 	});
+
+	const handleSubmit: SubmitFunction = ({ cancel }) => {
+		if (draftTimer) clearTimeout(draftTimer); // batalkan draft pending saat submit manual
+
+		// Display the standard browser modal
+		const confirmed = confirm('Are you sure you want to submit this answer?');
+
+		// Halt submission if they choose cancel
+		if (!confirmed) {
+			cancel();
+			return;
+		}
+
+		form = null;
+		saving = true;
+		return async ({ update }) => {
+			await update();
+			saving = false;
+			lastSavedValue = textValue;
+			draftStatus = 'idle';
+		};
+	};
 </script>
 
 <!-- Bind the window dimensions directly -->
@@ -155,17 +178,7 @@
 					method="post"
 					action="?/submit"
 					class="flex flex-col relative h-full"
-					use:enhance={() => {
-						if (draftTimer) clearTimeout(draftTimer); // batalkan draft pending saat submit manual
-						form = null;
-						saving = true;
-						return async ({ update }) => {
-							await update();
-							saving = false;
-							lastSavedValue = textValue;
-							draftStatus = 'idle';
-						};
-					}}
+					use:enhance={handleSubmit}
 				>
 					<!-- Wrapper relative untuk textarea + button -->
 					<div class="relative flex-1 min-h-0">
