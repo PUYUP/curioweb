@@ -12,6 +12,8 @@
 	import { Badge } from '@/lib/components/ui/badge';
 	import { onDestroy } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import Icon from 'mdi-svelte';
+	import { mdiChevronRight } from '@mdi/js';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -31,8 +33,10 @@
 
 	// ---- Answer Similarities ----
 	let answerSimilarities = $state<Record<string, any[]>>({});
+	let answerSimilarityDetail = $state<any>(null);
 	let isLoading = $state(false);
 	let hasScored = $state(false);
+	let drawerAnswerOpen = $state(false);
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
@@ -49,6 +53,13 @@
 		if (!open) {
 			// Bersihkan summary begitu drawer ditutup (tombol close, overlay, swipe, atau Escape)
 			sharedState.summary = null;
+		}
+	}
+
+	function handleAnswerDrawerOpenChange(open: boolean) {
+		drawerAnswerOpen = open;
+		if (!open) {
+			answerSimilarityDetail = null;
 		}
 	}
 
@@ -249,13 +260,22 @@
 														</Table.Row>
 													{:else}
 														{#each answerSimilarities[challenge.id] as sim}
-															<Table.Row>
+															<Table.Row
+																class="cursor-pointer"
+																onclick={() => {
+																	drawerAnswerOpen = true;
+																	answerSimilarityDetail = sim;
+																}}
+															>
 																<Table.Cell class="font-medium">
 																	<span class="text-sm font-bold">{sim.similarityScore}</span>
 																</Table.Cell>
 																<Table.Cell class="whitespace-normal break-words">
 																	<p class="line-clamp-1 mb-1">{sim.answerChunkContent}</p>
 																	<p class="line-clamp-1">{sim.paperChunkContent}</p>
+																</Table.Cell>
+																<Table.Cell class="text-right">
+																	<Icon path={mdiChevronRight} size="1.25rem" />
 																</Table.Cell>
 															</Table.Row>
 														{/each}
@@ -382,6 +402,40 @@
 							<p class="text-base text-neutral-800 leading-6">{item['future_works']}</p>
 						</div>
 					{/each}
+				</div>
+
+				<Drawer.Footer>
+					<Drawer.Close>
+						<Button variant="outline" class="w-full">Close</Button>
+					</Drawer.Close>
+				</Drawer.Footer>
+			</div>
+		</Drawer.Content>
+	</Drawer.Root>
+
+	<Drawer.Root
+		direction="right"
+		open={drawerAnswerOpen}
+		onOpenChange={handleAnswerDrawerOpenChange}
+	>
+		<Drawer.Content class="fixed flex w-full max-w-lg flex-col after:hidden">
+			<div class="flex h-full flex-col overflow-hidden">
+				<Drawer.Header class="text-left">
+					<Drawer.Title>Answer Details</Drawer.Title>
+				</Drawer.Header>
+
+				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
+					{#if answerSimilarityDetail}
+						<div class="mb-2 text-sm font-semibold">
+							<span class="border-b-3 border-green-300 bg-green-200"> Answer</span>
+						</div>
+						<p class="text-base">{answerSimilarityDetail.answerChunkContent}</p>
+
+						<div class="mb-2 text-sm font-semibold">
+							<span class="border-b-3 border-blue-300 bg-blue-200">Paper Chunk</span>
+						</div>
+						<p class="text-base">{answerSimilarityDetail.paperChunkContent}</p>
+					{/if}
 				</div>
 
 				<Drawer.Footer>
