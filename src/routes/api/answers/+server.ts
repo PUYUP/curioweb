@@ -1,12 +1,12 @@
 import { challengeFactory } from "@/lib/server/db/factories/challenge.factory";
-import type { SaveDraftInput } from "@/lib/types/models";
+import type { SaveAnswerInput } from "@/lib/types/models";
 import type { RequestEvent } from "@sveltejs/kit";
 
 export async function POST({ request }: RequestEvent) {
-    const data: SaveDraftInput = await request.json();
+    const data: SaveAnswerInput = await request.json();
 
     try {
-        const result = await challengeFactory.draftAnswer(data);
+        const result = await challengeFactory.saveAnswer(data);
         return new Response(JSON.stringify(result), {
             headers: { 'Content-Type': 'application/json' },
             status: 200

@@ -9,7 +9,7 @@ import {
     check,
     jsonb,
     pgEnum,
-    vector
+    real
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { user } from '../auth.schema';
@@ -94,7 +94,6 @@ export const answers = pgTable(
         challengeId: uuid('challenge_id').notNull(),
         userId: uuid('user_id').notNull(),
         content: text('content').notNull(),
-        chunks: jsonb('chunks'),
         status: text('status', { enum: ANSWERS_STATUSES }).notNull(),
         startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' })
             .notNull()
@@ -115,3 +114,25 @@ export const answers = pgTable(
         ),
     ]
 );
+
+export const answerSimilarities = pgTable('answer_similarities', {
+    // Primary Key
+    id: uuid('id').defaultRandom().primaryKey(),
+
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }),
+
+    // Foreign Keys (Non-nullable)
+    answerId: uuid('answer_id').notNull(),
+    answerChunkId: uuid('answer_chunk_id').notNull(),
+    challengeId: uuid('challenge_id').notNull(),
+    userId: uuid('user_id').notNull(),
+    paperId: uuid('paper_id').notNull(),
+    challengePaperId: uuid('challenge_paper_id').notNull(),
+    documentChunkId: uuid('document_chunk_id').notNull(),
+    // Content
+    answerChunkContent: text('answer_chunk_content'),
+    paperChunkContent: text('paper_chunk_content'),
+    similarityScore: real('similarity_score').notNull(),
+});

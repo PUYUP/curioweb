@@ -1,6 +1,6 @@
 import type { ChallengeStatus, ChallengeData, SaveDraftInput, SaveAnswerInput } from "@/lib/types/models.js";
 import { db } from "../index.js";
-import { challenges, challengePapers, answers, paperSummaries } from "../schemas/challenge.schema.js";
+import { challenges, challengePapers, answers, paperSummaries, answerSimilarities } from "../schemas/challenge.schema.js";
 import { papers } from "../schemas/paper.schema.js";
 import { and, eq, desc, sql, count, gt } from "drizzle-orm/sql";
 import { randomBytes } from "crypto";
@@ -172,6 +172,7 @@ class ChallengeFactory {
                     userId: values.userId,
                     challengeId: values.challengeId,
                     status: values.status,
+                    submittedAt: values.submittedAt,
                 })
                 .onConflictDoUpdate({
                     target: [answers.challengeId, answers.userId],
@@ -215,6 +216,32 @@ class ChallengeFactory {
                 throw new Error("Failed to get answer", { cause: error });
             } else {
                 throw new Error("Failed to get answer");
+            }
+        }
+    }
+
+    /**
+     * Getting answer similarities by challenge id
+     */
+    async getAnswerSimilaritiesByChallengeId(challengePaperId: string, userId: string) {
+        try {
+            const results = await db.select({
+                ...getTableColumns(answerSimilarities)
+            })
+                .from(answerSimilarities)
+                .where(
+                    and(
+                        eq(answerSimilarities.challengePaperId, challengePaperId),
+                        eq(answerSimilarities.userId, userId)
+                    )
+                )
+                .orderBy(desc(answerSimilarities.similarityScore));
+            return results;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error("Failed to get answer similarities", { cause: error });
+            } else {
+                throw new Error("Failed to get answer similarities");
             }
         }
     }

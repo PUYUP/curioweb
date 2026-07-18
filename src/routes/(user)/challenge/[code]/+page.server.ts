@@ -49,6 +49,7 @@ export const actions: Actions = {
             challengeId: challenge.id,
             content: content,
             status: 'submitted',
+            submittedAt: new Date(),
         };
 
         try {
@@ -74,6 +75,7 @@ export const actions: Actions = {
             challengeId: challenge.id,
             content: content,
             status: 'draft',
+            submittedAt: null,
         };
 
         try {

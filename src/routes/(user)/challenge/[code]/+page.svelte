@@ -28,6 +28,10 @@
 	let lastSavedValue = $state<string>('');
 	const DRAFT_DEBOUNCE_MS = 1500;
 
+	// ---- Answer Similarities ----
+	let answerSimilarities = $state<Record<string, any[]>>({});
+	let isLoading = $state(false);
+
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
 			drawerOpen = true;
@@ -120,6 +124,69 @@
 			draftStatus = 'idle';
 		};
 	};
+
+	async function getAnswerSimilarity(challengePaperId: string): Promise<string[] | null> {
+		const response = await fetch(`/api/answer-similarities?challengePaperId=${challengePaperId}`, {
+			method: 'GET'
+		});
+
+		if (!response.ok) {
+			console.error(`Fetch gagal (${response.status}) untuk challengePaperId=${challengePaperId}`);
+			return null;
+		}
+
+		const text = await response.text();
+		if (!text) {
+			console.warn(`Response kosong untuk challengePaperId=${challengePaperId}`);
+			return null;
+		}
+
+		try {
+			return JSON.parse(text);
+		} catch (e) {
+			console.error('Gagal parse JSON:', text);
+			return null;
+		}
+	}
+
+	// Trigger data fetching
+	$effect(() => {
+		if (!data) return;
+		const challengePapers = data.challenge.challenge_papers;
+		let cancelled = false;
+
+		(async () => {
+			isLoading = true;
+
+			// jalankan semua fetch secara paralel
+			const results = await Promise.all(
+				challengePapers.map(async (challengePaper) => {
+					const result = await getAnswerSimilarity(challengePaper.id);
+					return { id: challengePaper.id, result };
+				})
+			);
+
+			if (cancelled) return;
+
+			// gabungkan semua hasil jadi satu object, sekali update state
+			const newSimilarities: Record<string, string[]> = {};
+			for (const { id, result } of results) {
+				if (result !== null) {
+					newSimilarities[id] = result;
+				}
+			}
+
+			answerSimilarities = newSimilarities;
+			isLoading = false;
+
+			console.log('Semua fetch selesai:', newSimilarities);
+			// lanjutkan proses lain di sini setelah SEMUA selesai
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	});
 </script>
 
 <!-- Bind the window dimensions directly -->
@@ -162,6 +229,14 @@
 										<div class="flex-1 px-0.5 py-1">
 											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
 										</div>
+
+										{#if answerSimilarities[challenge.id]}
+											{#each answerSimilarities[challenge.id] as sim}
+												<p>Score: {sim.similarityScore}</p>
+												<p class="line-clamp-1 text-xs">{sim.answerChunkContent}</p>
+												<p class="line-clamp-1 text-xs">{sim.paperChunkContent}</p>
+											{/each}
+										{/if}
 									</div>
 								</Carousel.Item>
 							{/each}

@@ -31,8 +31,8 @@ export interface AnswerData {
     status: AnswerStatus;
     startedAt: Date;
     updatedAt: Date;
-    submittedAt: Date;
+    submittedAt: Date | null;
 }
 
-export type SaveAnswerInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content' | 'status'>;
-export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content'>;
+export type SaveAnswerInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content' | 'status' | 'submittedAt'>;
+export type SaveDraftInput = Pick<AnswerData, 'userId' | 'challengeId' | 'content' | 'status'>;
