@@ -71,7 +71,7 @@
 		<EvaluationCrt002 />
 	</div>
 
-	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 px-4 mt-2">
+	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4 gap-6 px-4 mt-2">
 		<div class="block">
 			<EvaluationCrt001 />
 		</div>
