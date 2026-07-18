@@ -8,6 +8,7 @@
 	import { applyAction, deserialize, enhance } from '$app/forms';
 	import { sharedState } from '@/lib/state.svelte';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
 	import { Badge } from '@/lib/components/ui/badge';
 	import { onDestroy } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -31,6 +32,7 @@
 	// ---- Answer Similarities ----
 	let answerSimilarities = $state<Record<string, any[]>>({});
 	let isLoading = $state(false);
+	let hasScored = $state(false);
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
@@ -178,9 +180,9 @@
 
 			answerSimilarities = newSimilarities;
 			isLoading = false;
-
-			console.log('Semua fetch selesai:', newSimilarities);
-			// lanjutkan proses lain di sini setelah SEMUA selesai
+			if (Object.keys(newSimilarities).length > 0) {
+				hasScored = true;
+			}
 		})();
 
 		return () => {
@@ -231,11 +233,35 @@
 										</div>
 
 										{#if answerSimilarities[challenge.id]}
-											{#each answerSimilarities[challenge.id] as sim}
-												<p>Score: {sim.similarityScore}</p>
-												<p class="line-clamp-1 text-xs">{sim.answerChunkContent}</p>
-												<p class="line-clamp-1 text-xs">{sim.paperChunkContent}</p>
-											{/each}
+											<Table.Root>
+												<Table.Header>
+													<Table.Row>
+														<Table.Head class="w-[100px]">Score</Table.Head>
+														<Table.Head>Answer / Paper Chunk</Table.Head>
+													</Table.Row>
+												</Table.Header>
+												<Table.Body>
+													{#if answerSimilarities[challenge.id].length === 0}
+														<Table.Row>
+															<Table.Cell colspan={2}
+																>Submit your answer above to see the similarity results.</Table.Cell
+															>
+														</Table.Row>
+													{:else}
+														{#each answerSimilarities[challenge.id] as sim}
+															<Table.Row>
+																<Table.Cell class="font-medium">
+																	<span class="text-sm font-bold">{sim.similarityScore}</span>
+																</Table.Cell>
+																<Table.Cell class="whitespace-normal break-words">
+																	<p class="line-clamp-1 mb-1">{sim.answerChunkContent}</p>
+																	<p class="line-clamp-1">{sim.paperChunkContent}</p>
+																</Table.Cell>
+															</Table.Row>
+														{/each}
+													{/if}
+												</Table.Body>
+											</Table.Root>
 										{/if}
 									</div>
 								</Carousel.Item>
@@ -249,6 +275,7 @@
 			</div>
 
 			<div class="w-full py-1">
+				<div class="mb-2 text-sm font-bold">My Answer</div>
 				<form
 					method="post"
 					action="?/submit"
@@ -273,13 +300,22 @@
 						{/if} -->
 
 						<div class="flex justify-between items-center">
-							<Button type="submit" size="lg" disabled={saving}>
-								{#if saving}
-									Saving...
-								{:else}
-									Submit & Analyze
-								{/if}
-							</Button>
+							{#if !hasScored}
+								<Button
+									type="submit"
+									size="lg"
+									disabled={saving || data.answer.status == 'submitted'}
+									variant={data.answer.status == 'submitted' ? 'ghost' : 'secondary'}
+								>
+									{#if saving}
+										Saving...
+									{:else if data.answer.status == 'submitted'}
+										Submitted - wait for analysis (refresh the page periodically to see results)
+									{:else}
+										Submit & Analyze
+									{/if}
+								</Button>
+							{/if}
 							<div class="ml-auto flex flex-row items-center gap-2 text-xs text-neutral-500">
 								{#if data.answer && data.answer.status == 'draft'}
 									<Badge variant="default" class="bg-blue-500 text-white">Draft</Badge>
