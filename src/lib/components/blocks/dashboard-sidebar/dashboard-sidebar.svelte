@@ -44,7 +44,7 @@
 		// },
 		{
 			title: 'Archives',
-			url: '/challenge',
+			url: '/challenges',
 			icon: mdiArchiveOutline,
 			badge: ''
 		},

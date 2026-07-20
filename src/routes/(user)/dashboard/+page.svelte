@@ -6,7 +6,6 @@
 	import languages from '@/lib/assets/data/ISO-639-1-language.json';
 	import ChallengeItem from '@/lib/components/blocks/challenge-item/challenge-item.svelte';
 	import type { LayoutServerData } from '../$types';
-	import { Badge } from '@/lib/components/ui/badge';
 	import EvaluationCrt001 from '@/lib/components/blocks/evaluation-crt001/evaluation-crt001.svelte';
 	import EvaluationCrt002 from '@/lib/components/blocks/evaluation-crt002/evaluation-crt002.svelte';
 
@@ -15,9 +14,6 @@
 	const profile = $derived(data ? data.profile : null);
 	const language = $derived(languages.find((l) => l.code === profile?.languageCode)?.name);
 	const challenges = $derived(data ? data?.challenges : []);
-
-	// svelte-ignore state_referenced_locally
-	console.log(challenges);
 </script>
 
 <svelte:head>

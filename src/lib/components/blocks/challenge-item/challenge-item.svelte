@@ -17,7 +17,7 @@
 
 <Item.Root variant="outline" size="default">
 	{#snippet child({ props })}
-		<a href="/challenge/{challenge.code}" class="flex items-center" {...props}>
+		<a href="/challenges/{challenge.code}" class="flex items-center" {...props}>
 			<Item.Media>
 				{#if challenge.status === 'read'}
 					<Icon path={mdiRead} color={'#6B7280'} class="size-5" />
