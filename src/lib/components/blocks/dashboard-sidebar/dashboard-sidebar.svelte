@@ -36,24 +36,24 @@
 			icon: mdiHomeOutline,
 			badge: ''
 		},
-		{
-			title: 'Research Logs',
-			url: '/logs',
-			icon: mdiNoteOutline,
-			badge: ''
-		},
+		// {
+		// 	title: 'Research Logs',
+		// 	url: '/logs',
+		// 	icon: mdiNoteOutline,
+		// 	badge: ''
+		// },
 		{
 			title: 'Archives',
 			url: '/challenge',
 			icon: mdiArchiveOutline,
 			badge: ''
 		},
-		{
-			title: 'Integrations',
-			url: '#',
-			icon: mdiConnection,
-			badge: ''
-		},
+		// {
+		// 	title: 'Integrations',
+		// 	url: '#',
+		// 	icon: mdiConnection,
+		// 	badge: ''
+		// },
 		{
 			title: 'Billing',
 			url: '#',

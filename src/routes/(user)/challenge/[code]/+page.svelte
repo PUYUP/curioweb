@@ -44,7 +44,7 @@
 	let drawerAnswerOpen = $state(false);
 	let drawerListAnswerOpen = $state(false);
 
-	// ---- Evaluation ----
+	// ---- Assessment ----
 	let answerEvaluations = $state<Record<string, any>>({});
 	let drawerEvaluationOpen = $state(false);
 	let hasEvaluated = $state<boolean>(false);
@@ -52,6 +52,10 @@
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
 			drawerOpen = true;
+		}
+
+		if (sharedState.similarity && sharedState.similarity.length > 0) {
+			drawerListAnswerOpen = true;
 		}
 
 		if (data?.answer) {
@@ -64,6 +68,7 @@
 		if (!open) {
 			// Bersihkan summary begitu drawer ditutup (tombol close, overlay, swipe, atau Escape)
 			sharedState.summary = null;
+			sharedState.similarity = null;
 		}
 	}
 
@@ -181,22 +186,6 @@
 		}
 	}
 
-	function getHighestAndLowestScore(data: any[]) {
-		if (data.length === 0) {
-			return { highest: null, lowest: null };
-		}
-
-		const highest = data.reduce((max, item) =>
-			item.similarityScore > max.similarityScore ? item : max
-		);
-
-		const lowest = data.reduce((min, item) =>
-			item.similarityScore < min.similarityScore ? item : min
-		);
-
-		return { highest: highest, lowest: lowest };
-	}
-
 	// get evaluation
 	async function getEvaluation(challengePaperId: string): Promise<any | null> {
 		const response = await fetch(`/api/evaluations?challengePaperId=${challengePaperId}`, {
@@ -274,7 +263,10 @@
 			}
 
 			// evaluated checker
-			if (Object.values(newEvaluations).every((evaluation) => evaluation.results.length > 0)) {
+			if (
+				Object.keys(newEvaluations).length > 0 &&
+				Object.values(newEvaluations).every((evaluation) => evaluation.results.length > 0)
+			) {
 				hasEvaluated = true;
 			}
 
@@ -331,127 +323,13 @@
 							{#each data.challenge.challenge_papers as challenge, i}
 								<Carousel.Item class="basis-full lg:basis-1/2">
 									<div class="flex flex-col relative h-full">
-										{#if answerSimilarities[challenge.id]}
-											{@const highestAndLowest = getHighestAndLowestScore(
-												answerSimilarities[challenge.id]
-											)}
-
-											<div class="px-0.5 py-1 mb-2">
-												<div class="bg-green-100 border rounded-lg p-4">
-													<div class="flex items-center">
-														<div class="flex-1">
-															<div class="mb-1 text-sm font-bold">Answer Similarity Score</div>
-															<div class="flex items-center gap-1 text-sm">
-																<span class="flex-none w-18">Highest: </span>
-																<span class="font-bold"
-																	>{highestAndLowest?.highest.similarityScore}</span
-																>
-															</div>
-
-															<div class="flex items-center gap-1 text-sm">
-																<span class="flex-none w-18">Lowest: </span>
-																<span class="font-bold"
-																	>{highestAndLowest.lowest.similarityScore}</span
-																>
-															</div>
-														</div>
-
-														<div class="ml-auto">
-															<Button
-																onclick={() => {
-																	answerSimilarityList = answerSimilarities[challenge.id];
-																	drawerListAnswerOpen = true;
-																}}
-															>
-																View Details
-															</Button>
-														</div>
-													</div>
-												</div>
-											</div>
-										{/if}
-
-										<!-- {#if answerEvaluations[challenge.id]}
-											{@const result = answerEvaluations[challenge.id].results?.[0]}
-											{#if result}
-												<div class="px-0.5 py-1 mb-2">
-													<div
-														class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
-													>
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.content_mastery_score}
-															</div>
-
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Content Mastery
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.memory_retention_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Memory Retention
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.academic_language_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Academic Language
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.cognitive_stretch_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Cognitive Strecth
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.cognitive_synthesis_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Cognitive Synthesis
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.critical_thinking_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Critical Thinking
-															</div>
-														</div>
-
-														<div class="p-2 bg-blue-100 border rounded-lg">
-															<div class="font-bold text-center text-2xl">
-																{result.logical_flow_score}
-															</div>
-															<div class="text-xs text-neutral-600 text-center mt-1">
-																Logical Flow
-															</div>
-														</div>
-													</div>
-												</div>
-											{/if}
-										{/if} -->
-
 										<div class="flex-1 px-0.5 py-1">
 											<PaperItem
 												paper={{ ...challenge.paper }}
 												index={i}
 												{challenge}
 												sample={false}
+												similarityScore={answerSimilarities[challenge.id]}
 											/>
 										</div>
 									</div>
@@ -514,7 +392,6 @@
 								</Button>
 							{/if}
 
-							<Button type="submit">XX</Button>
 							<div class="ml-auto flex flex-row items-center gap-2 text-xs text-neutral-500">
 								{#if data?.answer && data?.answer?.status == 'draft'}
 									<Badge variant="default" class="bg-blue-500 text-white">Draft</Badge>
@@ -625,17 +502,17 @@
 				</Drawer.Header>
 
 				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
-					{#if answerSimilarityList}
+					{#if sharedState.similarity}
 						<Table.Root>
 							<Table.Body>
-								{#if answerSimilarityList.length === 0}
+								{#if sharedState.similarity.length === 0}
 									<Table.Row>
 										<Table.Cell colspan={2}
 											>Submit your answer to see the similarity scores.</Table.Cell
 										>
 									</Table.Row>
 								{:else}
-									{#each answerSimilarityList as sim}
+									{#each sharedState.similarity as sim}
 										<Table.Row
 											class="cursor-pointer"
 											onclick={() => {

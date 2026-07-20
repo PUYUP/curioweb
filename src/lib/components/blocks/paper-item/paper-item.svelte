@@ -12,20 +12,23 @@
 	import Badge from '../../ui/badge/badge.svelte';
 	import Icon from 'mdi-svelte';
 	import { mdiShimmer } from '@mdi/js';
-	import { handleShowSummary } from '$lib/state.svelte';
+	import { handleShowSummary, handleShowSimilarity } from '$lib/state.svelte';
+	import { getHighestAndLowestScore } from '@/lib/utils';
 
 	const {
 		paper,
 		challenge,
 		index = null,
 		sample = false,
-		showTitle = false
+		showTitle = false,
+		similarityScore = null
 	} = $props<{
 		paper: PaperSummary;
 		challenge?: any;
 		index?: null | number;
 		sample?: boolean;
 		showTitle?: boolean;
+		similarityScore?: any;
 	}>();
 
 	const htmlContent = $derived(
@@ -39,10 +42,45 @@
 	const showSummaryHandler = async (results: any) => {
 		handleShowSummary(results);
 	};
+
+	const showSimilarityHandler = async (results: any) => {
+		handleShowSimilarity(results);
+	};
 </script>
 
 <Card class="h-full">
 	<CardHeader>
+		{#if similarityScore}
+			{@const highestAndLowest = getHighestAndLowestScore(similarityScore)}
+
+			<div class="border-0 mb-4">
+				<div class="flex items-center">
+					<div class="flex-1">
+						<div class="mb-1 text-sm font-bold">Answer Similarity Score</div>
+						<div class="flex items-center gap-1 text-sm">
+							<span class="flex-none w-18">Highest: </span>
+							<span class="font-bold">
+								{highestAndLowest?.highest.similarityScore}
+							</span>
+						</div>
+
+						<div class="flex items-center gap-1 text-sm">
+							<span class="flex-none w-18">Lowest: </span>
+							<span class="font-bold">
+								{highestAndLowest.lowest.similarityScore}
+							</span>
+						</div>
+					</div>
+
+					<div class="ml-auto">
+						<Button variant="outline" onclick={() => showSimilarityHandler(similarityScore)}>
+							View Details
+						</Button>
+					</div>
+				</div>
+			</div>
+		{/if}
+
 		<div class="flex gap-2 flex-wrap">
 			{#if sample}<Badge variant="destructive" class="mb-2">Sample</Badge>{/if}
 			{#if paper.fieldsOfStudy.length > 0}
@@ -53,6 +91,7 @@
 				</div>
 			{/if}
 		</div>
+
 		{#if showTitle}<CardTitle class="text-lg">{paper.title}</CardTitle>{/if}
 
 		{#if paper.pdfUrl}

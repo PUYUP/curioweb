@@ -1,6 +1,7 @@
 export const sharedState = $state({
     clicked: false,
     summary: null as any,
+    similarity: null as any,
 });
 
 export function handleClick() {
@@ -9,4 +10,8 @@ export function handleClick() {
 
 export function handleShowSummary(results: any) {
     sharedState.summary = results;
+}
+
+export function handleShowSimilarity(results: any) {
+    sharedState.similarity = results;
 }
