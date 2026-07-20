@@ -43,6 +43,10 @@
 	let drawerAnswerOpen = $state(false);
 	let drawerListAnswerOpen = $state(false);
 
+	// ---- Evaluation ----
+	let answerEvaluations = $state<Record<string, any[]>>({});
+	let drawerEvaluationOpen = $state(false);
+
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
 			drawerOpen = true;
@@ -150,6 +154,7 @@
 		};
 	};
 
+	// get answer similarity
 	async function getAnswerSimilarity(challengePaperId: string): Promise<string[] | null> {
 		const response = await fetch(`/api/answer-similarities?challengePaperId=${challengePaperId}`, {
 			method: 'GET'
@@ -190,6 +195,31 @@
 		return { highest: highest, lowest: lowest };
 	}
 
+	// get evaluation
+	async function getEvaluation(challengePaperId: string): Promise<any | null> {
+		const response = await fetch(`/api/evaluations?challengePaperId=${challengePaperId}`, {
+			method: 'GET'
+		});
+
+		if (!response.ok) {
+			console.error(`Fetch gagal (${response.status}) untuk challengePaperId=${challengePaperId}`);
+			return null;
+		}
+
+		const text = await response.text();
+		if (!text) {
+			console.warn(`Response kosong untuk challengePaperId=${challengePaperId}`);
+			return null;
+		}
+
+		try {
+			return JSON.parse(text);
+		} catch (e) {
+			console.error('Gagal parse JSON:', text);
+			return null;
+		}
+	}
+
 	// Trigger data fetching
 	$effect(() => {
 		if (!data) return;
@@ -200,9 +230,16 @@
 			isLoading = true;
 
 			// jalankan semua fetch secara paralel
-			const results = await Promise.all(
+			const similarityResults = await Promise.all(
 				challengePapers.map(async (challengePaper) => {
 					const result = await getAnswerSimilarity(challengePaper.id);
+					return { id: challengePaper.id, result };
+				})
+			);
+
+			const evaluationResults = await Promise.all(
+				challengePapers.map(async (challengePaper) => {
+					const result = await getEvaluation(challengePaper.id);
 					return { id: challengePaper.id, result };
 				})
 			);
@@ -211,14 +248,25 @@
 
 			// gabungkan semua hasil jadi satu object, sekali update state
 			const newSimilarities: Record<string, string[]> = {};
-			for (const { id, result } of results) {
+			for (const { id, result } of similarityResults) {
 				if (result !== null) {
 					newSimilarities[id] = result;
 				}
 			}
 
+			const newEvaluations: Record<string, any> = {};
+			for (const { id, result } of evaluationResults) {
+				if (result !== null) {
+					newEvaluations[id] = result;
+				}
+			}
+
 			answerSimilarities = newSimilarities;
+			answerEvaluations = newEvaluations;
+
 			isLoading = false;
+
+			// score checker
 			if (Object.values(newSimilarities).every((arr) => arr.length > 0)) {
 				hasScored = true;
 			}
@@ -316,6 +364,10 @@
 											</div>
 										{/if}
 
+										{#if answerEvaluations[challenge.id]}
+											{JSON.stringify(answerEvaluations[challenge.id])}
+										{/if}
+
 										<div class="flex-1 px-0.5 py-1">
 											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
 										</div>
@@ -403,42 +455,63 @@
 
 				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
 					{#each sharedState.summary ?? [] as item, i}
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-yellow-300 bg-yellow-200">1. Background</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['background']}</p>
-						</div>
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-blue-300 bg-blue-200">2. Methods</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['methods']}</p>
-						</div>
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-green-300 bg-green-200">3. Results</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['results']}</p>
-						</div>
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-teal-300 bg-teal-200">4. Conclusion</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['conclusions']}</p>
-						</div>
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-red-300 bg-red-200">5. Limitations</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['limitations']}</p>
-						</div>
-						<div class="flex flex-col mb-6">
-							<p class="text-base font-semibold mb-2 underline">
-								<span class="border-b-3 border-purple-300 bg-purple-200">6. Future Work</span>
-							</p>
-							<p class="text-base text-neutral-800 leading-6">{item['future_works']}</p>
-						</div>
+						{@const hasResult = item && typeof item === 'object' && 'result' in item}
+						{@const result = hasResult ? item.result : item}
+						{@const metadata = hasResult ? item.metadata : null}
+						{@const isError = typeof result === 'string'}
+
+						{#if isError}
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-red-300 bg-red-200">Item {i + 1} gagal</span>
+								</p>
+								<p class="text-base text-red-700 leading-6">{result}</p>
+							</div>
+						{:else}
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-yellow-300 bg-yellow-200">1. Background</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['background']}</p>
+							</div>
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-blue-300 bg-blue-200">2. Methods</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['methods']}</p>
+							</div>
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-green-300 bg-green-200">3. Results</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['results']}</p>
+							</div>
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-teal-300 bg-teal-200">4. Conclusion</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['conclusions']}</p>
+							</div>
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-red-300 bg-red-200">5. Limitations</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['limitations']}</p>
+							</div>
+							<div class="flex flex-col mb-6">
+								<p class="text-base font-semibold mb-2 underline">
+									<span class="border-b-3 border-purple-300 bg-purple-200">6. Future Work</span>
+								</p>
+								<p class="text-base text-neutral-800 leading-6">{result['future_works']}</p>
+							</div>
+
+							{#if metadata}
+								<p class="text-xs text-neutral-400 mb-6">
+									model: {metadata.model_version ?? '-'} · tokens: {metadata.usage_metadata
+										?.total_token_count ?? '-'}
+								</p>
+							{/if}
+						{/if}
 					{/each}
 				</div>
 
