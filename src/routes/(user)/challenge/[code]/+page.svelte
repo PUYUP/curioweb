@@ -14,6 +14,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
 	import { mdiChevronRight } from '@mdi/js';
+	import { EvaluationCRT003 } from '@/lib/components/blocks/evaluation-crt003';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -44,8 +45,9 @@
 	let drawerListAnswerOpen = $state(false);
 
 	// ---- Evaluation ----
-	let answerEvaluations = $state<Record<string, any[]>>({});
+	let answerEvaluations = $state<Record<string, any>>({});
 	let drawerEvaluationOpen = $state(false);
+	let hasEvaluated = $state<boolean>(false);
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
@@ -271,6 +273,11 @@
 				hasScored = true;
 			}
 
+			// evaluated checker
+			if (Object.values(newEvaluations).every((evaluation) => evaluation.results.length > 0)) {
+				hasEvaluated = true;
+			}
+
 			// rebuild caraouzel
 			await tick();
 			emblaApi?.reInit();
@@ -364,9 +371,80 @@
 											</div>
 										{/if}
 
-										{#if answerEvaluations[challenge.id]}
-											{JSON.stringify(answerEvaluations[challenge.id])}
-										{/if}
+										<!-- {#if answerEvaluations[challenge.id]}
+											{@const result = answerEvaluations[challenge.id].results?.[0]}
+											{#if result}
+												<div class="px-0.5 py-1 mb-2">
+													<div
+														class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
+													>
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.content_mastery_score}
+															</div>
+
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Content Mastery
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.memory_retention_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Memory Retention
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.academic_language_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Academic Language
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.cognitive_stretch_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Cognitive Strecth
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.cognitive_synthesis_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Cognitive Synthesis
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.critical_thinking_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Critical Thinking
+															</div>
+														</div>
+
+														<div class="p-2 bg-blue-100 border rounded-lg">
+															<div class="font-bold text-center text-2xl">
+																{result.logical_flow_score}
+															</div>
+															<div class="text-xs text-neutral-600 text-center mt-1">
+																Logical Flow
+															</div>
+														</div>
+													</div>
+												</div>
+											{/if}
+										{/if} -->
 
 										<div class="flex-1 px-0.5 py-1">
 											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
@@ -381,6 +459,12 @@
 					</Carousel.Root>
 				{/key}
 			</div>
+
+			{#if hasEvaluated}
+				<div class="py-0">
+					<EvaluationCRT003 data={answerEvaluations} />
+				</div>
+			{/if}
 
 			<div class="w-full py-1">
 				<div class="mb-2 text-sm font-bold">My Answer</div>
