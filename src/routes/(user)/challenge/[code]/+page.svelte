@@ -83,6 +83,7 @@
 		drawerListAnswerOpen = open;
 		if (!open) {
 			answerSimilarityList = [];
+			sharedState.similarity = null;
 		}
 	}
 
@@ -365,6 +366,7 @@
 							bind:value={textValue}
 							oninput={handleInput}
 							name="content"
+							disabled={data?.answer?.status == 'submitted'}
 						/>
 					</div>
 
@@ -520,7 +522,7 @@
 												answerSimilarityDetail = sim;
 											}}
 										>
-											<Table.Cell class="whitespace-normal break-words">
+											<Table.Cell class="whitespace-normal break-words py-4">
 												<p class="line-clamp-1 text-sm mb-1 text-neutral-700">
 													<span
 														class="w-6 text-center inline-block border-b-3 border-yellow-300 bg-yellow-200 px-1 font-semibold text-sm"
@@ -528,7 +530,7 @@
 													>
 													{sim.answerChunkContent}
 												</p>
-												<p class="line-clamp-1 text-sm mb-2 text-neutral-700">
+												<p class="line-clamp-1 text-sm mb-4 text-neutral-700">
 													<span
 														class="w-6 text-center inline-block border-b-3 border-blue-300 bg-blue-200 px-1 font-semibold text-sm"
 														>P:</span
@@ -536,7 +538,7 @@
 													{sim.paperChunkContent}
 												</p>
 												<span
-													class="border-b-3 border-green-300 bg-green-200 px-1 font-semibold text-sm"
+													class="border-b-3 border-green-300 bg-green-200 px-1 text-xs font-semibold"
 												>
 													Score: {sim.similarityScore}
 												</span>
