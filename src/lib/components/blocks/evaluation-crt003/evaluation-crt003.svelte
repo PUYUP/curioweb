@@ -130,20 +130,24 @@
 
 <Dialog.Root open={assessmentOpen} onOpenChange={(open) => (assessmentOpen = open)}>
 	<Dialog.Content class="flex max-h-[90vh] w-[95vw] max-w-none flex-col sm:max-w-none p-0">
-		<Dialog.Header class="p-4">
+		<Dialog.Header class="p-4 pb-0">
 			<Dialog.Title>Assessment Feedback</Dialog.Title>
 			<Dialog.Description>
 				This AI analytical results for your answer submission.
 			</Dialog.Description>
+
+			<div class="grid grid-cols-2 gap-4 pt-2">
+				{#each Object.entries(data) as [key, value], index}
+					<div class="text-base">
+						Paper <strong>{index == 0 ? 'A' : 'Z'}</strong>
+					</div>
+				{/each}
+			</div>
 		</Dialog.Header>
 		<div class="overflow-y-auto px-4">
 			<div class="grid grid-cols-2 gap-8">
 				{#each Object.entries(data) as [key, value], index}
 					<div class="block prose">
-						<div class="mb-2 text-base">
-							Paper <strong>{index == 0 ? 'A' : 'Z'}</strong>
-						</div>
-
 						{#each (value as any).results as result}
 							<div class="flex gap-4 flex-col">
 								<div class="block">
