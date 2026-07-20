@@ -17,11 +17,13 @@
 	const {
 		paper,
 		challenge,
+		index = null,
 		sample = false,
 		showTitle = false
 	} = $props<{
 		paper: PaperSummary;
 		challenge?: any;
+		index?: null | number;
 		sample?: boolean;
 		showTitle?: boolean;
 	}>();
@@ -74,11 +76,17 @@
 	</CardContent>
 
 	{#if challenge?.summary && challenge.summary.results.length > 0}
-		<CardFooter class="mt-auto">
+		<CardFooter class="mt-auto flex items-center">
 			<Button variant="link" onclick={() => showSummaryHandler(challenge.summary.results)}>
 				<Icon path={mdiShimmer} color={'#666'} class="size-4" />
 				Read Full Summary
 			</Button>
+
+			{#if index != null}
+				<div class="ml-auto uppercase text-base">
+					{#if index == 0}Paper <strong>A</strong>{/if}{#if index == 1}Paper <strong>Z</strong>{/if}
+				</div>
+			{/if}
 		</CardFooter>
 	{/if}
 </Card>

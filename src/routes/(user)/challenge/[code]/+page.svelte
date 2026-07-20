@@ -447,7 +447,12 @@
 										{/if} -->
 
 										<div class="flex-1 px-0.5 py-1">
-											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
+											<PaperItem
+												paper={{ ...challenge.paper }}
+												index={i}
+												{challenge}
+												sample={false}
+											/>
 										</div>
 									</div>
 								</Carousel.Item>
