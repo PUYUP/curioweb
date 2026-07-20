@@ -10,7 +10,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Badge } from '@/lib/components/ui/badge';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
 	import { mdiChevronRight } from '@mdi/js';
@@ -25,6 +25,9 @@
 	let orientation = $derived(width > 1280 ? 'vertical' : 'horizontal') as 'vertical' | 'horizontal';
 	let drawerOpen = $state<boolean>(false);
 
+	// --- Carousel State ---
+	let emblaApi = $state<any>(undefined);
+
 	// --- Auto-draft state ---
 	let draftTimer: ReturnType<typeof setTimeout> | undefined;
 	let draftStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -34,17 +37,19 @@
 	// ---- Answer Similarities ----
 	let answerSimilarities = $state<Record<string, any[]>>({});
 	let answerSimilarityDetail = $state<any>(null);
+	let answerSimilarityList = $state<any[]>([]);
 	let isLoading = $state(false);
 	let hasScored = $state(false);
 	let drawerAnswerOpen = $state(false);
+	let drawerListAnswerOpen = $state(false);
 
 	$effect(() => {
 		if (sharedState.summary && sharedState.summary.length > 0) {
 			drawerOpen = true;
 		}
 
-		if (data.answer) {
-			textValue = data.answer.content || '';
+		if (data?.answer) {
+			textValue = data?.answer?.content || '';
 		}
 	});
 
@@ -60,6 +65,13 @@
 		drawerAnswerOpen = open;
 		if (!open) {
 			answerSimilarityDetail = null;
+		}
+	}
+
+	function handleListAnswerDrawerOpenChange(open: boolean) {
+		drawerListAnswerOpen = open;
+		if (!open) {
+			answerSimilarityList = [];
 		}
 	}
 
@@ -162,6 +174,22 @@
 		}
 	}
 
+	function getHighestAndLowestScore(data: any[]) {
+		if (data.length === 0) {
+			return { highest: null, lowest: null };
+		}
+
+		const highest = data.reduce((max, item) =>
+			item.similarityScore > max.similarityScore ? item : max
+		);
+
+		const lowest = data.reduce((min, item) =>
+			item.similarityScore < min.similarityScore ? item : min
+		);
+
+		return { highest: highest, lowest: lowest };
+	}
+
 	// Trigger data fetching
 	$effect(() => {
 		if (!data) return;
@@ -191,9 +219,13 @@
 
 			answerSimilarities = newSimilarities;
 			isLoading = false;
-			if (Object.keys(newSimilarities).length > 0) {
+			if (Object.values(newSimilarities).every((arr) => arr.length > 0)) {
 				hasScored = true;
 			}
+
+			// rebuild caraouzel
+			await tick();
+			emblaApi?.reInit();
 		})();
 
 		return () => {
@@ -234,55 +266,59 @@
 		<div class="grid grid-cols-1 xl:grid-cols-1 gap-6">
 			<div class="flex gap-6">
 				{#key orientation}
-					<Carousel.Root opts={{ align: 'start' }} orientation={'horizontal'} class="w-full">
+					<Carousel.Root
+						setApi={(api) => (emblaApi = api)}
+						opts={{ align: 'start' }}
+						orientation={'horizontal'}
+						class="w-full"
+					>
 						<Carousel.Content>
 							{#each data.challenge.challenge_papers as challenge, i}
 								<Carousel.Item class="basis-full lg:basis-1/2">
 									<div class="flex flex-col relative h-full">
+										{#if answerSimilarities[challenge.id]}
+											{@const highestAndLowest = getHighestAndLowestScore(
+												answerSimilarities[challenge.id]
+											)}
+
+											<div class="px-0.5 py-1 mb-2">
+												<div class="bg-green-100 border rounded-lg p-4">
+													<div class="flex items-center">
+														<div class="flex-1">
+															<div class="mb-1 text-sm font-bold">Answer Similarity Score</div>
+															<div class="flex items-center gap-1 text-sm">
+																<span class="flex-none w-18">Highest: </span>
+																<span class="font-bold"
+																	>{highestAndLowest?.highest.similarityScore}</span
+																>
+															</div>
+
+															<div class="flex items-center gap-1 text-sm">
+																<span class="flex-none w-18">Lowest: </span>
+																<span class="font-bold"
+																	>{highestAndLowest.lowest.similarityScore}</span
+																>
+															</div>
+														</div>
+
+														<div class="ml-auto">
+															<Button
+																onclick={() => {
+																	answerSimilarityList = answerSimilarities[challenge.id];
+																	drawerListAnswerOpen = true;
+																}}
+															>
+																View Details
+															</Button>
+														</div>
+													</div>
+												</div>
+											</div>
+										{/if}
+
 										<div class="flex-1 px-0.5 py-1">
 											<PaperItem paper={{ ...challenge.paper }} {challenge} sample={false} />
 										</div>
-
-										{#if answerSimilarities[challenge.id]}
-											<Table.Root>
-												<Table.Header>
-													<Table.Row>
-														<Table.Head class="w-[100px]">Score</Table.Head>
-														<Table.Head>Answer / Paper Chunk</Table.Head>
-													</Table.Row>
-												</Table.Header>
-												<Table.Body>
-													{#if answerSimilarities[challenge.id].length === 0}
-														<Table.Row>
-															<Table.Cell colspan={2}
-																>Submit your answer above to see the similarity results.</Table.Cell
-															>
-														</Table.Row>
-													{:else}
-														{#each answerSimilarities[challenge.id] as sim}
-															<Table.Row
-																class="cursor-pointer"
-																onclick={() => {
-																	drawerAnswerOpen = true;
-																	answerSimilarityDetail = sim;
-																}}
-															>
-																<Table.Cell class="font-medium">
-																	<span class="text-sm font-bold">{sim.similarityScore}</span>
-																</Table.Cell>
-																<Table.Cell class="whitespace-normal break-words">
-																	<p class="line-clamp-1 mb-1">{sim.answerChunkContent}</p>
-																	<p class="line-clamp-1">{sim.paperChunkContent}</p>
-																</Table.Cell>
-																<Table.Cell class="text-right">
-																	<Icon path={mdiChevronRight} size="1.25rem" />
-																</Table.Cell>
-															</Table.Row>
-														{/each}
-													{/if}
-												</Table.Body>
-											</Table.Root>
-										{/if}
 									</div>
 								</Carousel.Item>
 							{/each}
@@ -324,20 +360,22 @@
 								<Button
 									type="submit"
 									size="lg"
-									disabled={saving || data.answer.status == 'submitted'}
-									variant={data.answer.status == 'submitted' ? 'ghost' : 'secondary'}
+									disabled={saving || data?.answer?.status == 'submitted'}
+									variant={data?.answer?.status == 'submitted' ? 'ghost' : 'default'}
 								>
 									{#if saving}
 										Saving...
-									{:else if data.answer.status == 'submitted'}
+									{:else if data?.answer?.status == 'submitted'}
 										Submitted - wait for analysis (refresh the page periodically to see results)
 									{:else}
 										Submit & Analyze
 									{/if}
 								</Button>
 							{/if}
+
+							<Button type="submit">XX</Button>
 							<div class="ml-auto flex flex-row items-center gap-2 text-xs text-neutral-500">
-								{#if data.answer && data.answer.status == 'draft'}
+								{#if data?.answer && data?.answer?.status == 'draft'}
 									<Badge variant="default" class="bg-blue-500 text-white">Draft</Badge>
 								{/if}
 								{#if draftStatus === 'saving'}
@@ -415,28 +453,106 @@
 
 	<Drawer.Root
 		direction="right"
-		open={drawerAnswerOpen}
-		onOpenChange={handleAnswerDrawerOpenChange}
+		open={drawerListAnswerOpen}
+		onOpenChange={handleListAnswerDrawerOpenChange}
 	>
 		<Drawer.Content class="fixed flex w-full max-w-lg flex-col after:hidden">
 			<div class="flex h-full flex-col overflow-hidden">
 				<Drawer.Header class="text-left">
-					<Drawer.Title>Answer Details</Drawer.Title>
+					<Drawer.Title>Similarity Chunks</Drawer.Title>
 				</Drawer.Header>
 
 				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
-					{#if answerSimilarityDetail}
-						<div class="mb-2 text-sm font-semibold">
-							<span class="border-b-3 border-green-300 bg-green-200"> Answer</span>
-						</div>
-						<p class="text-base">{answerSimilarityDetail.answerChunkContent}</p>
-
-						<div class="mb-2 text-sm font-semibold">
-							<span class="border-b-3 border-blue-300 bg-blue-200">Paper Chunk</span>
-						</div>
-						<p class="text-base">{answerSimilarityDetail.paperChunkContent}</p>
+					{#if answerSimilarityList}
+						<Table.Root>
+							<Table.Body>
+								{#if answerSimilarityList.length === 0}
+									<Table.Row>
+										<Table.Cell colspan={2}
+											>Submit your answer to see the similarity scores.</Table.Cell
+										>
+									</Table.Row>
+								{:else}
+									{#each answerSimilarityList as sim}
+										<Table.Row
+											class="cursor-pointer"
+											onclick={() => {
+												drawerAnswerOpen = true;
+												answerSimilarityDetail = sim;
+											}}
+										>
+											<Table.Cell class="whitespace-normal break-words">
+												<p class="line-clamp-1 text-sm mb-1 text-neutral-700">
+													<span
+														class="w-6 text-center inline-block border-b-3 border-yellow-300 bg-yellow-200 px-1 font-semibold text-sm"
+														>A:</span
+													>
+													{sim.answerChunkContent}
+												</p>
+												<p class="line-clamp-1 text-sm mb-2 text-neutral-700">
+													<span
+														class="w-6 text-center inline-block border-b-3 border-blue-300 bg-blue-200 px-1 font-semibold text-sm"
+														>P:</span
+													>
+													{sim.paperChunkContent}
+												</p>
+												<span
+													class="border-b-3 border-green-300 bg-green-200 px-1 font-semibold text-sm"
+												>
+													Score: {sim.similarityScore}
+												</span>
+											</Table.Cell>
+											<Table.Cell class="text-right">
+												<Icon path={mdiChevronRight} size="1.25rem" />
+											</Table.Cell>
+										</Table.Row>
+									{/each}
+								{/if}
+							</Table.Body>
+						</Table.Root>
 					{/if}
 				</div>
+
+				<Drawer.Root
+					direction="right"
+					open={drawerAnswerOpen}
+					onOpenChange={handleAnswerDrawerOpenChange}
+				>
+					<Drawer.Content class="fixed flex w-full max-w-lg flex-col after:hidden">
+						<div class="flex h-full flex-col overflow-hidden">
+							<Drawer.Header class="text-left">
+								<Drawer.Title>Answer Details</Drawer.Title>
+							</Drawer.Header>
+
+							<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
+								{#if answerSimilarityDetail}
+									<div
+										class="mb-6 bg-green-200 border-green-300 h-20 w-full rounded-lg flex flex-col items-center justify-center"
+									>
+										<span class="font-bold">Similarity Score</span>
+										<span class="text-3xl">{answerSimilarityDetail.similarityScore}</span>
+									</div>
+
+									<div class="mb-2 text-sm font-semibold">
+										<span class="border-b-3 border-yellow-300 bg-yellow-200"> Answer</span>
+									</div>
+									<p class="text-base">{answerSimilarityDetail.answerChunkContent}</p>
+
+									<div class="mb-2 text-sm font-semibold">
+										<span class="border-b-3 border-blue-300 bg-blue-200">Paper Chunk</span>
+									</div>
+									<p class="text-base">{answerSimilarityDetail.paperChunkContent}</p>
+								{/if}
+							</div>
+
+							<Drawer.Footer>
+								<Drawer.Close>
+									<Button variant="outline" class="w-full">Close</Button>
+								</Drawer.Close>
+							</Drawer.Footer>
+						</div>
+					</Drawer.Content>
+				</Drawer.Root>
 
 				<Drawer.Footer>
 					<Drawer.Close>
