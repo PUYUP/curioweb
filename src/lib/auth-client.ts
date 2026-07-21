@@ -1,6 +1,5 @@
 import { createAuthClient } from "better-auth/client";
 import { polarClient } from "@polar-sh/better-auth/client";
-import { env } from "process";
 
 export const authClient = createAuthClient({
     plugins: [polarClient()],
@@ -19,6 +18,9 @@ export const signInWithGoogle = async () => {
 
 // checkout
 export const checkout = async () => {
-    const checkoutResult = await authClient.checkout();
+    const checkoutResult = await authClient.checkout({
+        slug: 'ATLA-Bronze',
+    });
+
     console.log("checkoutResult", checkoutResult);
 }
