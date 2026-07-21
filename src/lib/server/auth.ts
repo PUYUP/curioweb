@@ -27,7 +27,7 @@ export const auth = betterAuth({
 				checkout({
 					products: [
 						{
-							productId: "e413af43-3135-45c3-b9aa-f7302ca1fc1e",
+							productId: env.POLAR_PRODUCT_ID,
 							slug: "ATLA-Bronze"
 						}
 					],
