@@ -56,7 +56,7 @@
 	} satisfies Chart.ChartConfig;
 </script>
 
-<Card.Root>
+<Card.Root class="h-full">
 	<Card.Header class="flex items-center mb-4">
 		<div class="flex-1">
 			<Card.Title>Multidimensional Cognitive Assessment</Card.Title>

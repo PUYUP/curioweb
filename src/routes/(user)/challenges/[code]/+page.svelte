@@ -257,6 +257,8 @@
 			answerSimilarities = newSimilarities;
 			answerEvaluations = newEvaluations;
 
+			console.log(answerEvaluations);
+
 			isLoading = false;
 
 			// score checker

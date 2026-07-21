@@ -54,7 +54,7 @@
 	} satisfies Chart.ChartConfig;
 </script>
 
-<Card.Root>
+<Card.Root class="h-full">
 	<Card.Header class="items-center mb-4">
 		<Card.Title>Structure of the Observed Learning Outcome</Card.Title>
 		<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
