@@ -11,6 +11,7 @@ export interface PaperData {
 export type ChallengeStatus = 'pending' | 'active' | 'completed' | 'read' | 'rejected';
 
 export interface ChallengeData {
+    readonly id: string;
     userId: string;
     targetDate: string;
     status: ChallengeStatus;

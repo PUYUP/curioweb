@@ -13,11 +13,37 @@
 	import type { ChallengeData } from '@/lib/types/models';
 
 	let { challenge }: { challenge: ChallengeData } = $props();
+
+	async function updateStatus(challengeId: string, status: string) {
+		const response = await fetch(`/api/challenges/${challengeId}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ status })
+		});
+
+		if (!response.ok) {
+			console.error(`Fetch gagal (${response.status})`);
+			return null;
+		}
+
+		const updatedChallenge = await response.json();
+		challenge = updatedChallenge;
+
+		return updatedChallenge;
+	}
+
+	async function markRead() {
+		if (challenge.status === 'pending') {
+			await updateStatus(challenge.id, 'read');
+		}
+	}
 </script>
 
 <Item.Root variant="outline" size="default">
 	{#snippet child({ props })}
-		<a href="/challenges/{challenge.code}" class="flex items-center" {...props}>
+		<a href="/challenges/{challenge.code}" class="flex items-center" onclick={markRead} {...props}>
 			<Item.Media>
 				{#if challenge.status === 'read'}
 					<Icon path={mdiRead} color={'#6B7280'} class="size-5" />

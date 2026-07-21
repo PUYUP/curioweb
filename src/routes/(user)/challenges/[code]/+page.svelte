@@ -140,6 +140,24 @@
 		if (draftTimer) clearTimeout(draftTimer);
 	});
 
+	async function updateStatus(challengeId: string, status: string) {
+		const response = await fetch(`/api/challenges/${challengeId}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ status })
+		});
+
+		if (!response.ok) {
+			console.error(`Fetch gagal (${response.status})`);
+			return null;
+		}
+
+		const updatedChallenge = await response.json();
+		return updatedChallenge;
+	}
+
 	const handleSubmit: SubmitFunction = ({ cancel }) => {
 		if (draftTimer) clearTimeout(draftTimer); // batalkan draft pending saat submit manual
 
@@ -159,6 +177,9 @@
 			saving = false;
 			lastSavedValue = textValue;
 			draftStatus = 'idle';
+
+			// update challenge status
+			updateStatus(data.challenge.id, 'completed');
 		};
 	};
 
@@ -255,8 +276,6 @@
 
 			answerSimilarities = newSimilarities;
 			answerEvaluations = newEvaluations;
-
-			console.log(answerEvaluations);
 
 			isLoading = false;
 
