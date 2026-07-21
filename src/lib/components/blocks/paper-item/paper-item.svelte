@@ -34,7 +34,14 @@
 	const htmlContent = $derived(
 		marked.parse(
 			(challenge?.summary && challenge.summary.results.length > 0
-				? `<p class="mb-2 pb-2"><span class="font-normal border-b-3 border-yellow-400 bg-yellow-300">Background:</span> ${challenge.summary.results[0].background}</p>\n<p class="mb-2 pb-2"><span class="font-normal border-b-3 border-green-400 bg-green-300">Results:</span> ${challenge.summary.results[0].results}</p>`
+				? `<p class="mb-2 pb-2">
+					<span class="font-normal border-b-3 border-yellow-400 bg-yellow-300">Background:</span>
+					${Object.hasOwn(challenge.summary.results[0], 'result') ? challenge.summary.results[0].result.background : challenge.summary.results[0].background}
+				</p>
+				<p class="mb-2 pb-2">
+					<span class="font-normal border-b-3 border-green-400 bg-green-300">Results:</span>
+					${Object.hasOwn(challenge.summary.results[0], 'result') ? challenge.summary.results[0].result.results : challenge.summary.results[0].results}
+				</p>`
 				: paper.abstract) ?? ''
 		)
 	);
@@ -53,32 +60,34 @@
 		{#if similarityScore}
 			{@const highestAndLowest = getHighestAndLowestScore(similarityScore)}
 
-			<div class="border-0 mb-4">
-				<div class="flex items-center">
-					<div class="flex-1">
-						<div class="mb-1 text-sm font-bold">Answer Similarity Score</div>
-						<div class="flex items-center gap-1 text-sm">
-							<span class="flex-none w-18">Highest: </span>
-							<span class="font-bold">
-								{highestAndLowest?.highest.similarityScore}
-							</span>
+			{#if highestAndLowest && highestAndLowest?.highest && highestAndLowest?.lowest}
+				<div class="border-0 mb-4">
+					<div class="flex items-center">
+						<div class="flex-1">
+							<div class="mb-1 text-sm font-bold">Answer Similarity Score</div>
+							<div class="flex items-center gap-1 text-sm">
+								<span class="flex-none w-18">Highest: </span>
+								<span class="font-bold">
+									{highestAndLowest?.highest.similarityScore}
+								</span>
+							</div>
+
+							<div class="flex items-center gap-1 text-sm">
+								<span class="flex-none w-18">Lowest: </span>
+								<span class="font-bold">
+									{highestAndLowest?.lowest.similarityScore}
+								</span>
+							</div>
 						</div>
 
-						<div class="flex items-center gap-1 text-sm">
-							<span class="flex-none w-18">Lowest: </span>
-							<span class="font-bold">
-								{highestAndLowest.lowest.similarityScore}
-							</span>
+						<div class="ml-auto">
+							<Button variant="outline" onclick={() => showSimilarityHandler(similarityScore)}>
+								View Details
+							</Button>
 						</div>
-					</div>
-
-					<div class="ml-auto">
-						<Button variant="outline" onclick={() => showSimilarityHandler(similarityScore)}>
-							View Details
-						</Button>
 					</div>
 				</div>
-			</div>
+			{/if}
 		{/if}
 
 		<div class="flex gap-2 flex-wrap">

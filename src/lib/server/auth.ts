@@ -10,7 +10,7 @@ import { Polar } from "@polar-sh/sdk";
 
 export const polarClient = new Polar({
 	accessToken: env.POLAR_ACCESS_TOKEN,
-	server: "sandbox",
+	server: env.POLAR_SERVER === "production" ? "production" : "sandbox",
 });
 
 export const auth = betterAuth({
