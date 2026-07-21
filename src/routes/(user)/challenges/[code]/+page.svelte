@@ -15,6 +15,7 @@
 	import Icon from 'mdi-svelte';
 	import { mdiChevronRight } from '@mdi/js';
 	import { EvaluationCRT003 } from '@/lib/components/blocks/evaluation-crt003';
+	import { EvaluationCRT004 } from '@/lib/components/blocks/evaluation-crt004';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -345,8 +346,14 @@
 			</div>
 
 			{#if hasEvaluated}
-				<div class="py-0">
-					<EvaluationCRT003 data={answerEvaluations} />
+				<div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+					<div class="py-0">
+						<EvaluationCRT003 data={answerEvaluations} />
+					</div>
+
+					<div class="py-0">
+						<EvaluationCRT004 data={answerEvaluations} />
+					</div>
 				</div>
 			{/if}
 

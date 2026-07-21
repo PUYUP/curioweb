@@ -11,22 +11,25 @@
 	let { data }: { data: any } = $props();
 
 	const categoryDefs = [
-		{ month: 'Content Mastery', key: 'content_mastery_score' },
-		{ month: 'Memory Retention', key: 'memory_retention_score' },
-		{ month: 'Academic Language', key: 'academic_language_score' },
-		{ month: 'Cognitive Stretch', key: 'cognitive_stretch_score' },
-		{ month: 'Cognitive Synthesis', key: 'cognitive_synthesis_score' },
-		{ month: 'Critical Thinking', key: 'critical_thinking_score' },
-		{ month: 'Logical Flow', key: 'logical_flow_score' }
+		{ month: 'Content Mastery', key: 'content_mastery' },
+		{ month: 'Memory Retention', key: 'memory_retention' },
+		{ month: 'Academic Language', key: 'academic_language' },
+		{ month: 'Cognitive Stretch', key: 'cognitive_stretch' },
+		{ month: 'Cognitive Synthesis', key: 'cognitive_synthesis' },
+		{ month: 'Critical Thinking', key: 'critical_thinking' },
+		{ month: 'Logical Flow', key: 'logical_flow' }
 	];
-
-	// svelte-ignore state_referenced_locally
-	console.log(data);
 
 	// Rata-rata skor per kategori dari sekumpulan hasil (results)
 	function averageScore(results: any[], key: string) {
 		if (!results?.length) return 0;
-		const values = results.map((r) => Number(r?.result?.[key]) || 0);
+		const values = results.map((r) => {
+			return (
+				Number(
+					Object.hasOwn(r?.result, 'hots') ? r?.result?.hots?.[key] : r?.result?.[`${key}_score`]
+				) || 0
+			);
+		});
 		return values.reduce((sum, v) => sum + v, 0) / values.length;
 	}
 
@@ -51,15 +54,16 @@
 		paper_a: { label: 'Paper A', color: 'var(--radar-chart-1)' },
 		paper_z: { label: 'Paper Z', color: 'var(--radar-chart-2)' }
 	} satisfies Chart.ChartConfig;
-
-	// svelte-ignore state_referenced_locally
-	console.log(data);
 </script>
 
 <Card.Root>
-	<Card.Header class="items-center mb-4">
-		<Card.Title>Multidimensional cognitive assessment</Card.Title>
-		<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
+	<Card.Header class="flex items-center mb-4">
+		<div class="flex-1">
+			<Card.Title>Multidimensional Cognitive Assessment</Card.Title>
+			<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
+		</div>
+
+		<Button variant="outline" onclick={() => (assessmentOpen = true)}>View Details</Button>
 	</Card.Header>
 	<Card.Content class="flex-1">
 		<Chart.Container config={chartConfig} class="mx-auto aspect-square max-h-[280px] pb-10">
@@ -122,10 +126,6 @@
 			</LineChart>
 		</Chart.Container>
 	</Card.Content>
-
-	<Card.Footer class="flex-col gap-2 text-sm">
-		<Button variant="default" onclick={() => (assessmentOpen = true)}>View Details</Button>
-	</Card.Footer>
 </Card.Root>
 
 <Dialog.Root open={assessmentOpen} onOpenChange={(open) => (assessmentOpen = open)}>
@@ -271,14 +271,6 @@
 
 <style>
 	@reference "tailwindcss";
-
-	.prose :global(h2) {
-		@apply text-base font-semibold leading-normal mb-2 mt-4;
-	}
-
-	.prose :global(h3) {
-		@apply text-base font-semibold leading-normal;
-	}
 
 	.prose :global(p) {
 		@apply text-base leading-6 text-neutral-800;
