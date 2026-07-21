@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import logo from '$lib/assets/atlanize-logo.png';
+	import icon from '$lib/assets/atlanize-icon.png';
 	import Button from '../../ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 </script>
@@ -7,8 +8,9 @@
 <nav class="navbar">
 	<div class="max-w-7xl mx-auto py-2 px-4 flex items-center gap-3">
 		<div class="logo -ml-2">
-			<a href="/" aria-label="Go to home page">
-				<img src={logo} alt="ATLANIZE" class="h-8 sm:h-12 w-auto" />
+			<a href="/" aria-label="Go to home page" class="flex items-center gap-2">
+				<img src={icon} alt="ATLANIZE Icon" class="h-14 w-auto" />
+				<span class="uppercase text-2xl tracking-wider"><i>a</i>tlanize</span>
 			</a>
 		</div>
 

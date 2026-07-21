@@ -2,6 +2,7 @@
 	import Icon from 'mdi-svelte';
 	import { mdiGithub, mdiLinkedin, mdiTwitter } from '@mdi/js';
 	import logo from '$lib/assets/atlanize-logo.png';
+	import icon from '$lib/assets/atlanize-icon.png';
 	import { Separator } from '@/lib/components/ui/separator/index.js';
 </script>
 
@@ -9,8 +10,9 @@
 	<div class="max-w-7xl mx-auto py-2 px-4">
 		<div class="flex items-center md:items-start justify-between flex-col md:flex-row">
 			<div class="block ml-0 md:-ml-2 mt-0 md:-mt-2 mb-6 md:mb-0">
-				<a href="/" aria-label="Go to home page">
-					<img src={logo} alt="ATLANIZE" class="h-12 w-auto" />
+				<a href="/" aria-label="Go to home page" class="flex items-center gap-2">
+					<img src={icon} alt="ATLANIZE Icon" class="h-14 w-auto" />
+					<span class="uppercase text-2xl tracking-wider"><i>a</i>tlanize</span>
 				</a>
 			</div>
 

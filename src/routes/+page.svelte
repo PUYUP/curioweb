@@ -30,9 +30,9 @@
 			pdfUrl: null,
 			title: 'Bahaya Jalan Pintas di Balik Simulasi Kenaikan Air Laut',
 			fieldsOfStudy: ['Computer Science'],
-			abstract: `Ternyata model prediksi es mencair yang sering dipakai nyimpen *plot twist*. Sekilas, metode *shortcut* (SOSA) dan metode presisi (AD) kelihatan ngasih hasil mirip. Tapi pas dibedah matematis, metode *shortcut* ini sering meremehkan sensitivitas sistem. Efeknya, kondisi es seolah-olah terlihat jauh lebih stabil dan pasti dari realitanya.
+			abstract: `It turns out that a widely used ice-sheet melt prediction model hides an unexpected *plot twist*. At first glance, the shortcut method (SOSA) and the more precise approach (AD) appear to produce similar results. However, a mathematical analysis reveals that the shortcut method often underestimates the system's sensitivity. As a result, ice-sheet behavior appears much more stable and predictable than it actually is.
 
-Walau masih diuji di skenario terkontrol, ini jadi *wake-up call*. Pakai metode kalkulasi yang akurat bakal ngasih proyeksi kenaikan air laut yang lebih valid. Ini krusial banget buat kebijakan mitigasi perubahan iklim dan tata ruang wilayah pesisir biar kita nggak kebobolan di masa depan.`
+Although these findings have so far been validated only in controlled scenarios, they serve as an important wake-up call. Using more accurate computational methods can provide more reliable projections of future sea-level rise. This is essential for developing effective climate change mitigation strategies and improving coastal land-use planning, helping societies better prepare for future risks.`
 		},
 		{
 			sample: true,
@@ -40,9 +40,9 @@ Walau masih diuji di skenario terkontrol, ini jadi *wake-up call*. Pakai metode 
 			title:
 				'Exact vs approximate second-order derivatives in vertically-integrated ice sheet models',
 			fieldsOfStudy: ['Biomedical'],
-			abstract: `Evolusi capit kepiting itu *mindblowing* banget! Ternyata banyak bentuk capit yang beda jauh tapi performanya bisa sama persis (*many-to-one mapping*). Kepiting yang beda spesies dan gak berkerabat bisa berevolusi punya capit mirip kalau tantangan habitatnya sama. Alam tuh kayak punya banyak *cheat* buat nyelesaiin satu masalah!
+			abstract: `The evolution of crab claws is absolutely *mind-blowing*! It turns out that claws with dramatically different shapes can perform exactly the same function—a phenomenon known as *many-to-one mapping*. Even crab species that aren't closely related can evolve remarkably similar claws when they face the same environmental challenges. Nature seems to have countless *cheat codes* for solving the same problem!
 
-Nah, capit ekstrem kayak penghancur cangkang itu hasil seleksi alam yang super ketat. Peneliti ngebongkar rahasia ini pake *CT-scan 3D* dan simulasi biomekanik. Kerennya, riset ini gak cuma berguna buat biologi, tapi bisa jadi inspirasi buat desain alat biomimetik masa depan. *OP* banget kan alam kita?`
+The most extreme claws, such as those specialized for crushing shells, are the result of intense natural selection. Researchers uncovered these evolutionary secrets using *3D CT scanning* and biomechanical simulations. What's even cooler is that this research goes beyond biology—it could inspire the design of future biomimetic tools and technologies. Nature really is *OP*!`
 		}
 	];
 

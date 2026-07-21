@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import logo from '$lib/assets/atlanize-logo.png';
+	import icon from '$lib/assets/atlanize-icon.png';
 	import { Button } from '$lib/components/ui/button';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { MenuIcon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
@@ -51,8 +52,9 @@
 	</div>
 
 	<div class="ml-auto">
-		<a href={resolve('/dashboard')}>
-			<img src={logo} alt="ATLANIZE Logo" class="h-8 w-auto" />
+		<a href={resolve('/dashboard')} class="flex items-center gap-2">
+			<img src={icon} alt="ATLANIZE Icon" class="h-10 w-auto" />
+			<span class="uppercase text-2xl tracking-wider"><i>a</i>tlanize</span>
 		</a>
 	</div>
 </nav>
