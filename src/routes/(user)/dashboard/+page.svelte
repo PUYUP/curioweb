@@ -52,10 +52,10 @@
 								<Spinner />
 							</Item.Media>
 							<Item.Content>
-								<Item.Title class="line-clamp-1">Generating challenges...</Item.Title>
-							</Item.Content>
-							<Item.Content class="flex-none justify-end">
-								<span class="text-sm tabular-nums">10 queue</span>
+								<Item.Title class="line-clamp-1">Generating your first challenges...</Item.Title>
+								<span class="text-sm tabular-nums text-xs italic text-neutral-500 leading-2">
+									(may need up to 10 minutes, refresh periodically)
+								</span>
 							</Item.Content>
 						</Item.Root>
 					</div>

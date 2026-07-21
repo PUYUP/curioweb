@@ -56,11 +56,21 @@
 		// },
 		{
 			title: 'Billing',
-			url: '#',
+			url: '/billing',
 			icon: mdiCreditCardOutline,
 			badge: ''
 		}
 	];
+
+	// grab sidebar context so we can close it programmatically
+	const sidebar = Sidebar.useSidebar();
+
+	function handleMenuClick() {
+		// closes the mobile sheet
+		sidebar.setOpenMobile(false);
+		// optional: also collapse the desktop sidebar on click
+		// if (!sidebar.isMobile) sidebar.setOpen(false);
+	}
 </script>
 
 <Sidebar.Root>
@@ -88,7 +98,7 @@
 				<Sidebar.MenuItem class="!px-2">
 					<Sidebar.MenuButton>
 						{#snippet child({ props })}
-							<a href={item.url} {...props}>
+							<a href={item.url} onclick={handleMenuClick} {...props}>
 								<Icon path={item.icon} size="1.25rem" />
 								<span>{item.title}</span>
 							</a>
