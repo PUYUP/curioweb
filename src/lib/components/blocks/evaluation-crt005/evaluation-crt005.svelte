@@ -7,30 +7,34 @@
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { cubicInOut } from 'svelte/easing';
-	import { parse, format } from 'date-fns';
+	import { format, parse } from 'date-fns';
 
-	type SoloDatum = {
+	type HotsDatum = {
 		month: string;
 		year: string;
-		prestructural: number;
-		unistructural: number;
-		multistructural: number;
-		relational: number;
-		extended_abstract: number;
+		content_mastery: number;
+		logical_flow: number;
+		critical_thinking: number;
+		academic_language: number;
+		cognitive_synthesis: number;
+		memory_retention: number;
+		cognitive_stretch: number;
 	};
 
-	let chartData = $state<SoloDatum[]>([]);
+	let chartData = $state<HotsDatum[]>([]);
 
 	const chartConfig = {
-		prestructural: { label: 'Prestructural', color: 'var(--chart-1)' },
-		unistructural: { label: 'Unistructural', color: 'var(--chart-2)' },
-		multistructural: { label: 'Multistructural', color: 'var(--chart-3)' },
-		relational: { label: 'Relational', color: 'var(--chart-4)' },
-		extended_abstract: { label: 'Extended Abstract', color: 'var(--chart-5)' }
+		content_mastery: { label: 'Content Mastery', color: 'var(--chart-1)' },
+		logical_flow: { label: 'Logical Flow', color: 'var(--chart-2)' },
+		critical_thinking: { label: 'Critical Thinking', color: 'var(--chart-3)' },
+		academic_language: { label: 'Academic Language', color: 'var(--chart-4)' },
+		cognitive_synthesis: { label: 'Cognitive Synthesis', color: 'var(--chart-5)' },
+		memory_retention: { label: 'Memory Retention', color: 'var(--chart-6)' },
+		cognitive_stretch: { label: 'Cognitive Stretch', color: 'var(--chart-7)' }
 	} satisfies Chart.ChartConfig;
 
-	async function getSummary(): Promise<any[] | null> {
-		const response = await fetch(`/api/evaluations/solos`, {
+	async function getSummary(): Promise<string[] | null> {
+		const response = await fetch(`/api/evaluations/hots`, {
 			method: 'GET'
 		});
 
@@ -62,11 +66,13 @@
 				return {
 					month: format(dateObj, 'MMMM'),
 					year: format(dateObj, 'yyyy'),
-					prestructural: Number(r.summary.prestructural),
-					unistructural: Number(r.summary.unistructural),
-					multistructural: Number(r.summary.multistructural),
-					relational: Number(r.summary.relational),
-					extended_abstract: Number(r.summary.extended_abstract)
+					content_mastery: Number(r.summary.content_mastery),
+					logical_flow: Number(r.summary.logical_flow),
+					critical_thinking: Number(r.summary.critical_thinking),
+					academic_language: Number(r.summary.academic_language),
+					cognitive_synthesis: Number(r.summary.cognitive_synthesis),
+					memory_retention: Number(r.summary.memory_retention),
+					cognitive_stretch: Number(r.summary.cognitive_stretch)
 				};
 			});
 
@@ -77,7 +83,7 @@
 
 <Card.Root class="h-full">
 	<Card.Header>
-		<Card.Title>Structure of the Observed Learning Outcome</Card.Title>
+		<Card.Title>Multidimensional Cognitive Assessment</Card.Title>
 		<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
 	</Card.Header>
 	<Card.Content>
@@ -88,18 +94,36 @@
 				x="month"
 				axis="x"
 				series={[
-					{ key: 'prestructural', label: 'Prestructural', color: chartConfig.prestructural.color },
-					{ key: 'unistructural', label: 'Unistructural', color: chartConfig.unistructural.color },
 					{
-						key: 'multistructural',
-						label: 'Multistructural',
-						color: chartConfig.multistructural.color
+						key: 'content_mastery',
+						label: 'Content Mastery',
+						color: chartConfig.content_mastery.color
 					},
-					{ key: 'relational', label: 'Relational', color: chartConfig.relational.color },
+					{ key: 'logical_flow', label: 'Logical Flow', color: chartConfig.logical_flow.color },
 					{
-						key: 'extended_abstract',
-						label: 'Extended Abstract',
-						color: chartConfig.extended_abstract.color
+						key: 'critical_thinking',
+						label: 'Critical Thinking',
+						color: chartConfig.critical_thinking.color
+					},
+					{
+						key: 'academic_language',
+						label: 'Academic Language',
+						color: chartConfig.academic_language.color
+					},
+					{
+						key: 'cognitive_synthesis',
+						label: 'Cognitive Synthesis',
+						color: chartConfig.cognitive_synthesis.color
+					},
+					{
+						key: 'memory_retention',
+						label: 'Memory Retention',
+						color: chartConfig.memory_retention.color
+					},
+					{
+						key: 'cognitive_stretch',
+						label: 'Cognitive Stretch',
+						color: chartConfig.cognitive_stretch.color
 					}
 				]}
 				x1Scale={scaleBand().paddingInner(0.2)}

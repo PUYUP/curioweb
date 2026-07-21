@@ -47,7 +47,6 @@
 
 	// ---- Assessment ----
 	let answerEvaluations = $state<Record<string, any>>({});
-	let drawerEvaluationOpen = $state(false);
 	let hasEvaluated = $state<boolean>(false);
 
 	$effect(() => {

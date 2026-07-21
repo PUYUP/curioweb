@@ -51,8 +51,8 @@
 	});
 
 	const chartConfig = {
-		paper_a: { label: 'Paper A', color: 'var(--radar-chart-1)' },
-		paper_z: { label: 'Paper Z', color: 'var(--radar-chart-2)' }
+		paper_a: { label: 'Paper A', color: 'var(--chart-1)' },
+		paper_z: { label: 'Paper Z', color: 'var(--chart-3)' }
 	} satisfies Chart.ChartConfig;
 </script>
 

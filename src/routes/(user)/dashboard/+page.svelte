@@ -8,6 +8,7 @@
 	import type { LayoutServerData } from '../$types';
 	import EvaluationCrt001 from '@/lib/components/blocks/evaluation-crt001/evaluation-crt001.svelte';
 	import EvaluationCrt002 from '@/lib/components/blocks/evaluation-crt002/evaluation-crt002.svelte';
+	import EvaluationCrt005 from '@/lib/components/blocks/evaluation-crt005/evaluation-crt005.svelte';
 
 	const { data }: { data: LayoutServerData } = $props();
 
@@ -63,25 +64,13 @@
 		</div>
 	</div>
 
-	<div class="p-4">
-		<EvaluationCrt002 />
-	</div>
-
-	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4 gap-6 px-4 mt-2">
+	<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4 gap-6 px-4 mt-6">
 		<div class="block">
 			<EvaluationCrt001 />
 		</div>
 
 		<div class="block">
-			<EvaluationCrt001 />
-		</div>
-
-		<div class="block">
-			<EvaluationCrt001 />
-		</div>
-
-		<div class="block">
-			<EvaluationCrt001 />
+			<EvaluationCrt005 />
 		</div>
 	</div>
 </div>
