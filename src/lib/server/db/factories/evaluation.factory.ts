@@ -70,8 +70,7 @@ class EvaluationFactory {
                 ) sub
             `);
 
-            const rows = result as unknown as { rows: { data: MonthlySummary[] | null }[] };
-            return rows.rows[0]?.data ?? [];
+            return result?.[0]?.[0] as MonthlySummary[] ?? [];
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error("Failed to get monthly solo summary", { cause: error });
@@ -108,8 +107,7 @@ class EvaluationFactory {
                 ) sub
             `);
 
-            const rows = result as unknown as { rows: { data: MonthlySummary[] | null }[] };
-            return rows.rows[0]?.data ?? [];
+            return result?.[0]?.[0] as MonthlySummary[] ?? [];
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error("Failed to get monthly hots summary", { cause: error });

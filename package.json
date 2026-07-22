@@ -65,6 +65,7 @@
 		"@polar-sh/better-auth": "^1.8.4",
 		"@polar-sh/sdk": "^0.47.1",
 		"@polar-sh/sveltekit": "^0.7.6",
+		"@supabase/supabase-js": "^2.110.8",
 		"@tailwindcss/vite": "^4.3.1",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
@@ -72,6 +73,7 @@
 		"marked": "^18.0.5",
 		"mdi-svelte": "^1.1.2",
 		"pg": "^8.22.0",
+		"postgres": "^3.4.9",
 		"tailwindcss": "^4.3.1",
 		"zod": "^4.4.3"
 	}
