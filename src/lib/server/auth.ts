@@ -5,6 +5,7 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
 import { upsertProfile } from './db/factories/profle.factory';
+import * as schema from '$lib/server/db/schemas/schema';
 import { polar, checkout, portal, usage, webhooks } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 
@@ -16,7 +17,14 @@ export const polarClient = new Polar({
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
 	secret: env.BETTER_AUTH_SECRET,
-	database: drizzleAdapter(db, { provider: 'pg' }),
+	database: drizzleAdapter(
+		db,
+		{
+			provider: 'pg',
+			schema: schema,
+			usePlural: false,
+		}
+	),
 	emailAndPassword: { enabled: true },
 	plugins: [
 		sveltekitCookies(getRequestEvent), // make sure this is the last plugin in the array
@@ -56,6 +64,7 @@ export const auth = betterAuth({
 		}
 	},
 	advanced: {
+		useCookieForState: true,
 		database: {
 			generateId: false // Tells Better Auth to let Postgres/ORM handle the ID
 		}
