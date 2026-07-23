@@ -121,6 +121,9 @@
 			if (result.type === 'success') {
 				lastSavedValue = textValue;
 				draftStatus = 'saved';
+
+				// update challenge status
+				updateStatus(data.challenge.id, 'active');
 			} else {
 				draftStatus = 'error';
 			}
