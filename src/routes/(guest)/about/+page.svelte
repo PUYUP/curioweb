@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Footer } from '@/lib/components/blocks/footer';
 </script>
 
 <svelte:head>
@@ -106,6 +107,8 @@
 		<p>If you have any question, feel free to contact us.</p>
 	</div>
 </div>
+
+<Footer />
 
 <style>
 	p + p {
