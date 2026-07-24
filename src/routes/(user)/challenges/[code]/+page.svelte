@@ -16,6 +16,7 @@
 	import { mdiChevronRight } from '@mdi/js';
 	import { EvaluationCRT003 } from '@/lib/components/blocks/evaluation-crt003';
 	import { EvaluationCRT004 } from '@/lib/components/blocks/evaluation-crt004';
+	import type { SaveAnswerInput } from '@/lib/types/models';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -107,18 +108,23 @@
 			const formData = new FormData();
 			formData.set('content', textValue);
 
-			const response = await fetch('?/draft', {
+			const payload = {
+				...Object.fromEntries(formData.entries()),
+				challengeId: data.challenge.id,
+				status: 'draft',
+				submittedAt: null
+			};
+
+			const response = await fetch('/api/answers/save-draft', {
 				method: 'POST',
-				body: formData
+				body: JSON.stringify(payload)
 			});
 
 			const result = deserialize(await response.text());
 
-			if (result.type === 'success' || result.type === 'failure') {
+			if (result) {
 				await applyAction(result);
-			}
 
-			if (result.type === 'success') {
 				lastSavedValue = textValue;
 				draftStatus = 'saved';
 
