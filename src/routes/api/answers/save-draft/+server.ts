@@ -12,7 +12,6 @@ export async function POST({ request, locals }: RequestEvent) {
 
     const payload: SaveAnswerInput = await request.json();
     payload.userId = locals.user.id;
-    console.log("payload", payload);
 
     try {
         const result = await challengeFactory.saveAnswer(payload);
