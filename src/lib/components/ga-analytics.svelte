@@ -14,8 +14,6 @@
 				send_to: gaId
 			});
 		}
-
-		console.log('test', gaId, dev, browser);
 	});
 </script>
 
