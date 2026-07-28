@@ -43,7 +43,7 @@
 		// 	badge: ''
 		// },
 		{
-			title: 'Archives',
+			title: 'Challenges',
 			url: '/challenges',
 			icon: mdiArchiveOutline,
 			badge: ''
@@ -55,8 +55,8 @@
 		// 	badge: ''
 		// },
 		{
-			title: 'Billing',
-			url: '/billing',
+			title: 'Subscriptions',
+			url: '/subscription',
 			icon: mdiCreditCardOutline,
 			badge: ''
 		}

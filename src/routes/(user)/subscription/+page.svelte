@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-	<title>ATLANIZE - Billing Management</title>
+	<title>ATLANIZE - Subscriptions</title>
 	<meta
 		name="description"
 		content="Discover the latest research and challenge your curiosity with ATLANIZE."
