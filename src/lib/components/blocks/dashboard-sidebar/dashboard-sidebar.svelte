@@ -9,7 +9,9 @@
 		mdiAccount,
 		mdiArchiveOutline,
 		mdiCreditCardOutline,
-		mdiNoteOutline
+		mdiNoteOutline,
+		mdiFolder,
+		mdiAccountSchoolOutline
 	} from '@mdi/js';
 
 	let { user }: { user: any } = $props();
@@ -45,15 +47,15 @@
 		{
 			title: 'Challenges',
 			url: '/challenges',
-			icon: mdiArchiveOutline,
+			icon: mdiAccountSchoolOutline,
 			badge: ''
 		},
-		// {
-		// 	title: 'Research Context',
-		// 	url: '/research-context',
-		// 	icon: mdiConnection,
-		// 	badge: ''
-		// },
+		{
+			title: 'Workspaces',
+			url: '/workspaces',
+			icon: mdiNoteOutline,
+			badge: ''
+		},
 		{
 			title: 'Subscriptions',
 			url: '/subscription',

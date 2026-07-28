@@ -16,7 +16,6 @@
 	import { mdiChevronRight } from '@mdi/js';
 	import { EvaluationCRT003 } from '@/lib/components/blocks/evaluation-crt003';
 	import { EvaluationCRT004 } from '@/lib/components/blocks/evaluation-crt004';
-	import type { SaveAnswerInput } from '@/lib/types/models';
 
 	let { code } = page.params;
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
