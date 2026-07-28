@@ -7,7 +7,6 @@
 	import ChallengeItem from '@/lib/components/blocks/challenge-item/challenge-item.svelte';
 	import type { LayoutServerData } from '../$types';
 	import EvaluationCrt001 from '@/lib/components/blocks/evaluation-crt001/evaluation-crt001.svelte';
-	import EvaluationCrt002 from '@/lib/components/blocks/evaluation-crt002/evaluation-crt002.svelte';
 	import EvaluationCrt005 from '@/lib/components/blocks/evaluation-crt005/evaluation-crt005.svelte';
 
 	const { data }: { data: LayoutServerData } = $props();

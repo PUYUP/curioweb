@@ -14,6 +14,11 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Window {
+		dataLayer: unknown[];
+		gtag: (...args: unknown[]) => void;
+	}
 }
 
-export {};
+export { };
