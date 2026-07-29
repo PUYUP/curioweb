@@ -50,7 +50,7 @@
 	async function handleDelete() {
 		if (confirm('Are you sure you want to delete this research context?')) {
 			deleting = true;
-			const response = await fetch(`/api/workspaces/${context?.id}`, {
+			const response = await fetch(`/api/contexts/${context?.id}`, {
 				method: 'DELETE'
 			});
 			if (response.ok) {
@@ -78,6 +78,18 @@
 <div class="pb-4 px-4">
 	<div class="mb-4 flex items-center border-b border-neutral-200 pb-2">
 		<h1>{context ? 'Edit Research Context' : 'New Research Context'}</h1>
+		{#if context}
+			<Button
+				type="button"
+				class="ml-auto text-red-600"
+				variant="link"
+				disabled={saving || deleting}
+				onclick={handleDelete}
+			>
+				<Icon path={mdiDeleteOutline} size="1rem" />
+				Delete
+			</Button>
+		{/if}
 	</div>
 
 	<div class="w-full xl:w-3/7">
@@ -89,6 +101,7 @@
 					name="content"
 					bind:value={formValues.content}
 					placeholder="Research context content"
+					class="!text-sm"
 					required
 				/>
 			</div>

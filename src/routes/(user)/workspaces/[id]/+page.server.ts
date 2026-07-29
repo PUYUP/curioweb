@@ -1,22 +1,34 @@
 import { db } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import { redirect } from "@sveltejs/kit";
-import { workspaces } from "$lib/server/db/schemas/workspace.schema.js";
+import { researchContexts, workspaces } from "$lib/server/db/schemas/workspace.schema.js";
 
 export const load = async ({ locals, params }) => {
     if (!locals.user) {
         return redirect(302, '/auth/login');
     }
 
+    const workspaceId = params.id;
+
     try {
-        const [result] = await db.select()
+        const [workspace] = await db.select()
             .from(workspaces)
-            .where(eq(workspaces.id, params.id))
+            .where(eq(workspaces.id, workspaceId))
             .limit(1);
 
-        return { workspace: result };
+        const contexts = await db.select()
+            .from(researchContexts)
+            .where(eq(researchContexts.workspaceId, workspaceId));
+
+        return {
+            workspace: workspace,
+            contexts: contexts
+        };
     } catch (error) {
         console.error("Error fetching workspace:", error);
-        return { workspace: null };
+        return {
+            workspace: null,
+            contexts: []
+        };
     }
 };

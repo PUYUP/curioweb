@@ -1,32 +1,26 @@
 <script lang="ts">
 	import { Spinner } from '@/lib/components/ui/spinner';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import type { PageData } from './$types';
 	import { Button } from '@/lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Icon from 'mdi-svelte';
 	import { mdiPlus } from '@mdi/js';
 	import { goto } from '$app/navigation';
+	import type { PageServerData } from './$types';
 
 	let loading: boolean = $state<boolean>(true);
+	let loadingContexts: boolean = $state<boolean>(true);
 
-	const { data } = $props() as { data: PageData };
+	const { data }: { data: PageServerData } = $props();
 	const workspace = $derived(data.workspace);
-
-	const samples: any[] = [
-		{
-			content:
-				'Fokus pada perkembangan Large Language Models (LLM), AI Agents, Multimodal AI, Robotics, dan Generative AI.'
-		},
-		{
-			content:
-				'Buat perbandingan tools AI terbaik untuk produktivitas. Kelompokkan berdasarkan kategori seperti AI Chatbot, AI Coding Assistant, AI Image Generator, AI Video Generator, AI Meeting Assistant, dan AI Automation. Bandingkan fitur, harga, kelebihan, kekurangan, dan use case masing-masing.'
-		}
-	];
+	const contexts = $derived(data.contexts);
 
 	$effect(() => {
 		if (workspace) {
 			loading = false;
+		}
+
+		if (contexts) {
+			loadingContexts = false;
 		}
 	});
 </script>
@@ -61,19 +55,35 @@
 			<span class="text-sm">Research Contexts</span>
 		</div>
 
-		{#if samples.length > 0}
-			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-				{#each samples as sample}
+		{#if contexts.length > 0}
+			<div
+				class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+			>
+				{#each contexts as context}
 					<Card.Root>
 						<Card.Content>
-							<p class="text-sm">{sample.content}</p>
+							<p class="text-sm">{context.content}</p>
 						</Card.Content>
 						<Card.Footer class="mt-auto grid grid-cols-2 gap-4 w-full border-t border-neutral-200">
 							<div class="block">
-								<Button variant="link" class="w-full">Edit</Button>
+								<Button
+									variant="link"
+									class="w-full"
+									onclick={() =>
+										goto(`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`)}
+								>
+									Edit
+								</Button>
 							</div>
 							<div class="block">
-								<Button variant="outline" class="w-full">View</Button>
+								<Button
+									variant="outline"
+									class="w-full bg-neutral-50"
+									onclick={() =>
+										goto(`/workspaces/${context?.workspaceId}/contexts/${context?.id}`)}
+								>
+									View Papers
+								</Button>
 							</div>
 						</Card.Footer>
 					</Card.Root>

@@ -110,6 +110,7 @@ export const actions = {
             const [context] = await db.update(researchContexts)
                 .set({
                     content: content,
+                    updatedAt: new Date(),
                 })
                 .where(eq(researchContexts.id, id))
                 .returning();
