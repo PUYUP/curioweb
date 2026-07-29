@@ -11,6 +11,7 @@
 
 	const { data }: { data: PageServerData } = $props();
 
+	const { workspace } = $derived(data);
 	let saving: boolean = $state<boolean>(false);
 	let deleting: boolean = $state<boolean>(false);
 
@@ -77,7 +78,12 @@
 
 <div class="pb-4 px-4">
 	<div class="mb-4 flex items-center border-b border-neutral-200 pb-2">
-		<h1>{context ? 'Edit Research Context' : 'New Research Context'}</h1>
+		<div class="block">
+			<div class="block text-xs text-neutral-500">
+				{context?.workspace?.title || workspace?.title}
+			</div>
+			<h1>{context ? 'Edit Research Context' : 'New Research Context'}</h1>
+		</div>
 		{#if context}
 			<Button
 				type="button"

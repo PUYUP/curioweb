@@ -33,9 +33,9 @@
 	</div>
 
 	<div class="w-full md:w-3/6 text-sm">
-		Collections of workspaces where papers are <strong
-			>retrieved using sentence-level contexts</strong
-		>, enabling more precise discovery than abstract and citation based search.
+		Collections of workspaces where papers are
+		<strong>retrieved using sentence-level contexts</strong>, enabling more precise discovery than
+		abstract and citation based search.
 	</div>
 
 	<div class="mt-6">

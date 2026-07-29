@@ -55,10 +55,8 @@
 			<span class="text-sm">Research Contexts</span>
 		</div>
 
-		{#if contexts.length > 0}
-			<div
-				class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-			>
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+			{#if contexts.length > 0}
 				{#each contexts as context}
 					<Card.Root>
 						<Card.Content>
@@ -88,17 +86,19 @@
 						</Card.Footer>
 					</Card.Root>
 				{/each}
-
-				<Card.Root
-					class="cursor-pointer hover:bg-neutral-100"
-					onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
-				>
-					<Card.Content class="flex flex-col items-center justify-center h-full">
-						<Icon path={mdiPlus} size="1.5rem" />
-						<p class="text-sm">Add New</p>
-					</Card.Content>
-				</Card.Root>
-			</div>
-		{/if}
+			{/if}
+			<Card.Root
+				class="cursor-pointer hover:bg-neutral-100"
+				onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
+			>
+				<Card.Content class="flex flex-col items-center justify-center h-full">
+					<Icon path={mdiPlus} size="1.5rem" />
+					<p class="text-sm mb-2">Add New</p>
+					<p class="text-xs text-neutral-500 text-center">
+						Retrieve papers using sentence-level contextual search
+					</p>
+				</Card.Content>
+			</Card.Root>
+		</div>
 	{/if}
 </div>
