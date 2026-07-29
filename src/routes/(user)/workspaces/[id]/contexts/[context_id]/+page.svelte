@@ -22,7 +22,7 @@
 		</div>
 	</div>
 
-	<div class="w-full md:w-3/6 pb-4">
+	<div class="w-full xl:w-3/6 pb-4">
 		<p>{context?.content}</p>
 	</div>
 </div>
