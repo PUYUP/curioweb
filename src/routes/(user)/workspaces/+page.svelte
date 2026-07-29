@@ -33,8 +33,9 @@
 	</div>
 
 	<div class="w-full md:w-3/6 text-sm">
-		Collections of workspaces you are currently working on. Use it to view, organize, and continue
-		your ongoing work.
+		Collections of workspaces where papers are <strong
+			>retrieved using sentence-level contexts</strong
+		>, enabling more precise discovery than abstract and citation based search.
 	</div>
 
 	<div class="mt-6">
