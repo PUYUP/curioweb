@@ -7,7 +7,6 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
 	import { mdiDeleteOutline, mdiContentSaveOutline } from '@mdi/js';
-	import type { PageData } from '../../$types';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
@@ -44,6 +43,7 @@
 	$effect(() => {
 		if (context) {
 			formValues.content = context.content || '';
+			console.log(context);
 		}
 	});
 
@@ -109,6 +109,8 @@
 			{#if context}
 				<input type="hidden" name="id" value={context.id} />
 			{/if}
+
+			<input type="hidden" name="languageCode" value={context?.workspace?.languageCode} />
 
 			<div class="flex justify-start">
 				<Button type="submit" disabled={saving || deleting}>

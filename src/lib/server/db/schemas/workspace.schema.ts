@@ -8,6 +8,7 @@ export const workspaces = pgTable('workspaces', {
         .default(sql`gen_random_uuid()`),
     title: text('title').notNull(),
     description: text('description'),
+    languageCode: text('language_code').notNull().default('en'),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),
@@ -32,6 +33,7 @@ export const researchContexts = pgTable('contexts', {
         .notNull()
         .references(() => workspaces.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
+    languageCode: text('language_code').notNull().default('en'),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),

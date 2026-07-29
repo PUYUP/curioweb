@@ -1,7 +1,7 @@
 import { db } from "@/lib/server/db";
-import { researchContexts } from "@/lib/server/db/schemas/workspace.schema";
+import { researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { redirect } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 
 export const load = async ({ locals, params, url }) => {
     if (!locals.user) {
@@ -17,8 +17,12 @@ export const load = async ({ locals, params, url }) => {
     }
 
     try {
-        const [result] = await db.select()
+        const [result] = await db.select({
+            ...getTableColumns(researchContexts),
+            workspace: workspaces
+        })
             .from(researchContexts)
+            .leftJoin(workspaces, eq(researchContexts.workspaceId, workspaces.id))
             .where(eq(researchContexts.id, entityId))
             .limit(1);
 
@@ -41,6 +45,7 @@ export const actions = {
 
         const formData = await request.formData();
         const content = formData.get('content')?.toString() || '';
+        const languageCode = formData.get('languageCode')?.toString() || '';
         const workspaceId = params.id;
 
         if (!content) {
@@ -63,6 +68,7 @@ export const actions = {
                     content: content,
                     userId: user.id,
                     workspaceId: workspaceId,
+                    languageCode: languageCode,
                 })
                 .returning();
 
@@ -91,6 +97,7 @@ export const actions = {
         const formData = await request.formData();
         const id = formData.get('id')?.toString();
         const content = formData.get('content')?.toString() || '';
+        const languageCode = formData.get('languageCode')?.toString() || '';
 
         if (!id) {
             return {
@@ -110,6 +117,7 @@ export const actions = {
             const [context] = await db.update(researchContexts)
                 .set({
                     content: content,
+                    languageCode: languageCode,
                     updatedAt: new Date(),
                 })
                 .where(eq(researchContexts.id, id))

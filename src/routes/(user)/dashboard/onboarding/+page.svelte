@@ -66,11 +66,11 @@
 			<div class="text-sm mb-2 text-neutral-600">Preferred language*</div>
 
 			<Select.Root type="single" name="languageCode" required bind:value={selectedLanguage}>
-				<Select.Trigger class="w-[220px]">
+				<Select.Trigger class="w-full">
 					{triggerContent}
 				</Select.Trigger>
 
-				<Select.Content class="w-[220px] max-h-[300px]">
+				<Select.Content class="w-full max-h-[300px]">
 					<Select.Group>
 						<Select.Label>Languages</Select.Label>
 						{#each languages as language (language.code)}

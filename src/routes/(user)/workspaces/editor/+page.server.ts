@@ -43,11 +43,12 @@ export const actions = {
         const formData = await request.formData();
         const title = formData.get('title');
         const description = formData.get('description');
+        const languageCode = formData.get('languageCode');
 
-        if (!title) {
+        if (!title || !languageCode) {
             return fail(400, {
                 success: false,
-                message: "Title is required"
+                message: "Title and language code are required"
             })
         }
 
@@ -55,6 +56,7 @@ export const actions = {
             const [result] = await db.insert(workspaces).values({
                 title: title as string,
                 description: description as string,
+                languageCode: languageCode as string,
                 userId: user.id
             }).returning()
 
@@ -86,11 +88,12 @@ export const actions = {
         const id = formData.get('id');
         const title = formData.get('title');
         const description = formData.get('description');
+        const languageCode = formData.get('languageCode');
 
-        if (!title || !id) {
+        if (!title || !id || !languageCode) {
             return fail(400, {
                 success: false,
-                message: "Title and ID are required"
+                message: "Title and ID and language code are required"
             })
         }
 
@@ -99,6 +102,7 @@ export const actions = {
                 .set({
                     title: title as string,
                     description: description as string,
+                    languageCode: languageCode as string,
                     userId: user.id,
                     updatedAt: new Date(),
                 })

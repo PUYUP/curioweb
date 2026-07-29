@@ -5,19 +5,27 @@
 	import { Button } from '@/lib/components/ui/button';
 	import { Label } from '@/lib/components/ui/label';
 	import { Textarea } from '@/lib/components/ui/textarea';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import type { PageData } from '../[id]/$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
 	import { mdiDeleteOutline, mdiContentSaveOutline } from '@mdi/js';
+	import languages from '$lib/assets/data/ISO-639-1-language.json';
 
 	const { data } = $props() as { data: PageData };
 
 	let saving: boolean = $state<boolean>(false);
 	let deleting: boolean = $state<boolean>(false);
+	let selectedLanguage = $state('en');
 
-	let formValues: { title: string; description: string } = $state({
+	let formValues: {
+		title: string;
+		description: string;
+		languageCode: string;
+	} = $state({
 		title: '',
-		description: ''
+		description: '',
+		languageCode: 'en'
 	});
 
 	const handleSubmit: SubmitFunction = ({ cancel }) => {
@@ -45,6 +53,8 @@
 		if (workspace) {
 			formValues.title = workspace.title || '';
 			formValues.description = workspace.description || '';
+			formValues.languageCode = workspace.languageCode || '';
+			selectedLanguage = workspace.languageCode || 'en';
 		}
 	});
 
@@ -60,6 +70,10 @@
 			}
 		}
 	}
+
+	const triggerContent = $derived(
+		languages.find((f) => f.code === selectedLanguage)?.name?.split(';')?.[0] ?? 'Select languages'
+	);
 </script>
 
 <svelte:head>
@@ -105,6 +119,27 @@
 					placeholder="Workspace name"
 					required
 				/>
+			</div>
+
+			<div class="mb-4">
+				<Label for="languageCode" class="mb-2">Preferred language*</Label>
+
+				<Select.Root type="single" name="languageCode" required bind:value={selectedLanguage}>
+					<Select.Trigger class="w-full">
+						{triggerContent}
+					</Select.Trigger>
+
+					<Select.Content class="w-full max-h-[300px]">
+						<Select.Group>
+							<Select.Label>Languages</Select.Label>
+							{#each languages as language (language.code)}
+								<Select.Item value={language.code} label={language.name.split(';')?.[0]}>
+									{language.name.split(';')?.[0]}
+								</Select.Item>
+							{/each}
+						</Select.Group>
+					</Select.Content>
+				</Select.Root>
 			</div>
 
 			<div class="mb-4">
