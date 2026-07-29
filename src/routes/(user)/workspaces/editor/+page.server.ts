@@ -99,7 +99,8 @@ export const actions = {
                 .set({
                     title: title as string,
                     description: description as string,
-                    userId: user.id
+                    userId: user.id,
+                    updatedAt: new Date(),
                 })
                 .where(eq(workspaces.id, id as string))
                 .returning()

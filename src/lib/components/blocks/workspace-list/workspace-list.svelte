@@ -14,7 +14,7 @@
 					<Item.Content>
 						<Item.Title class="!mb-0">{item.title}</Item.Title>
 						{#if item.description}
-							<Item.Description>{item.description}</Item.Description>
+							<Item.Description class="line-clamp-2">{item.description}</Item.Description>
 						{/if}
 					</Item.Content>
 

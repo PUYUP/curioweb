@@ -1,0 +1,129 @@
+import { db } from "@/lib/server/db";
+import { researchContexts } from "@/lib/server/db/schemas/workspace.schema";
+import { redirect } from "@sveltejs/kit";
+import { eq } from "drizzle-orm";
+
+export const load = async ({ locals, params, url }) => {
+    if (!locals.user) {
+        return redirect(302, '/auth/login');
+    }
+
+    const entityId = url.searchParams.get('id');
+
+    if (!entityId) {
+        return {
+            context: null
+        }
+    }
+
+    try {
+        const [result] = await db.select()
+            .from(researchContexts)
+            .where(eq(researchContexts.id, entityId))
+            .limit(1);
+
+        return { context: result };
+    } catch (error) {
+        console.error("Error fetching workspace:", error);
+        return { context: null };
+    }
+};
+
+export const actions = {
+    insert: async ({ request, locals, params }) => {
+        const user = locals.user;
+        if (!user) {
+            return {
+                success: false,
+                message: "Unauthorized"
+            };
+        }
+
+        const formData = await request.formData();
+        const content = formData.get('content')?.toString() || '';
+        const workspaceId = params.id;
+
+        if (!content) {
+            return {
+                success: false,
+                message: "Content is required"
+            };
+        }
+
+        if (!workspaceId) {
+            return {
+                success: false,
+                message: "Workspace ID is required"
+            };
+        }
+
+        try {
+            const [context] = await db.insert(researchContexts)
+                .values({
+                    content: content,
+                    userId: user.id,
+                    workspaceId: workspaceId,
+                })
+                .returning();
+
+            return {
+                success: true,
+                context
+            };
+        } catch (error) {
+            console.error("Error creating context:", error);
+            return {
+                success: false,
+                message: "Failed to create context"
+            };
+        }
+    },
+
+    update: async ({ request, locals }) => {
+        const user = locals.user;
+        if (!user) {
+            return {
+                success: false,
+                message: "Unauthorized"
+            };
+        }
+
+        const formData = await request.formData();
+        const id = formData.get('id')?.toString();
+        const content = formData.get('content')?.toString() || '';
+
+        if (!id) {
+            return {
+                success: false,
+                message: "Context ID is required"
+            };
+        }
+
+        if (!content) {
+            return {
+                success: false,
+                message: "Content is required"
+            };
+        }
+
+        try {
+            const [context] = await db.update(researchContexts)
+                .set({
+                    content: content,
+                })
+                .where(eq(researchContexts.id, id))
+                .returning();
+
+            return {
+                success: true,
+                context
+            };
+        } catch (error) {
+            console.error("Error updating context:", error);
+            return {
+                success: false,
+                message: "Failed to update context"
+            };
+        }
+    }
+};
