@@ -1,6 +1,6 @@
 import { db } from "@/lib/server/db";
 import { researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
-import { countWords, MIN_CONTENT_WORDS } from "@/lib/utils";
+import { countWords, MAX_CONTENT_WORDS, MIN_CONTENT_WORDS } from "@/lib/utils";
 import { fail, redirect } from "@sveltejs/kit";
 import { eq, getTableColumns } from "drizzle-orm";
 
@@ -75,10 +75,10 @@ export const actions = {
         }
 
         const wordCount = countWords(content);
-        if (wordCount < MIN_CONTENT_WORDS) {
+        if (wordCount < MIN_CONTENT_WORDS || wordCount > MAX_CONTENT_WORDS) {
             return fail(400, {
                 success: false,
-                message: `Content must be at least ${MIN_CONTENT_WORDS} words (currently ${wordCount})`
+                message: `Content must be between ${MIN_CONTENT_WORDS} and ${MAX_CONTENT_WORDS} words (currently ${wordCount})`
             });
         }
 
@@ -141,10 +141,10 @@ export const actions = {
         }
 
         const wordCount = countWords(content);
-        if (wordCount < MIN_CONTENT_WORDS) {
+        if (wordCount < MIN_CONTENT_WORDS || wordCount > MAX_CONTENT_WORDS) {
             return fail(400, {
                 success: false,
-                message: `Content must be at least ${MIN_CONTENT_WORDS} words (currently ${wordCount})`
+                message: `Content must be between ${MIN_CONTENT_WORDS} and ${MAX_CONTENT_WORDS} words (currently ${wordCount})`
             });
         }
 

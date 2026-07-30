@@ -8,7 +8,7 @@
 	import Icon from 'mdi-svelte';
 	import { mdiDeleteOutline, mdiContentSaveOutline, mdiAlertCircleOutline } from '@mdi/js';
 	import type { PageServerData } from './$types';
-	import { countWords, MIN_CONTENT_WORDS } from '@/lib/utils';
+	import { countWords, MAX_CONTENT_WORDS, MIN_CONTENT_WORDS } from '@/lib/utils';
 
 	const { data }: { data: PageServerData } = $props();
 	const { workspace, context } = $derived(data);
@@ -146,7 +146,13 @@
 			<input type="hidden" name="languageCode" value={workspace?.languageCode || 'en'} />
 
 			<div class="flex justify-start">
-				<Button type="submit" disabled={saving || deleting}>
+				<Button
+					type="submit"
+					disabled={saving ||
+						deleting ||
+						countWords(formValues.content) < MIN_CONTENT_WORDS ||
+						countWords(formValues.content) > MAX_CONTENT_WORDS}
+				>
 					{#if saving}
 						Saving...
 					{:else}
@@ -161,13 +167,15 @@
 
 				<div class="ml-auto flex items-center gap-2 text-xs">
 					<div
-						class={countWords(formValues.content) >= MIN_CONTENT_WORDS
+						class={countWords(formValues.content) >= MIN_CONTENT_WORDS &&
+						countWords(formValues.content) <= MAX_CONTENT_WORDS
 							? 'text-green-600'
 							: 'text-red-600'}
 					>
 						{countWords(formValues.content)} / {MIN_CONTENT_WORDS}
-						words
 					</div>
+
+					<div>max {MAX_CONTENT_WORDS} words</div>
 				</div>
 			</div>
 		</form>

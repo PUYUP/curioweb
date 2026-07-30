@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '@/lib/components/ui/button';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import Icon from 'mdi-svelte';
 	import { mdiArrowRight } from '@mdi/js';
 	import type { PageServerData } from './$types';
@@ -18,6 +19,17 @@
 	// svelte-ignore state_referenced_locally
 	console.log(context);
 </script>
+
+<svelte:head>
+	<title>Research Context - {context?.workspace?.title}</title>
+	<meta name="description" content="Research Context - {context?.workspace?.title}" />
+	<meta
+		name="keywords"
+		content="research, curiosity, science, AI, bioinformatics, computational
+		bology, data analysis, technology, education"
+	/>
+	<meta name="author" content="ATLANIZE" />
+</svelte:head>
 
 <div class="px-4 pb-4">
 	<div class="mb-4 border-b border-neutral-200 pb-2">
@@ -42,6 +54,13 @@
 				<Button variant="outline" size="sm" onclick={viewChunkHandler}>
 					View {context.chunks.length} Chunks <Icon path={mdiArrowRight} size={0.65} />
 				</Button>
+			{:else}
+				<div class="flex items-center gap-2">
+					<Spinner />
+					<p class="text-xs text-neutral-500">
+						Chunkings on progress... refresh this page simultanously
+					</p>
+				</div>
 			{/if}
 		</div>
 	</div>
