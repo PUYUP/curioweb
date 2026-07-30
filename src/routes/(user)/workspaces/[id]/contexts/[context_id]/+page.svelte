@@ -5,6 +5,9 @@
 	const { data }: { data: PageServerData } = $props();
 
 	let { context } = $derived(data);
+
+	// svelte-ignore state_referenced_locally
+	console.log(context);
 </script>
 
 <div class="px-4 pb-4">

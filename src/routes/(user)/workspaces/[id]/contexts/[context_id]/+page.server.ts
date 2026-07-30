@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
-import { researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
+import { contextChunks, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { redirect } from "@sveltejs/kit";
-import { eq, getTableColumns } from "drizzle-orm";
+import { eq, getTableColumns, asc } from "drizzle-orm";
 
 export const load = async ({ locals, params }) => {
     if (!locals.user) {
@@ -20,8 +20,16 @@ export const load = async ({ locals, params }) => {
             .where(eq(researchContexts.id, contextId))
             .limit(1);
 
+        const chunks = await db.select()
+            .from(contextChunks)
+            .where(eq(contextChunks.contextId, contextId))
+            .orderBy(asc(contextChunks.chunkIndex));
+
         return {
-            context: context,
+            context: {
+                ...context,
+                chunks: chunks,
+            },
         };
     } catch (error) {
         console.error("Error fetching context:", error);
