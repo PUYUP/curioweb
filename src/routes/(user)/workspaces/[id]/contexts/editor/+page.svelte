@@ -6,27 +6,31 @@
 	import { Textarea } from '@/lib/components/ui/textarea';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
-	import { mdiDeleteOutline, mdiContentSaveOutline } from '@mdi/js';
+	import { mdiDeleteOutline, mdiContentSaveOutline, mdiAlertCircleOutline } from '@mdi/js';
 	import type { PageServerData } from './$types';
+	import { countWords, MIN_CONTENT_WORDS } from '@/lib/utils';
 
 	const { data }: { data: PageServerData } = $props();
+	const { workspace, context } = $derived(data);
 
-	const { workspace } = $derived(data);
 	let saving: boolean = $state<boolean>(false);
 	let deleting: boolean = $state<boolean>(false);
+	let errorMessage: string | null = $state<string | null>(null);
 
 	let formValues: { content: string } = $state({
 		content: ''
 	});
 
-	const handleSubmit: SubmitFunction = ({ cancel }) => {
+	const handleSubmit: SubmitFunction = () => {
 		saving = true;
+		errorMessage = null;
 
 		return async ({ result, update }) => {
-			await update();
 			saving = false;
 
 			if (result.type === 'success') {
+				await update();
+
 				const workspaceId = result.data?.context?.workspaceId;
 				const entityId = result?.data?.context?.id;
 
@@ -35,16 +39,26 @@
 						replaceState: true
 					});
 				}
+				return;
 			}
+
+			if (result.type === 'failure') {
+				errorMessage = (result.data?.message as string) || 'Failed to save research context';
+				return;
+			}
+
+			if (result.type === 'error') {
+				errorMessage = result.error?.message || 'Something went wrong';
+				return;
+			}
+
+			await update();
 		};
 	};
-
-	const context = $derived(data.context);
 
 	$effect(() => {
 		if (context) {
 			formValues.content = context.content || '';
-			console.log(context);
 		}
 	});
 
@@ -57,6 +71,9 @@
 			if (response.ok) {
 				deleting = false;
 				goto(`/workspaces/${context?.workspaceId}`);
+			} else {
+				deleting = false;
+				errorMessage = 'Failed to delete research context';
 			}
 		}
 	}
@@ -99,6 +116,16 @@
 	</div>
 
 	<div class="w-full xl:w-3/7">
+		{#if errorMessage}
+			<div
+				class="mb-4 flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+				role="alert"
+			>
+				<Icon path={mdiAlertCircleOutline} size="1rem" class="shrink-0" />
+				{errorMessage}
+			</div>
+		{/if}
+
 		<form method="post" action={context ? '?/update' : '?/insert'} use:enhance={handleSubmit}>
 			<div class="mb-4">
 				<Label for="content" class="mb-2">Content*</Label>
@@ -116,7 +143,7 @@
 				<input type="hidden" name="id" value={context.id} />
 			{/if}
 
-			<input type="hidden" name="languageCode" value={context?.workspace?.languageCode} />
+			<input type="hidden" name="languageCode" value={workspace?.languageCode || 'en'} />
 
 			<div class="flex justify-start">
 				<Button type="submit" disabled={saving || deleting}>
@@ -131,6 +158,17 @@
 						{/if}
 					{/if}
 				</Button>
+
+				<div class="ml-auto flex items-center gap-2 text-xs">
+					<div
+						class={countWords(formValues.content) >= MIN_CONTENT_WORDS
+							? 'text-green-600'
+							: 'text-red-600'}
+					>
+						{countWords(formValues.content)} / {MIN_CONTENT_WORDS}
+						words
+					</div>
+				</div>
 			</div>
 		</form>
 	</div>

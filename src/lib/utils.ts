@@ -27,3 +27,12 @@ export function getHighestAndLowestScore(data: any[]) {
 
 	return { highest: highest, lowest: lowest };
 }
+
+export const MIN_CONTENT_WORDS = 35;
+
+export const countWords = (text: string): number => {
+	return text
+		.trim()
+		.split(/\s+/)
+		.filter((word) => word.length > 0).length;
+}

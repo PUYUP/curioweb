@@ -1,6 +1,7 @@
 import { db } from "@/lib/server/db";
 import { researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
-import { redirect } from "@sveltejs/kit";
+import { countWords, MIN_CONTENT_WORDS } from "@/lib/utils";
+import { fail, redirect } from "@sveltejs/kit";
 import { eq, getTableColumns } from "drizzle-orm";
 
 export const load = async ({ locals, params, url }) => {
@@ -55,10 +56,10 @@ export const actions = {
     insert: async ({ request, locals, params }) => {
         const user = locals.user;
         if (!user) {
-            return {
+            return fail(401, {
                 success: false,
                 message: "Unauthorized"
-            };
+            });
         }
 
         const formData = await request.formData();
@@ -67,17 +68,25 @@ export const actions = {
         const workspaceId = params.id;
 
         if (!content) {
-            return {
+            return fail(400, {
                 success: false,
                 message: "Content is required"
-            };
+            });
+        }
+
+        const wordCount = countWords(content);
+        if (wordCount < MIN_CONTENT_WORDS) {
+            return fail(400, {
+                success: false,
+                message: `Content must be at least ${MIN_CONTENT_WORDS} words (currently ${wordCount})`
+            });
         }
 
         if (!workspaceId) {
-            return {
+            return fail(400, {
                 success: false,
                 message: "Workspace ID is required"
-            };
+            });
         }
 
         try {
@@ -96,20 +105,20 @@ export const actions = {
             };
         } catch (error) {
             console.error("Error creating context:", error);
-            return {
+            return fail(500, {
                 success: false,
                 message: "Failed to create context"
-            };
+            });
         }
     },
 
     update: async ({ request, locals }) => {
         const user = locals.user;
         if (!user) {
-            return {
+            return fail(401, {
                 success: false,
                 message: "Unauthorized"
-            };
+            });
         }
 
         const formData = await request.formData();
@@ -118,17 +127,25 @@ export const actions = {
         const languageCode = formData.get('languageCode')?.toString() || '';
 
         if (!id) {
-            return {
+            return fail(400, {
                 success: false,
                 message: "Context ID is required"
-            };
+            });
         }
 
         if (!content) {
-            return {
+            return fail(400, {
                 success: false,
                 message: "Content is required"
-            };
+            });
+        }
+
+        const wordCount = countWords(content);
+        if (wordCount < MIN_CONTENT_WORDS) {
+            return fail(400, {
+                success: false,
+                message: `Content must be at least ${MIN_CONTENT_WORDS} words (currently ${wordCount})`
+            });
         }
 
         try {
@@ -147,10 +164,10 @@ export const actions = {
             };
         } catch (error) {
             console.error("Error updating context:", error);
-            return {
+            return fail(500, {
                 success: false,
                 message: "Failed to update context"
-            };
+            });
         }
     }
 };

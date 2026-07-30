@@ -75,7 +75,7 @@
 							<polyline points="20 6 9 17 4 12"></polyline>
 						</svg>
 					</span>
-					<span class="text-sm text-slate-600">2 paper recommendations every 2 days</span>
+					<span class="text-sm text-slate-600">[FREE] 1 challenge every 2 days</span>
 				</li>
 				<li class="flex items-start gap-3">
 					<span
@@ -112,24 +112,6 @@
 						</svg>
 					</span>
 					<span class="text-sm text-slate-600">Unlimited workspaces</span>
-				</li>
-				<li class="flex items-start gap-3">
-					<span
-						class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
-					>
-						<svg
-							class="h-3 w-3 text-white"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="3"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polyline points="20 6 9 17 4 12"></polyline>
-						</svg>
-					</span>
-					<span class="text-sm text-slate-600">Full essay analysis</span>
 				</li>
 			</ul>
 
