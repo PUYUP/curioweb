@@ -1,28 +1,51 @@
-// src/routes/api/polar/webhook/+server.ts
 import { Webhooks } from "@polar-sh/sveltekit";
 import { env } from '$env/dynamic/private';
+import { subscriptionFactory } from '$lib/server/db/factories/subscription.factory';
 
 export const POST = Webhooks({
     webhookSecret: env.POLAR_WEBHOOK_SECRET!,
     onPayload: async (payload) => {
         const actionType = payload.type;
-        console.log("webhook received:", payload);
 
-        if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled') {
-            const email = payload.data.metadata?.email;
-            const userId = payload.data.metadata?.user_id;
+        if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled' || actionType === 'subscription.canceled') {
+            const status = payload.data.status;
+            const productId = payload.data.product.id;
+            const productName = payload.data.product.name;
+            const startDate = payload.data.currentPeriodStart;
+            const endDate = payload.data.currentPeriodEnd;
+            const canceledAt = payload.data.canceledAt;
+            const email = payload.data.metadata?.email as string;
+            const userId = payload.data.metadata?.user_id as string;
 
-            if (email && userId) {
-                // update email with polar email
+            const subsData = {
+                status: status,
+                productId: productId,
+                productName: productName,
+                userId: userId,
+                startDate: startDate,
+                endDate: endDate,
+                canceledAt: canceledAt,
             }
-        }
 
-        if (actionType === 'subscription.canceled') {
-            const email = payload.data.metadata?.email;
-            const userId = payload.data.metadata?.user_id;
+            if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled') {
+                if (email && userId) {
+                    await subscriptionFactory.insert(subsData);
+                }
+            }
 
-            if (email && userId) {
-                // update email with polar email
+            if (actionType === 'subscription.canceled') {
+                if (email && userId) {
+                    const lastSub = await subscriptionFactory.getLatestByUserId(userId);
+                    if (lastSub?.id) {
+                        await subscriptionFactory.update(
+                            lastSub.id,
+                            {
+                                status: 'canceled',
+                                canceledAt: canceledAt
+                            }
+                        );
+                    }
+                }
             }
         }
     },
