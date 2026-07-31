@@ -104,6 +104,13 @@
 							</div>
 						{/each}
 					</div>
+				{:else}
+					<div class="flex items-center gap-2 mt-6">
+						<Spinner />
+						<p class="text-xs text-neutral-500">
+							Papers retrieval on progress... refresh this page simultanously
+						</p>
+					</div>
 				{/if}
 			{:else}
 				<div class="flex items-center gap-2">
