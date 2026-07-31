@@ -3,7 +3,26 @@
 	import { mdiFilePdfBox } from '@mdi/js';
 
 	const { item } = $props();
-	let lineClamp = $state(3);
+
+	let isExpanded = $state(false);
+	let isTruncated = $state(false);
+	let contentEl: HTMLDivElement | undefined = $state();
+
+	let lineClamp = $derived(isExpanded ? 100 : 3);
+
+	function checkTruncation() {
+		if (contentEl) {
+			// bandingkan tinggi asli konten vs tinggi yang terlihat (setelah clamp)
+			isTruncated = contentEl.scrollHeight > contentEl.clientHeight;
+		}
+	}
+
+	$effect(() => {
+		// hanya perlu dicek ulang saat kondisi belum expand (masih di-clamp)
+		if (!isExpanded) {
+			checkTruncation();
+		}
+	});
 </script>
 
 {#if item}
@@ -33,14 +52,18 @@
 
 		<button
 			type="button"
-			class="block cursor-pointer"
-			onclick={() => {
-				lineClamp == 3 ? (lineClamp = 100) : (lineClamp = 3);
-			}}
+			class="block w-full cursor-pointer text-left"
+			onclick={() => (isExpanded = !isExpanded)}
 		>
-			<div class="text-neutral-700 text-left line-clamp-{lineClamp}">
+			<div bind:this={contentEl} class="text-neutral-700 text-left line-clamp-{lineClamp}">
 				{item?.documentContent}
 			</div>
+
+			{#if isTruncated || isExpanded}
+				<span class="mt-1 italic inline-block text-xs font-medium underline">
+					{isExpanded ? 'View less' : 'View more...'}
+				</span>
+			{/if}
 		</button>
 	</li>
 {/if}
