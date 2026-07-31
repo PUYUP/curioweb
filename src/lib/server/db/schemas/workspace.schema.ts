@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique, real } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
+import { papers } from './paper.schema';
 
 export const workspaces = pgTable('workspaces', {
     id: uuid('id')
@@ -71,3 +72,31 @@ export const contextChunks = pgTable('context_chunks', {
 }, (table) => ({
     uniqueChunk: unique().on(table.userId, table.workspaceId, table.contextId, table.chunkIndex),
 }));
+
+export const contextSimilarities = pgTable('context_similarities', {
+    id: uuid('id')
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    paperId: uuid('paper_id')
+        .notNull()
+        .references(() => papers.id, { onDelete: 'cascade' }),
+    contextId: uuid('context_id')
+        .notNull()
+        .references(() => researchContexts.id, { onDelete: 'cascade' }),
+    contextChunkId: uuid('context_chunk_id')
+        .notNull()
+        .references(() => contextChunks.id, { onDelete: 'cascade' }),
+    documentContent: text('document_content').notNull(),
+    similarityScore: real('similarity_score').notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
+        .default(sql`null`),
+});

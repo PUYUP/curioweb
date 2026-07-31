@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<div class="w-full md:w-3/6 text-sm">
+		<div class="w-full md:w-3/6 text-sm whitespace-break-spaces">
 			{workspace?.description}
 		</div>
 

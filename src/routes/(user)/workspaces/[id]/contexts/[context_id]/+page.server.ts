@@ -1,7 +1,8 @@
 import { db } from "$lib/server/db";
-import { contextChunks, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
+import { papers } from "@/lib/server/db/schemas/paper.schema.js";
+import { contextChunks, contextSimilarities, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { redirect } from "@sveltejs/kit";
-import { eq, getTableColumns, asc } from "drizzle-orm";
+import { eq, getTableColumns, asc, desc } from "drizzle-orm";
 
 export const load = async ({ locals, params }) => {
     if (!locals.user) {
@@ -25,10 +26,28 @@ export const load = async ({ locals, params }) => {
             .where(eq(contextChunks.contextId, contextId))
             .orderBy(asc(contextChunks.chunkIndex));
 
+        const similarities = await db.select({
+            ...getTableColumns(contextSimilarities),
+            paper: papers,
+        })
+            .from(contextSimilarities)
+            .leftJoin(papers, eq(papers.id, contextSimilarities.paperId))
+            .where(eq(contextSimilarities.contextId, contextId))
+            .orderBy(desc(contextSimilarities.similarityScore));
+
+        const matchResults = chunks.map((c: any) => {
+            return {
+                ...c,
+                similarities: similarities.filter((s: any) => s.contextChunkId === c.id),
+            };
+        });
+
         return {
             context: {
                 ...context,
                 chunks: chunks,
+                matchResults: matchResults,
+                hasSimilarity: similarities && similarities.length > 0,
             },
         };
     } catch (error) {

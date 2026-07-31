@@ -12,7 +12,7 @@
 			{#snippet child({ props })}
 				<a href="/workspaces/{item.id}" class="flex items-center" {...props}>
 					<Item.Content>
-						<Item.Title class="!mb-0">{item.title}</Item.Title>
+						<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
 						{#if item.description}
 							<Item.Description class="line-clamp-2">{item.description}</Item.Description>
 						{/if}
