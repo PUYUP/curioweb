@@ -62,7 +62,9 @@
 							<polyline points="20 6 9 17 4 12"></polyline>
 						</svg>
 					</span>
-					<span class="text-sm text-slate-600">2 workspace with max. 5 research contexts each</span>
+					<span class="text-sm text-slate-600"
+						>10 workspaces with max. 5 research contexts each</span
+					>
 				</li>
 			</ul>
 
