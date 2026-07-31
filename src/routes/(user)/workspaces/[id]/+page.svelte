@@ -6,6 +6,7 @@
 	import { mdiPlus } from '@mdi/js';
 	import { goto } from '$app/navigation';
 	import type { PageServerData } from './$types';
+	import Badge from '@/lib/components/ui/badge/badge.svelte';
 
 	let loading: boolean = $state<boolean>(true);
 	let loadingContexts: boolean = $state<boolean>(true);
@@ -64,24 +65,32 @@
 						</Card.Content>
 						<Card.Footer class="mt-auto grid grid-cols-2 gap-4 w-full border-t border-neutral-200">
 							<div class="block">
-								<Button
-									variant="link"
-									class="w-full"
-									onclick={() =>
-										goto(`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`)}
-								>
-									Edit
-								</Button>
+								{#if context.status === 'draft'}
+									<Badge variant="outline" class="uppercase">{context.status}</Badge>
+								{:else if context.status === 'retrieved'}
+									<Badge variant="default" class="uppercase">{context.status}</Badge>
+								{/if}
 							</div>
 							<div class="block">
-								<Button
-									variant="outline"
-									class="w-full bg-neutral-50"
-									onclick={() =>
-										goto(`/workspaces/${context?.workspaceId}/contexts/${context?.id}`)}
-								>
-									View Papers
-								</Button>
+								{#if context?.status === 'draft'}
+									<Button
+										variant="outline"
+										class="w-full bg-neutral-50"
+										onclick={() =>
+											goto(`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`)}
+									>
+										Continue Editing
+									</Button>
+								{:else}
+									<Button
+										variant="outline"
+										class="w-full bg-neutral-50"
+										onclick={() =>
+											goto(`/workspaces/${context?.workspaceId}/contexts/${context?.id}`)}
+									>
+										View Papers
+									</Button>
+								{/if}
 							</div>
 						</Card.Footer>
 					</Card.Root>

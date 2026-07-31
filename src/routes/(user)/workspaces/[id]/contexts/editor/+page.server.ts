@@ -53,7 +53,7 @@ export const load = async ({ locals, params, url }) => {
 };
 
 export const actions = {
-    insert: async ({ request, locals, params }) => {
+    submit: async ({ request, locals, params }) => {
         const user = locals.user;
         if (!user) {
             return fail(401, {
@@ -96,6 +96,68 @@ export const actions = {
                     userId: user.id,
                     workspaceId: workspaceId,
                     languageCode: languageCode,
+                    status: 'retrieved',
+                    submittedAt: new Date(),
+                })
+                .returning();
+
+            return {
+                success: true,
+                context
+            };
+        } catch (error) {
+            console.error("Error creating context:", error);
+            return fail(500, {
+                success: false,
+                message: "Failed to create context"
+            });
+        }
+    },
+
+    draft: async ({ request, params, locals }) => {
+        const user = locals.user;
+        if (!user) {
+            return fail(401, {
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        const formData = await request.formData();
+        const content = formData.get('content')?.toString() || '';
+        const languageCode = formData.get('languageCode')?.toString() || '';
+        const workspaceId = params.id;
+
+        if (!content) {
+            return fail(400, {
+                success: false,
+                message: "Content is required"
+            });
+        }
+
+        const wordCount = countWords(content);
+        if (wordCount < MIN_CONTENT_WORDS || wordCount > MAX_CONTENT_WORDS) {
+            return fail(400, {
+                success: false,
+                message: `Content must be between ${MIN_CONTENT_WORDS} and ${MAX_CONTENT_WORDS} words (currently ${wordCount})`
+            });
+        }
+
+        if (!workspaceId) {
+            return fail(400, {
+                success: false,
+                message: "Workspace ID is required"
+            });
+        }
+
+        try {
+            const [context] = await db.insert(researchContexts)
+                .values({
+                    content: content,
+                    userId: user.id,
+                    workspaceId: workspaceId,
+                    languageCode: languageCode,
+                    status: 'draft',
                 })
                 .returning();
 
@@ -153,6 +215,8 @@ export const actions = {
                 .set({
                     content: content,
                     languageCode: languageCode,
+                    status: 'retrieved',
+                    submittedAt: new Date(),
                     updatedAt: new Date(),
                 })
                 .where(eq(researchContexts.id, id))

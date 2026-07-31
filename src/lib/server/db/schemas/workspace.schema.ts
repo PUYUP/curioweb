@@ -35,6 +35,8 @@ export const researchContexts = pgTable('contexts', {
         .references(() => workspaces.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
     languageCode: text('language_code').notNull().default('en'),
+    status: text('status').notNull().default('draft'),
+    submittedAt: timestamp('submitted_at', { withTimezone: true, mode: 'date' }),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),

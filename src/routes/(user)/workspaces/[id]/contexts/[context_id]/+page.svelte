@@ -38,63 +38,69 @@
 		<div class="block text-xs text-neutral-500">{context?.workspace?.title}</div>
 		<div class="flex w-full justify-between items-center">
 			<h1 class="!mb-0 font-semibold">Research Context</h1>
-			<Button
-				class="ml-auto"
-				href={`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`}
-				variant="outline"
-			>
-				Edit
-			</Button>
+			{#if !context?.hasSimilarity || context.status !== 'retrieved'}
+				<Button
+					class="ml-auto"
+					href={`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`}
+					variant="outline"
+				>
+					Edit
+				</Button>
+			{/if}
 		</div>
 	</div>
 
 	<div class="w-full xl:w-4/6 2xl:w-4/6 pb-4">
 		<div class="whitespace-break-spaces">{context?.content}</div>
 
-		<div class="mt-6">
-			{#if context?.chunks && context.chunks.length > 0}
-				<Button variant="outline" size="sm" onclick={viewChunkHandler}>
-					View {context.chunks.length} Chunks <Icon path={mdiArrowRight} size={0.65} />
-				</Button>
+		{#if context?.status === 'retrieved'}
+			<div class="mt-6">
+				{#if context?.chunks && context.chunks.length > 0}
+					<Button variant="outline" size="sm" onclick={viewChunkHandler}>
+						View {context.chunks.length} Chunks <Icon path={mdiArrowRight} size={0.65} />
+					</Button>
 
-				{#if context.hasSimilarity}
-					<div class="block mt-6">
-						<div class="mt-2 mb-4">Found Related Papers</div>
+					{#if context?.hasSimilarity}
+						<div class="block mt-6">
+							<div class="mt-2 mb-4">Found Related Papers</div>
 
-						{#each context.matchResults as chunk, idx}
-							<Separator class="my-4" />
-							<div class="mt-2">
-								<div class="block mb-4">
-									<p class="text-base text-green-600 font-bold mb-1 uppercase">Chunk #{idx + 1}</p>
-									<p class="text-base">{chunk?.content}</p>
+							{#each context.matchResults as chunk, idx}
+								<Separator class="my-4" />
+								<div class="mt-2">
+									<div class="block mb-4">
+										<p class="text-base text-green-600 font-bold mb-1 uppercase">
+											Chunk #{idx + 1}
+										</p>
+										<p class="text-base">{chunk?.content}</p>
+									</div>
+									{#if (chunk as any)?.similarities && (chunk as any).similarities.length > 0}
+										<ol class="list-decimal pl-8">
+											{#each (chunk as any).similarities as similarity}
+												<SimilarItem item={similarity} />
+											{/each}
+										</ol>
+									{/if}
 								</div>
-								{#if (chunk as any)?.similarities && (chunk as any).similarities.length > 0}
-									<ol class="list-decimal pl-8">
-										{#each (chunk as any).similarities as similarity}
-											<SimilarItem item={similarity} />
-										{/each}
-									</ol>
-								{/if}
-							</div>
-						{/each}
-					</div>
+							{/each}
+						</div>
+					{:else}
+						<div class="flex items-center gap-2 mt-6">
+							<Spinner />
+							<p class="text-xs text-neutral-500">
+								Papers retrieval on progress... refresh this page simultanously
+							</p>
+						</div>
+					{/if}
 				{:else}
-					<div class="flex items-center gap-2 mt-6">
+					<div class="flex items-center gap-2">
 						<Spinner />
 						<p class="text-xs text-neutral-500">
-							Papers retrieval on progress... refresh this page simultanously
+							Chunkings on progress... refresh this page simultanously
 						</p>
 					</div>
 				{/if}
-			{:else}
-				<div class="flex items-center gap-2">
-					<Spinner />
-					<p class="text-xs text-neutral-500">
-						Chunkings on progress... refresh this page simultanously
-					</p>
-				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 </div>
 

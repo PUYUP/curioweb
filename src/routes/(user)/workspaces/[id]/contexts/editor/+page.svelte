@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, deserialize, enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { Button } from '@/lib/components/ui/button';
 	import { Label } from '@/lib/components/ui/label';
@@ -21,7 +21,25 @@
 		content: ''
 	});
 
-	const handleSubmit: SubmitFunction = () => {
+	// --- Auto-draft state ---
+	let currentId = $state<string | null>(null);
+	let draftTimer: ReturnType<typeof setTimeout> | undefined;
+	let draftStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle');
+	let lastSavedValue = $state<string>('');
+	const DRAFT_DEBOUNCE_MS = 1500;
+
+	const handleSubmit: SubmitFunction = ({ cancel }) => {
+		if (draftTimer) clearTimeout(draftTimer); // batalkan draft pending saat submit manual
+
+		// Display the standard browser modal
+		const confirmed = confirm('Are you sure you want to submit this context?');
+
+		// Halt submission if they choose cancel
+		if (!confirmed) {
+			cancel();
+			return;
+		}
+
 		saving = true;
 		errorMessage = null;
 
@@ -77,6 +95,73 @@
 			}
 		}
 	}
+
+	function handleInput() {
+		draftStatus = 'idle';
+		scheduleDraftSave();
+	}
+
+	function scheduleDraftSave() {
+		// Batalkan timer sebelumnya tiap kali user mengetik lagi
+		if (draftTimer) clearTimeout(draftTimer);
+		draftTimer = setTimeout(() => {
+			saveDraft();
+		}, DRAFT_DEBOUNCE_MS);
+	}
+
+	async function saveDraft() {
+		// Jangan bentrok dengan submit manual, dan jangan save kalau isi tidak berubah
+		if (saving) return;
+		if (formValues.content === lastSavedValue) return;
+		if (formValues.content.trim().length === 0) return;
+
+		draftStatus = 'saving';
+
+		try {
+			const formData = new FormData();
+			formData.set('content', formValues.content);
+
+			const payload = {
+				...Object.fromEntries(formData.entries()),
+				workspaceId: workspace?.id || context?.workspaceId,
+				languageCode: workspace?.languageCode || context?.languageCode || 'en',
+				status: 'draft',
+				submittedAt: null
+			};
+
+			const response = await fetch(`/api/contexts/${context ? context.id : 'save-draft'}`, {
+				method: context ? 'PATCH' : 'POST',
+				body: JSON.stringify(payload),
+				headers: { 'Content-Type': 'application/json' }
+			});
+
+			console.log(response);
+
+			if (!response.ok) {
+				draftStatus = 'error';
+				return;
+			}
+
+			const result = await response.json();
+			await applyAction(result);
+
+			lastSavedValue = formValues.content;
+			draftStatus = 'saved';
+			currentId = result?.id as string;
+
+			if (!context) {
+				await goto(`/workspaces/${workspace.id}/contexts/editor?id=${currentId}`, {
+					replaceState: true,
+					noScroll: true,
+					keepFocus: true,
+					invalidateAll: false
+				});
+			}
+		} catch (e) {
+			console.error('Auto-draft gagal:', e);
+			draftStatus = 'error';
+		}
+	}
 </script>
 
 <svelte:head>
@@ -126,13 +211,14 @@
 			</div>
 		{/if}
 
-		<form method="post" action={context ? '?/update' : '?/insert'} use:enhance={handleSubmit}>
+		<form method="post" action={context ? '?/update' : '?/submit'} use:enhance={handleSubmit}>
 			<div class="mb-4">
 				<Label for="content" class="mb-2">Content*</Label>
 				<Textarea
 					id="content"
 					name="content"
 					bind:value={formValues.content}
+					oninput={handleInput}
 					placeholder="Research context content"
 					class="!text-sm"
 					required
@@ -154,28 +240,42 @@
 						countWords(formValues.content) > MAX_CONTENT_WORDS}
 				>
 					{#if saving}
-						Saving...
+						Submitting...
 					{:else}
 						<Icon path={mdiContentSaveOutline} size="1rem" />
 						{#if context}
-							Update
+							Submit
 						{:else}
 							Save
 						{/if}
 					{/if}
 				</Button>
 
-				<div class="ml-auto flex items-center gap-2 text-xs">
-					<div
-						class={countWords(formValues.content) >= MIN_CONTENT_WORDS &&
-						countWords(formValues.content) <= MAX_CONTENT_WORDS
-							? 'text-green-600'
-							: 'text-red-600'}
-					>
-						{countWords(formValues.content)} / {MIN_CONTENT_WORDS}
+				<div class="ml-auto">
+					<div class="flex items-center gap-2 text-xs">
+						<div
+							class={countWords(formValues.content) >= MIN_CONTENT_WORDS &&
+							countWords(formValues.content) <= MAX_CONTENT_WORDS
+								? 'text-green-600'
+								: 'text-red-600'}
+						>
+							{countWords(formValues.content)} / {MIN_CONTENT_WORDS}
+						</div>
+
+						<div>max {MAX_CONTENT_WORDS} words</div>
 					</div>
 
-					<div>max {MAX_CONTENT_WORDS} words</div>
+					<div class="flex flex-row items-center gap-2 text-xs text-neutral-500">
+						{#if draftStatus === 'saving'}
+							<span>saving draft...</span>
+						{:else if draftStatus === 'saved'}
+							<span class="text-green-600">draft saved</span>
+						{:else if draftStatus === 'error'}
+							<span class="text-red-500">failed to save draft</span>
+						{:else if context?.status === 'draft'}
+							<span class="text-neutral-600">draft</span>
+						{/if}
+					</div>
 				</div>
 			</div>
 		</form>
