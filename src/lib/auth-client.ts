@@ -17,9 +17,13 @@ export const signInWithGoogle = async () => {
 };
 
 // checkout
-export const checkout = async () => {
+export const checkout = async (userId: string | null, email: string | null) => {
     const checkoutResult = await authClient.checkout({
         slug: 'ATLA-Bronze',
+        metadata: {
+            user_id: userId as string,
+            email: email as string
+        }
     });
 
     console.log("checkoutResult", checkoutResult);

@@ -9,8 +9,15 @@
 	let loading = $state<boolean>(true);
 	let redirecting = $state<boolean>(false);
 
+	let userId = $state<string | null>(null);
+	let userEmail = $state<string | null>(null);
+
 	$effect(() => {
 		(async () => {
+			const { data: session } = await authClient.getSession();
+			userId = session?.user?.id ?? null;
+			userEmail = session?.user?.email ?? null;
+
 			const { data: subscriptions } = await authClient.customer.subscriptions.list({
 				query: {
 					page: 1,
@@ -88,7 +95,9 @@
 				</Item.Content>
 
 				<Item.Actions>
-					<Button onclick={checkout}>Start 30 Days Trial</Button>
+					<Button onclick={() => checkout(userId, userEmail)} disabled={redirecting}
+						>Start 30 Days Trial</Button
+					>
 				</Item.Actions>
 			</Item.Root>
 		{/if}

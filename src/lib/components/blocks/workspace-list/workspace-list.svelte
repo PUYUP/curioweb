@@ -7,22 +7,30 @@
 </script>
 
 <div class="w-full flex flex-col gap-4">
-	{#each items as item}
-		<Item.Root variant="outline" size="default">
-			{#snippet child({ props })}
-				<a href="/workspaces/{item.id}" class="flex items-center" {...props}>
-					<Item.Content>
-						<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
-						{#if item.description}
-							<Item.Description class="line-clamp-2">{item.description}</Item.Description>
-						{/if}
-					</Item.Content>
+	{#if items.length > 0}
+		{#each items as item}
+			<Item.Root variant="outline" size="default">
+				{#snippet child({ props })}
+					<a href="/workspaces/{item.id}" class="flex items-center" {...props}>
+						<Item.Content>
+							<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
+							{#if item.description}
+								<Item.Description class="line-clamp-2">{item.description}</Item.Description>
+							{/if}
+						</Item.Content>
 
-					<Item.Actions>
-						<Icon path={mdiChevronRight} color={'#666'} class="size-4" />
-					</Item.Actions>
-				</a>
-			{/snippet}
+						<Item.Actions>
+							<Icon path={mdiChevronRight} color={'#666'} class="size-4" />
+						</Item.Actions>
+					</a>
+				{/snippet}
+			</Item.Root>
+		{/each}
+	{:else}
+		<Item.Root variant="outline" size="default">
+			<Item.Content>
+				<Item.Title>No workspaces found, why don't you create a new one?</Item.Title>
+			</Item.Content>
 		</Item.Root>
-	{/each}
+	{/if}
 </div>
