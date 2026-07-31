@@ -1,6 +1,6 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import atlanizeLogoText from '$lib/assets/atlanize_logo_text.png';
+	import atlanizeLogoText from '$lib/assets/atlanize-logo-text.png';
 	import GaAnalytics from '@/lib/components/ga-analytics.svelte';
 	let { children } = $props();
 </script>
