@@ -71,17 +71,27 @@
 									<ol class="list-decimal pl-6">
 										{#each (chunk as any).similarities as similarity}
 											<li class="text-sm mb-4">
-												<div class="flex gap-2 items-start mb-2">
+												<div class="mb-2">
 													<a
 														href={similarity?.paper?.pdfUrl}
 														target="_blank"
 														class="flex w-full justify-between line-clamp-3 text-base font-semibold italic"
 													>
-														<span class="flex-1 text-blue-500">{similarity?.paper?.title}</span>
+														<span class="flex-1 text-blue-500">
+															{similarity?.paper?.title}
+														</span>
 														<span class="ml-auto text-red-600">
 															<Icon path={mdiFilePdfBox} size={0.85} />
 														</span>
 													</a>
+
+													<div class="mt-0 flex gap-2 items-center text-sm">
+														<span class="text-orange-500">Similarity Score:</span>
+														<span class="text-orange-600 font-bold underline">
+															{(similarity?.similarityScore * 100).toFixed(1)}%
+														</span>
+														<span class="text-xs">({similarity?.similarityScore})</span>
+													</div>
 												</div>
 
 												<div class="block text-neutral-700">
