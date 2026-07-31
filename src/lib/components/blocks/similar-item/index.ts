@@ -1,0 +1,1 @@
+export { default as SimilarItem } from './similar-item.svelte';
