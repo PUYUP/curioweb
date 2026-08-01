@@ -46,7 +46,7 @@
 		<div class="block text-xs text-neutral-500">{context?.workspace?.title}</div>
 		<div class="flex w-full justify-between items-center">
 			<h1 class="!mb-0 font-semibold">Research Context</h1>
-			{#if !context?.hasSimilarity || context.status !== 'retrieved'}
+			{#if context?.status !== 'retrieved'}
 				<Button
 					class="ml-auto"
 					href={`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`}
