@@ -82,9 +82,9 @@
 				</div>
 
 				<div class="ml-auto">
-					<Button variant="default" size="sm" onclick={() => checkout(user.id, user.email)}
-						>Unlock</Button
-					>
+					<Button variant="default" onclick={() => checkout(user.id, user.email)}>
+						Subscribe to Unlock
+					</Button>
 				</div>
 			</div>
 		{/if}
