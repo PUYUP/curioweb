@@ -18,10 +18,13 @@
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Carousel from '$lib/components/ui/carousel/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import type { CarouselAPI } from '$lib/components/ui/carousel/context.js';
 
 	import { Navbar } from '$lib/components/blocks/navbar/index.js';
 	import { Footer } from '$lib/components/blocks/footer/index.js';
+	import { Badge } from '@/lib/components/ui/badge';
 
 	// sample paper summary
 	const summaries: PaperSummary[] = [
@@ -102,6 +105,24 @@ The most extreme claws, such as those specialized for crushing shells, are the r
 					Elevate how you learn. We distill latest research based on your interests into engaging
 					insights. Dive deeper, expand on them, and let AI evaluate and improve your understanding.
 				</p>
+
+				<Separator class="my-6" />
+
+				<Alert.Root class="border-0">
+					<Alert.Title class="flex items-center justify-center gap-2 text-base">
+						<Badge variant="secondary">New</Badge>
+						Workspaces Feature
+					</Alert.Title>
+					<Alert.Description class="text-center text-sm">
+						<p>Help your collect paper deeply with context-aware for research contexts.</p>
+
+						<div class="text-center mt-2">
+							<Button>Learn More</Button>
+						</div>
+					</Alert.Description>
+				</Alert.Root>
+
+				<Separator class="mt-6" />
 			</div>
 		</div>
 	</div>
