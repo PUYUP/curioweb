@@ -25,6 +25,7 @@
 	import { Navbar } from '$lib/components/blocks/navbar/index.js';
 	import { Footer } from '$lib/components/blocks/footer/index.js';
 	import { Badge } from '@/lib/components/ui/badge';
+	import { goto } from '$app/navigation';
 
 	// sample paper summary
 	const summaries: PaperSummary[] = [
@@ -117,7 +118,7 @@ The most extreme claws, such as those specialized for crushing shells, are the r
 						<p>Help your collect paper deeply with context-aware for research contexts.</p>
 
 						<div class="text-center mt-2">
-							<Button>Learn More</Button>
+							<Button onclick={() => goto('/workspace')}>Learn More</Button>
 						</div>
 					</Alert.Description>
 				</Alert.Root>
