@@ -53,7 +53,7 @@ export const subscriptionPlans = [
 		restrictions: {
 			maxWorkspaces: 1,
 			maxOfContextsPerWorkspace: 5,
-			challengeLoopDuration: 168, // in hours every 7 days
+			challengeInterval: 168, // in hours every 7 days
 		},
 		link: '/auth/register',
 		ctaLabel: 'Get started for free'
@@ -72,7 +72,7 @@ export const subscriptionPlans = [
 		restrictions: {
 			maxWorkspaces: 20,
 			maxOfContextsPerWorkspace: 25,
-			challengeLoopDuration: 48, // in hours every 2 days
+			challengeInterval: 48, // in hours every 2 days
 		},
 		link: '/auth/register',
 		ctaLabel: 'Subscribe now'

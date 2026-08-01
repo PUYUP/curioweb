@@ -30,7 +30,7 @@ export const POST = Webhooks({
                 attributes: {
                     maxWorkspaces: 20,
                     maxOfContextsPerWorkspace: 25,
-                    challengeLoopDuration: 48,
+                    challengeInterval: 48,
                 }
             }
 
@@ -56,7 +56,7 @@ export const POST = Webhooks({
                                 attributes: {
                                     maxWorkspaces: 1,
                                     maxOfContextsPerWorkspace: 5,
-                                    challengeLoopDuration: 168,
+                                    challengeInterval: 168,
                                 }
                             }
                         );
