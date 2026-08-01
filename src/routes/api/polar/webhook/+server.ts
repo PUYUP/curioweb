@@ -39,7 +39,7 @@ export const POST = Webhooks({
                     await subscriptionFactory.insert(subsData);
                     // update profile next_processed_at
                     await updateProfile(userId, {
-                        nextProcessedAt: addHours(new Date(), 24),
+                        nextProcessedAt: addHours(new Date(), 48),
                     });
                 }
             }
