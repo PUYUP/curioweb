@@ -4,8 +4,10 @@
 	import * as Item from '$lib/components/ui/item/index.js';
 	import { Badge } from '@/lib/components/ui/badge';
 	import { Spinner } from '@/lib/components/ui/spinner';
+	import { subscriptionPlans } from '@/lib/utils';
 
 	let subscriptionItems = $state<any[]>([]);
+	let plans = $state<any[]>(subscriptionPlans);
 	let loading = $state<boolean>(true);
 	let redirecting = $state<boolean>(false);
 
@@ -28,6 +30,26 @@
 
 			subscriptionItems = subscriptions?.result?.items ?? [];
 			loading = false;
+
+			if (subscriptionItems.length > 0) {
+				const item = subscriptionItems[0];
+				plans = plans.map((plan) => {
+					if (plan.name == 'ATLA Bronze') {
+						plan = {
+							...plan,
+							isActive: item.canceledAt ? false : true,
+							item: item
+						};
+					} else {
+						plan = {
+							...plan,
+							isActive: item.canceledAt ? true : false,
+							item: null
+						};
+					}
+					return plan;
+				});
+			}
 		})();
 	});
 
@@ -56,94 +78,74 @@
 </svelte:head>
 
 <div class="pb-4 px-4">
-	{#if !loading}
+	<div class="mb-6 flex items-center border-b border-neutral-200 pb-4">
+		<span>Active Subscriptions</span>
 		{#if subscriptionItems.length > 0}
-			<div class="mb-4 flex items-center">
-				<span>Active Subscriptions</span>
-				<Button onclick={manage} disabled={redirecting} class="ml-auto">
-					{redirecting ? 'Redirecting...' : 'Manage'}
-				</Button>
-			</div>
-
-			{#each subscriptionItems as sub}
-				<Item.Root variant="outline">
-					<Item.Content>
-						<Item.Title>{sub.product.name}</Item.Title>
-						<Item.Description class="flex gap-1">
-							<span class="uppercase">{sub.currency}</span>
-							<span class="font-semibold">{sub.amount}</span>
-							<span>/ {sub.recurringInterval}</span>
-						</Item.Description>
-					</Item.Content>
-
-					<Item.Actions>
-						{#if sub.status === 'trialing'}
-							<Badge>Trial</Badge>
-						{/if}
-					</Item.Actions>
-				</Item.Root>
-			{/each}
-		{:else}
-			<Item.Root variant="outline">
-				<Item.Content>
-					<Item.Title>ATLA Bronze</Item.Title>
-					<Item.Description class="flex gap-1">
-						<span class="uppercase">USD</span>
-						<span class="font-semibold">4.99</span>
-						<span>/ month</span>
-					</Item.Description>
-				</Item.Content>
-
-				<Item.Actions>
-					<Button onclick={() => checkout(userId, userEmail)} disabled={redirecting}
-						>Start 30 Days Trial</Button
-					>
-				</Item.Actions>
-			</Item.Root>
+			<Button onclick={manage} disabled={redirecting} class="ml-auto">
+				{redirecting ? 'Redirecting...' : 'Manage'}
+			</Button>
 		{/if}
+	</div>
+
+	{#if !loading}
+		<div class="flex gap-6">
+			{#each plans as plan}
+				<div class="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+					<div class="flex items-baseline gap-1">
+						<span class="text-4xl font-semibold tracking-tight text-slate-900">
+							${plan.priceAmount}
+						</span>
+						<span class="text-sm font-medium text-slate-500">/month</span>
+					</div>
+
+					<ul class="mt-6 space-y-3">
+						{#each plan.benefits as benefit}
+							<li class="flex items-start gap-3">
+								<span
+									class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
+								>
+									<svg
+										class="h-3 w-3 text-white"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="3"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<polyline points="20 6 9 17 4 12"></polyline>
+									</svg>
+								</span>
+								<span class="text-sm text-slate-600">{benefit}</span>
+							</li>
+						{/each}
+					</ul>
+
+					<div class="mt-8 text-center">
+						{#if plan.isActive}
+							<div class="bg-lime-100 py-2.5 text-sm font-medium rounded-lg">
+								Already subscribed to this plan
+							</div>
+						{:else}
+							{#if plan.priceAmount > 0}
+								<button
+									type="button"
+									onclick={() => checkout(userId, userEmail)}
+									disabled={redirecting}
+									class="cursor-pointer w-full block text-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+								>
+									Start 30 Days Trial
+								</button>
+							{/if}
+						{/if}
+					</div>
+				</div>
+			{/each}
+		</div>
 	{:else}
 		<div class="flex gap-2 items-center">
 			<Spinner />
 			<p>Loading...</p>
 		</div>
 	{/if}
-
-	<ul class="mt-6 space-y-3 mb-6">
-		<li class="flex items-start gap-3">
-			<span
-				class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
-			>
-				<svg
-					class="h-3 w-3 text-white"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="3"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<polyline points="20 6 9 17 4 12"></polyline>
-				</svg>
-			</span>
-			<span class="text-sm text-slate-600">[FREE] 1 challenge every 2 days</span>
-		</li>
-		<li class="flex items-start gap-3">
-			<span
-				class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
-			>
-				<svg
-					class="h-3 w-3 text-white"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="3"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<polyline points="20 6 9 17 4 12"></polyline>
-				</svg>
-			</span>
-			<span class="text-sm text-slate-600">10 workspaces with max. 5 research contexts each</span>
-		</li>
-	</ul>
 </div>

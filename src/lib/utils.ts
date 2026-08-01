@@ -37,3 +37,30 @@ export const countWords = (text: string): number => {
 		.split(/\s+/)
 		.filter((word) => word.length > 0).length;
 }
+
+export const subscriptionPlans = [
+	{
+		name: 'ATLA Free',
+		priceLabel: '$0',
+		priceAmount: 0,
+		isActive: true,
+		benefits: [
+			'1 challenge every one week (full analysis)',
+			'1 workspaces with max. 5 research contexts each'
+		],
+		link: '/auth/register',
+		ctaLabel: 'Get started for free'
+	},
+	{
+		name: 'ATLA Bronze',
+		priceLabel: '$4.99/month',
+		priceAmount: 4.99,
+		isActive: false,
+		benefits: [
+			'1 challenge every 2 days (full analysis)',
+			'20 workspaces with max. 25 research contexts each'
+		],
+		link: '/auth/register',
+		ctaLabel: 'Subscribe now'
+	}
+];

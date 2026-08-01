@@ -1,4 +1,5 @@
 <script>
+	import { subscriptionPlans } from '@/lib/utils';
 	import '../../../app.css';
 	import { Footer } from '@/lib/components/blocks/footer';
 </script>
@@ -15,65 +16,55 @@
 </svelte:head>
 
 <div class="flex flex-1 items-center justify-center px-4 py-8 md:py-24">
-	<div class="w-full max-w-lg">
+	<div class="w-full max-w-2xl">
 		<p>
-			This your investment to upgrade your brain. Throw brain root to the ground. Make it grow every
-			days.
+			This your investment to upgrade your brain. Throw brain root to the ground. Make your growth
+			happen every days.
 		</p>
 
-		<div class="w-full max-w-sm mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-			<div class="flex items-baseline gap-1">
-				<span class="text-4xl font-semibold tracking-tight text-slate-900">$4.99</span>
-				<span class="text-sm font-medium text-slate-500">/month</span>
-			</div>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			{#each subscriptionPlans as plan}
+				<div
+					class="w-full max-w-sm mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+				>
+					<div class="flex items-baseline gap-1">
+						<span class="text-4xl font-semibold tracking-tight text-slate-900">
+							${plan.priceAmount}
+						</span>
+						<span class="text-sm font-medium text-slate-500">/month</span>
+					</div>
 
-			<ul class="mt-6 space-y-3">
-				<li class="flex items-start gap-3">
-					<span
-						class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
-					>
-						<svg
-							class="h-3 w-3 text-white"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="3"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polyline points="20 6 9 17 4 12"></polyline>
-						</svg>
-					</span>
-					<span class="text-sm text-slate-600">[FREE] 1 challenge every 2 days</span>
-				</li>
-				<li class="flex items-start gap-3">
-					<span
-						class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
-					>
-						<svg
-							class="h-3 w-3 text-white"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="3"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polyline points="20 6 9 17 4 12"></polyline>
-						</svg>
-					</span>
-					<span class="text-sm text-slate-600"
-						>10 workspaces with max. 5 research contexts each</span
-					>
-				</li>
-			</ul>
+					<ul class="mt-6 space-y-3">
+						{#each plan.benefits as benefit}
+							<li class="flex items-start gap-3">
+								<span
+									class="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-900"
+								>
+									<svg
+										class="h-3 w-3 text-white"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="3"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<polyline points="20 6 9 17 4 12"></polyline>
+									</svg>
+								</span>
+								<span class="text-sm text-slate-600">{benefit}</span>
+							</li>
+						{/each}
+					</ul>
 
-			<a
-				href="/auth/register"
-				class="mt-8 w-full block text-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
-			>
-				Subscribe now
-			</a>
+					<a
+						href={plan.link}
+						class="mt-8 w-full block text-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+					>
+						{plan.ctaLabel}
+					</a>
+				</div>
+			{/each}
 		</div>
 	</div>
 </div>
