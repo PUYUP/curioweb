@@ -12,8 +12,7 @@
 	const { data }: { data: PageServerData } = $props();
 	let { context } = $derived(data);
 
-	let userId = $state<string | null>(null);
-	let userEmail = $state<string | null>(null);
+	let user = $state<any>(null);
 
 	// chunks viewer
 	let chunkDrawerOpen = $state(false);
@@ -24,8 +23,7 @@
 	$effect(() => {
 		(async () => {
 			const { data: session } = await authClient.getSession();
-			userId = session?.user?.id ?? null;
-			userEmail = session?.user?.email ?? null;
+			user = session?.user ?? null;
 		})();
 	});
 </script>
@@ -84,7 +82,7 @@
 									{#if (chunk as any)?.similarities && (chunk as any).similarities.length > 0}
 										<ol class="list-decimal pl-8">
 											{#each (chunk as any).similarities as similarity}
-												<SimilarItem item={similarity} user={{ id: userId, email: userEmail }} />
+												<SimilarItem item={similarity} {user} />
 											{/each}
 										</ol>
 									{/if}

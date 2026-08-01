@@ -2,7 +2,8 @@
 	import Icon from 'mdi-svelte';
 	import { mdiFilePdfBox } from '@mdi/js';
 	import { Button } from '@/lib/components/ui/button';
-	import { checkout } from '@/lib/auth-client';
+	import { authClient, checkout } from '@/lib/auth-client';
+	import { portal } from '@polar-sh/better-auth';
 
 	const { item, user } = $props();
 
@@ -82,7 +83,16 @@
 				</div>
 
 				<div class="ml-auto">
-					<Button variant="default" onclick={() => checkout(user.id, user.email)}>
+					<Button
+						variant="default"
+						onclick={async () => {
+							if (user?.subscription?.status === 'canceled') {
+								await authClient.customer.portal();
+							} else {
+								await checkout(user.id, user.email);
+							}
+						}}
+					>
 						Subscribe to Unlock
 					</Button>
 				</div>
