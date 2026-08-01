@@ -25,6 +25,11 @@ export const POST = Webhooks({
                 startDate: startDate,
                 endDate: endDate,
                 canceledAt: canceledAt,
+                attributes: {
+                    maxWorkspaces: 20,
+                    maxOfContextsPerWorkspace: 25,
+                    challengeLoopDuration: 48,
+                }
             }
 
             if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled') {
@@ -41,7 +46,12 @@ export const POST = Webhooks({
                             lastSub.id,
                             {
                                 status: 'canceled',
-                                canceledAt: canceledAt
+                                canceledAt: canceledAt,
+                                attributes: {
+                                    maxWorkspaces: 1,
+                                    maxOfContextsPerWorkspace: 5,
+                                    challengeLoopDuration: 168,
+                                }
                             }
                         );
                     }

@@ -18,8 +18,6 @@
 				const { user } = session;
 				subscription = (user as any)?.subscription;
 				subscriptionIsActive = subscription?.status === 'active';
-
-				console.log(subscription?.restrictions);
 			}
 		})();
 	});
@@ -43,14 +41,14 @@
 	<div class="mb-4 flex items-center border-b border-neutral-200 pb-4">
 		<span>Workspaces</span>
 		<div class="ml-auto">
-			{#if workspaceList.length >= (subscription?.restrictions?.maxWorkspaces ?? 0)}
+			{#if workspaceList.length >= (subscription?.attributes?.maxWorkspaces ?? 0)}
 				<p class="text-xs text-red-500">
-					Limit {subscription?.restrictions?.maxWorkspaces} reached, upgrade to add more
+					Limit {subscription?.attributes?.maxWorkspaces} reached, upgrade to add more
 				</p>
 			{:else}
 				<Button
 					href="/workspaces/editor"
-					disabled={workspaceList.length >= (subscription?.restrictions?.maxWorkspaces ?? 0)}
+					disabled={workspaceList.length >= (subscription?.attributes?.maxWorkspaces ?? 0)}
 				>
 					<Icon path={mdiPlus} size="1rem" />
 					New

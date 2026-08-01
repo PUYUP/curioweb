@@ -36,7 +36,7 @@ export const load = async ({ locals, params, url }) => {
             .where(eq(researchContexts.workspaceId, params.id));
         const contextCount = result.count;
 
-        if (contextCount >= subscription.restrictions.maxOfContextsPerWorkspace) {
+        if (contextCount >= subscription.attributes.maxOfContextsPerWorkspace) {
             throw redirect(302, '/subscription?error=limit-exceeded');
         }
 

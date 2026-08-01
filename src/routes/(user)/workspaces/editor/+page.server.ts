@@ -18,7 +18,7 @@ export const load = async ({ locals, params, url }) => {
             .where(eq(workspaces.userId, locals.user.id));
         const workspaceCount = result.count;
 
-        if (workspaceCount >= subscription.restrictions.maxWorkspaces) {
+        if (workspaceCount >= subscription.attributes.maxWorkspaces) {
             throw redirect(302, '/subscription?error=limit-exceeded');
         }
 

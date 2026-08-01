@@ -128,11 +128,11 @@
 							{#if plan.priceAmount > 0}
 								<button
 									type="button"
-									onclick={() => checkout(userId, userEmail)}
+									onclick={() => (plan.item ? manage() : checkout(userId, userEmail))}
 									disabled={redirecting}
 									class="cursor-pointer w-full block text-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
 								>
-									Subscribe
+									{plan.item ? 'Manage' : 'Subscribe'}
 								</button>
 							{/if}
 						{/if}

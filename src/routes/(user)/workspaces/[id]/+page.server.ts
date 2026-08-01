@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { redirect } from "@sveltejs/kit";
 import { researchContexts, workspaces } from "$lib/server/db/schemas/workspace.schema.js";
 
@@ -18,7 +18,8 @@ export const load = async ({ locals, params }) => {
 
         const contexts = await db.select()
             .from(researchContexts)
-            .where(eq(researchContexts.workspaceId, workspaceId));
+            .where(eq(researchContexts.workspaceId, workspaceId))
+            .orderBy(desc(researchContexts.createdAt));
 
         return {
             workspace: workspace,

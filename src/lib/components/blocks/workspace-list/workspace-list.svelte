@@ -14,9 +14,9 @@
 					<a href="/workspaces/{item.id}" class="flex items-center" {...props}>
 						<Item.Content>
 							<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
-							{#if item.description}
-								<Item.Description class="line-clamp-2">{item.description}</Item.Description>
-							{/if}
+							<Item.Description class="line-clamp-2">
+								{item.description ? item.description : 'No description given.'}
+							</Item.Description>
 						</Item.Content>
 
 						<Item.Actions>

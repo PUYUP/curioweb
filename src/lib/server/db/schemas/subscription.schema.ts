@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
 import { sql } from 'drizzle-orm';
 
@@ -16,6 +16,7 @@ export const subscriptions = pgTable('subscriptions', {
     startDate: timestamp('start_date', { mode: 'date' }),
     endDate: timestamp('end_date', { mode: 'date' }),
     canceledAt: timestamp('canceled_at', { mode: 'date' }),
+    attributes: jsonb('attributes'),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),

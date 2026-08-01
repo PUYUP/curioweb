@@ -49,7 +49,7 @@
 		</div>
 
 		<div class="w-full md:w-3/6 text-sm whitespace-break-spaces">
-			{workspace?.description}
+			{workspace?.description ? workspace.description : 'No description given.'}
 		</div>
 
 		<div class="mb-4 mt-8 flex items-center border-b border-neutral-200 pb-2">
@@ -61,7 +61,7 @@
 				{#each contexts as context}
 					<Card.Root>
 						<Card.Content>
-							<p class="text-sm">{context.content}</p>
+							<div class="text-sm">{context.content}</div>
 						</Card.Content>
 						<Card.Footer class="mt-auto grid grid-cols-2 gap-4 w-full border-t border-neutral-200">
 							<div class="block">

@@ -51,9 +51,8 @@ export const auth = betterAuth({
 		}),
 		customSession(async ({ user, session }) => {
 			const currentSubscription = await subscriptionFactory.getLatestByUserId(user.id);
-			const subscriptionActive = currentSubscription?.status === "active";
 			const subscriptionRestriction = subscriptionPlans.find(
-				plan => plan.slug === (subscriptionActive ? 'bronze' : 'free')
+				plan => plan.slug === 'free'
 			)?.restrictions;
 
 			return {
@@ -61,7 +60,7 @@ export const auth = betterAuth({
 					...user,
 					subscription: {
 						...currentSubscription,
-						restrictions: subscriptionRestriction,
+						attributes: currentSubscription?.attributes || subscriptionRestriction,
 					}
 				},
 				session,
