@@ -1,6 +1,8 @@
 import { Webhooks } from "@polar-sh/sveltekit";
 import { env } from '$env/dynamic/private';
 import { subscriptionFactory } from '$lib/server/db/factories/subscription.factory';
+import { updateProfile } from "@/lib/server/db/factories/profle.factory";
+import { addHours } from "date-fns";
 
 export const POST = Webhooks({
     webhookSecret: env.POLAR_WEBHOOK_SECRET!,
@@ -35,6 +37,10 @@ export const POST = Webhooks({
             if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled') {
                 if (email && userId) {
                     await subscriptionFactory.insert(subsData);
+                    // update profile next_processed_at
+                    await updateProfile(userId, {
+                        nextProcessedAt: addHours(new Date(), 24),
+                    });
                 }
             }
 
@@ -54,6 +60,11 @@ export const POST = Webhooks({
                                 }
                             }
                         );
+
+                        // update profile next_processed_at
+                        await updateProfile(userId, {
+                            nextProcessedAt: addHours(new Date(), 168),
+                        });
                     }
                 }
             }

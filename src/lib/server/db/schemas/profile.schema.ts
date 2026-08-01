@@ -13,6 +13,7 @@ export const profile = pgTable('profile', {
     interest: text('interest').notNull(),
     interestEmbedding: vector('interest_embedding', { dimensions: 1024 }),
     languageCode: text('language_code').notNull().default('en'),
+    nextProcessedAt: timestamp('next_processed_at', { mode: 'date' }),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),

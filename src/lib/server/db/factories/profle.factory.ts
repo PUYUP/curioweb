@@ -26,3 +26,20 @@ export const upsertProfile = async (userId: string, profileData: ProfileData) =>
         return result;
     }
 }
+
+// --------
+// update user profile
+// --------
+
+export const updateProfile = async (userId: string, profileData: Partial<typeof profile.$inferInsert>) => {
+    try {
+        const [result] = await db.update(profile)
+            .set(profileData)
+            .where(eq(profile.userId, userId))
+            .returning();
+        return result;
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return null;
+    }
+}
