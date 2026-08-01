@@ -10,6 +10,8 @@ export const load = async ({ locals, params }) => {
     }
 
     const contextId = params.context_id;
+    const subscription = (locals.user as any).subscription;
+    const subscriptionActive = subscription?.status === "active";
 
     try {
         const [context] = await db.select({
@@ -35,10 +37,19 @@ export const load = async ({ locals, params }) => {
             .where(eq(contextSimilarities.contextId, contextId))
             .orderBy(desc(contextSimilarities.similarityScore));
 
+
         const matchResults = chunks.map((c: any) => {
+            const similarsByChunk = similarities.filter((s: any) => s.contextChunkId === c.id);
+            const top3Ids = new Set(similarsByChunk.slice(0, 3).map((s: any) => s.id));
+
             return {
                 ...c,
-                similarities: similarities.filter((s: any) => s.contextChunkId === c.id),
+                similarities: similarsByChunk.map((item: any) => {
+                    return {
+                        ...item,
+                        paper: (!subscriptionActive && top3Ids.has(item.id)) ? null : item.paper,
+                    }
+                }),
             };
         });
 

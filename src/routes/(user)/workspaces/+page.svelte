@@ -4,9 +4,25 @@
 	import { mdiPlus } from '@mdi/js';
 	import Icon from 'mdi-svelte';
 	import type { PageServerData } from './$types';
+	import { authClient } from '@/lib/auth-client';
 
 	const { data }: { data: PageServerData } = $props();
 	const workspaceList = $derived(data.workspaces);
+	let subscription = $state<any>(null);
+	let subscriptionIsActive = $state<boolean>(false);
+
+	$effect(() => {
+		(async () => {
+			const { data: session } = await authClient.getSession();
+			if (session) {
+				const { user } = session;
+				subscription = (user as any)?.subscription;
+				subscriptionIsActive = subscription?.status === 'active';
+
+				console.log(subscription?.restrictions);
+			}
+		})();
+	});
 </script>
 
 <svelte:head>
@@ -24,12 +40,23 @@
 </svelte:head>
 
 <div class="pb-4 px-4">
-	<div class="mb-4 flex items-center">
+	<div class="mb-4 flex items-center border-b border-neutral-200 pb-4">
 		<span>Workspaces</span>
-		<Button class="ml-auto" href="/workspaces/editor">
-			<Icon path={mdiPlus} size="1rem" />
-			New
-		</Button>
+		<div class="ml-auto">
+			{#if workspaceList.length >= (subscription?.restrictions?.maxWorkspaces ?? 0)}
+				<p class="text-xs text-red-500">
+					Limit {subscription?.restrictions?.maxWorkspaces} reached, upgrade to add more
+				</p>
+			{:else}
+				<Button
+					href="/workspaces/editor"
+					disabled={workspaceList.length >= (subscription?.restrictions?.maxWorkspaces ?? 0)}
+				>
+					<Icon path={mdiPlus} size="1rem" />
+					New
+				</Button>
+			{/if}
+		</div>
 	</div>
 
 	<div class="w-full md:w-3/6 text-sm">

@@ -7,10 +7,13 @@
 	import { mdiArrowRight, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
 	import type { PageServerData } from './$types';
 	import { SimilarItem } from '@/lib/components/blocks/similar-item';
+	import { authClient } from '@/lib/auth-client';
 
 	const { data }: { data: PageServerData } = $props();
-
 	let { context } = $derived(data);
+
+	let userId = $state<string | null>(null);
+	let userEmail = $state<string | null>(null);
 
 	// chunks viewer
 	let chunkDrawerOpen = $state(false);
@@ -18,8 +21,13 @@
 		chunkDrawerOpen = !chunkDrawerOpen;
 	}
 
-	// svelte-ignore state_referenced_locally
-	console.log(context);
+	$effect(() => {
+		(async () => {
+			const { data: session } = await authClient.getSession();
+			userId = session?.user?.id ?? null;
+			userEmail = session?.user?.email ?? null;
+		})();
+	});
 </script>
 
 <svelte:head>
@@ -76,7 +84,7 @@
 									{#if (chunk as any)?.similarities && (chunk as any).similarities.length > 0}
 										<ol class="list-decimal pl-8">
 											{#each (chunk as any).similarities as similarity}
-												<SimilarItem item={similarity} />
+												<SimilarItem item={similarity} user={{ id: userId, email: userEmail }} />
 											{/each}
 										</ol>
 									{/if}

@@ -41,25 +41,37 @@ export const countWords = (text: string): number => {
 export const subscriptionPlans = [
 	{
 		name: 'ATLA Free',
+		slug: 'free',
 		priceLabel: '$0',
 		priceAmount: 0,
 		isActive: true,
 		benefits: [
 			'1 challenge every one week (full analysis)',
-			'1 workspaces with max. 5 research contexts each'
+			'1 workspaces with max. 5 research contexts each',
+			'Top 3 matching papers in research contexts hidden',
 		],
+		restrictions: {
+			maxWorkspaces: 1,
+			maxOfContextsPerWorkspace: 5,
+		},
 		link: '/auth/register',
 		ctaLabel: 'Get started for free'
 	},
 	{
 		name: 'ATLA Bronze',
+		slug: 'bronze',
 		priceLabel: '$4.99/month',
 		priceAmount: 4.99,
 		isActive: false,
 		benefits: [
 			'1 challenge every 2 days (full analysis)',
-			'20 workspaces with max. 25 research contexts each'
+			'20 workspaces with max. 25 research contexts each',
+			'All matching papers in research contexts visible',
 		],
+		restrictions: {
+			maxWorkspaces: 20,
+			maxOfContextsPerWorkspace: 25,
+		},
 		link: '/auth/register',
 		ctaLabel: 'Subscribe now'
 	}

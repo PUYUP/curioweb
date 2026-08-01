@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { authClient, checkout } from '@/lib/auth-client';
 	import { Button } from '@/lib/components/ui/button';
-	import * as Item from '$lib/components/ui/item/index.js';
-	import { Badge } from '@/lib/components/ui/badge';
 	import { Spinner } from '@/lib/components/ui/spinner';
 	import { subscriptionPlans } from '@/lib/utils';
 
@@ -134,7 +132,7 @@
 									disabled={redirecting}
 									class="cursor-pointer w-full block text-center rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
 								>
-									Start 30 Days Trial
+									Subscribe
 								</button>
 							{/if}
 						{/if}

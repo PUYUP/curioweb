@@ -1,16 +1,27 @@
 import { db } from "$lib/server/db/index.js";
 import { workspaces } from "$lib/server/db/schemas/workspace.schema.js";
 import { fail, redirect } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 export const load = async ({ locals, params, url }) => {
     if (!locals.user) {
         return redirect(302, '/auth/login');
     }
 
+    // limitation
+    const subscription = (locals.user as any)?.subscription;
     const entityId = url.searchParams.get('id');
 
     if (!entityId) {
+        const [result] = await db.select({ count: count() })
+            .from(workspaces)
+            .where(eq(workspaces.userId, locals.user.id));
+        const workspaceCount = result.count;
+
+        if (workspaceCount >= subscription.restrictions.maxWorkspaces) {
+            throw redirect(302, '/subscription?error=limit-exceeded');
+        }
+
         return {
             workspace: null
         }

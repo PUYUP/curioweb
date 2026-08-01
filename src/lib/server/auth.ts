@@ -8,6 +8,9 @@ import { upsertProfile } from './db/factories/profle.factory';
 import * as schema from '$lib/server/db/schemas/schema';
 import { polar, checkout, portal, usage, webhooks } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
+import { customSession } from "better-auth/plugins";
+import { subscriptionFactory } from './db/factories/subscription.factory';
+import { subscriptionPlans } from '../utils';
 
 export const polarClient = new Polar({
 	accessToken: env.POLAR_ACCESS_TOKEN,
@@ -45,7 +48,25 @@ export const auth = betterAuth({
 				portal(),
 				usage(),
 			],
-		})
+		}),
+		customSession(async ({ user, session }) => {
+			const currentSubscription = await subscriptionFactory.getLatestByUserId(user.id);
+			const subscriptionActive = currentSubscription?.status === "active";
+			const subscriptionRestriction = subscriptionPlans.find(
+				plan => plan.slug === (subscriptionActive ? 'bronze' : 'free')
+			)?.restrictions;
+
+			return {
+				user: {
+					...user,
+					subscription: {
+						...currentSubscription,
+						restrictions: subscriptionRestriction,
+					}
+				},
+				session,
+			};
+		}),
 	],
 	logger: { level: 'debug' },
 	socialProviders: {
@@ -78,5 +99,5 @@ export const auth = betterAuth({
 				});
 			},
 		},
-	}
+	},
 });
