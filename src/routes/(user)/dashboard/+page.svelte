@@ -33,7 +33,9 @@
 					<Button variant="outline" href="/dashboard/onboarding" size="sm">Change</Button>
 				</div>
 
-				<p class="interest-content text-lg">{profile?.interest || 'No interests added'}</p>
+				<div class="interest-content text-lg whitespace-break-spaces">
+					{profile?.interest || 'No interests added'}
+				</div>
 			</div>
 		</div>
 
