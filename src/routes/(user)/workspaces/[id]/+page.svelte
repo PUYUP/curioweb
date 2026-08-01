@@ -97,7 +97,7 @@
 				{/each}
 			{/if}
 			<Card.Root
-				class="cursor-pointer hover:bg-neutral-100"
+				class="cursor-pointer bg-neutral-50 hover:bg-neutral-100"
 				onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
 			>
 				<Card.Content class="flex flex-col items-center justify-center h-full">

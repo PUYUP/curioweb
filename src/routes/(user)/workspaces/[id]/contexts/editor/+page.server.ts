@@ -2,13 +2,15 @@ import { db } from "@/lib/server/db";
 import { researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { countWords, MAX_CONTENT_WORDS, MIN_CONTENT_WORDS } from "@/lib/utils";
 import { fail, redirect } from "@sveltejs/kit";
-import { eq, getTableColumns } from "drizzle-orm";
+import { count, eq, getTableColumns } from "drizzle-orm";
 
 export const load = async ({ locals, params, url }) => {
     if (!locals.user) {
         return redirect(302, '/auth/login');
     }
 
+    // limitation
+    const subscription = (locals.user as any)?.subscription;
     let workspace: any = null;
     const workspaceId = params.id;
     const entityId = url.searchParams.get('id');
@@ -29,6 +31,15 @@ export const load = async ({ locals, params, url }) => {
     }
 
     if (!entityId) {
+        const [result] = await db.select({ count: count() })
+            .from(researchContexts)
+            .where(eq(researchContexts.workspaceId, params.id));
+        const contextCount = result.count;
+
+        if (contextCount >= subscription.restrictions.maxOfContextsPerWorkspace) {
+            throw redirect(302, '/subscription?error=limit-exceeded');
+        }
+
         return {
             context: null,
             workspace: workspace
