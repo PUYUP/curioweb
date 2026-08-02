@@ -5,7 +5,7 @@ import { updateProfile } from "@/lib/server/db/factories/profle.factory";
 import { addHours } from "date-fns";
 
 export const POST = Webhooks({
-    webhookSecret: env.POLAR_WEBHOOK_SECRET!,
+    webhookSecret: env.POLAR_WEBHOOK_SECRET,
     onPayload: async (payload) => {
         const actionType = payload.type;
 
