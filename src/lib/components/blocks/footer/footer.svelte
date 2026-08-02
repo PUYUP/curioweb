@@ -38,6 +38,12 @@
 						class="text-sm text-muted-foreground hover:text-foreground transition-colors"
 						>Contact us</a
 					>
+					<Separator orientation="vertical" />
+					<a
+						href="/institution"
+						class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+						>For Institutions</a
+					>
 				</nav>
 
 				<div class="flex gap-6 justify-center mt-6">
