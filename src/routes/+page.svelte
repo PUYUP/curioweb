@@ -78,7 +78,7 @@ The most extreme claws, such as those specialized for crushing shells, are the r
 </script>
 
 <svelte:head>
-	<title>ATLANIZE - Sifting Journals Challenging Curiosity</title>
+	<title>ATLANIZE - Sifting Research Papers Challenging Curiosity</title>
 	<meta
 		name="description"
 		content="Discover the latest research and challenge your curiosity with ATLANIZE."
@@ -97,7 +97,7 @@ The most extreme claws, such as those specialized for crushing shells, are the r
 	<div class="flex items-center justify-center">
 		<div class="w-full text-center py-6 pb-14 sm:py-12 md:py-24">
 			<h1 class="text-4xl sm:text-6xl font-bold mb-4 sm:mb-12">
-				<span class="text-[#072e5f] block mb-2"><u class="italic">Sifting</u> Journals</span>
+				<span class="text-[#072e5f] block mb-3"><u class="italic">Sifting</u> Research Papers</span>
 				<span class="text-[#38b9fc] block">Challenging <u class="italic">Curiosity</u></span>
 			</h1>
 
