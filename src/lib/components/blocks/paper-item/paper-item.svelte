@@ -127,7 +127,7 @@
 		<CardFooter class="mt-auto flex items-center">
 			<Button variant="link" onclick={() => showSummaryHandler(challenge.summary.results)}>
 				<Icon path={mdiShimmer} color={'#666'} class="size-4" />
-				Read Full Summary
+				View TL;DR
 			</Button>
 
 			{#if index != null}

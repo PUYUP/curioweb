@@ -453,7 +453,7 @@
 		<Drawer.Content class="fixed flex w-full max-w-lg flex-col after:hidden">
 			<div class="flex h-full flex-col overflow-hidden">
 				<Drawer.Header class="text-left">
-					<Drawer.Title>Full Summaries</Drawer.Title>
+					<Drawer.Title>TL;DR Viewer</Drawer.Title>
 				</Drawer.Header>
 
 				<div class="prose flex-1 space-y-3 overflow-y-auto px-4 pb-4">
@@ -510,8 +510,10 @@
 
 							{#if metadata}
 								<p class="text-xs text-neutral-400 mb-6">
-									model: {metadata.model_version ?? '-'} · tokens: {metadata.usage_metadata
-										?.total_token_count ?? '-'}
+									Model: {metadata.model_version ?? '-'} • Tokens: {metadata.usage_metadata
+										?.totalTokenCount ??
+										metadata.usage_metadata?.total_token_count ??
+										'-'}
 								</p>
 							{/if}
 						{/if}
