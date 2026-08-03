@@ -81,12 +81,13 @@
 		<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<Chart.Container config={chartConfig} class="h-[160px] w-full">
+		<Chart.Container config={chartConfig} class="h-[220px] w-full">
 			<BarChart
 				data={chartData}
 				xScale={scaleBand().padding(0.15)}
 				x="month"
-				axis="x"
+				axis={true}
+				yDomain={[0, 10]}
 				series={[
 					{ key: 'prestructural', label: 'Prestructural', color: chartConfig.prestructural.color },
 					{ key: 'unistructural', label: 'Unistructural', color: chartConfig.unistructural.color },
@@ -113,7 +114,8 @@
 						motion: { type: 'tween', duration: 500, easing: cubicInOut }
 					},
 					highlight: { area: { fill: 'none' } },
-					xAxis: { format: (d) => d.slice(0, 3) }
+					xAxis: { format: (d) => d.slice(0, 3) },
+					yAxis: { ticks: 10 }
 				}}
 			>
 				{#snippet tooltip()}

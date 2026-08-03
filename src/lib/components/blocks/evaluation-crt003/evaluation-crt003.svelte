@@ -66,7 +66,7 @@
 		<Button variant="outline" onclick={() => (assessmentOpen = true)}>View Details</Button>
 	</Card.Header>
 	<Card.Content class="flex-1">
-		<Chart.Container config={chartConfig} class="mx-auto aspect-square max-h-[280px] pb-10">
+		<Chart.Container config={chartConfig} class="mx-auto aspect-square max-h-[380px] pb-10">
 			<LineChart
 				data={chartData}
 				series={[
@@ -92,6 +92,7 @@
 				radial
 				x="month"
 				xScale={scaleBand()}
+				yDomain={[0, 10]}
 				padding={8}
 				legend={{ classes: { root: '-bottom-10' } }}
 				props={{
@@ -104,7 +105,7 @@
 						tickLength: 10
 					},
 					yAxis: {
-						format: () => ''
+						ticks: 6
 					},
 					grid: {
 						radialY: 'linear'

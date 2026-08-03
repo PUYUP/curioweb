@@ -87,12 +87,13 @@
 		<Card.Description>Range score: 1 (Worst) - 10 (Best)</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<Chart.Container config={chartConfig} class="h-[160px] w-full">
+		<Chart.Container config={chartConfig} class="h-[220px] w-full">
 			<BarChart
 				data={chartData}
 				xScale={scaleBand().padding(0.15)}
 				x="month"
-				axis="x"
+				axis={true}
+				yDomain={[0, 10]}
 				series={[
 					{
 						key: 'content_mastery',
@@ -137,7 +138,9 @@
 						motion: { type: 'tween', duration: 500, easing: cubicInOut }
 					},
 					highlight: { area: { fill: 'none' } },
-					xAxis: { format: (d) => d.slice(0, 3) }
+					xAxis: { format: (d) => d.slice(0, 3) },
+					yAxis: { ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+					grid: { yTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 				}}
 			>
 				{#snippet tooltip()}
