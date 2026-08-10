@@ -6,6 +6,7 @@
 	import { Label } from '@/lib/components/ui/label';
 	import { Textarea } from '@/lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
 	import type { PageData } from '../[id]/$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
@@ -17,15 +18,18 @@
 	let saving: boolean = $state<boolean>(false);
 	let deleting: boolean = $state<boolean>(false);
 	let selectedLanguage = $state('en');
+	let scope = $state('individual');
 
 	let formValues: {
 		title: string;
 		description: string;
 		languageCode: string;
+		scope: string;
 	} = $state({
 		title: '',
 		description: '',
-		languageCode: 'en'
+		languageCode: 'en',
+		scope: 'individual'
 	});
 
 	const handleSubmit: SubmitFunction = ({ cancel }) => {
@@ -55,6 +59,7 @@
 			formValues.description = workspace.description || '';
 			formValues.languageCode = workspace.languageCode || '';
 			selectedLanguage = workspace.languageCode || 'en';
+			scope = workspace.scope || 'individual';
 		}
 	});
 
@@ -140,6 +145,20 @@
 						</Select.Group>
 					</Select.Content>
 				</Select.Root>
+			</div>
+
+			<div class="mb-4">
+				<Label for="scope" class="mb-2">Scope*</Label>
+				<RadioGroup.Root name="scope" bind:value={scope}>
+					<div class="flex items-center space-x-2">
+						<RadioGroup.Item value="individual" id="individual" />
+						<Label for="individual">Individual</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<RadioGroup.Item value="group" id="group" />
+						<Label for="group">Group</Label>
+					</div>
+				</RadioGroup.Root>
 			</div>
 
 			<div class="mb-4">

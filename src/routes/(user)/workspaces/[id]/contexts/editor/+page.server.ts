@@ -11,24 +11,7 @@ export const load = async ({ locals, params, url }) => {
 
     // limitation
     const subscription = (locals.user as any)?.subscription;
-    let workspace: any = null;
-    const workspaceId = params.id;
     const entityId = url.searchParams.get('id');
-
-    try {
-        const [workspaceResult] = await db.select({
-            ...getTableColumns(workspaces),
-        })
-            .from(workspaces)
-            .where(eq(workspaces.id, workspaceId))
-            .limit(1);
-        if (!workspaceResult) {
-            return redirect(302, '/workspaces');
-        }
-        workspace = workspaceResult;
-    } catch (error) {
-        return redirect(302, '/workspaces');
-    }
 
     if (!entityId) {
         const [result] = await db.select({ count: count() })
@@ -42,7 +25,6 @@ export const load = async ({ locals, params, url }) => {
 
         return {
             context: null,
-            workspace: workspace
         }
     }
 

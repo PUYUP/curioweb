@@ -7,10 +7,9 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import Icon from 'mdi-svelte';
 	import { mdiDeleteOutline, mdiContentSaveOutline, mdiAlertCircleOutline } from '@mdi/js';
-	import type { PageServerData } from './$types';
 	import { countWords, MAX_CONTENT_WORDS, MIN_CONTENT_WORDS } from '@/lib/utils';
 
-	const { data }: { data: PageServerData } = $props();
+	const { data } = $props();
 	const { workspace, context } = $derived(data);
 
 	let saving: boolean = $state<boolean>(false);
@@ -150,7 +149,7 @@
 			currentId = result?.id as string;
 
 			if (!context) {
-				await goto(`/workspaces/${workspace.id}/contexts/editor?id=${currentId}`, {
+				await goto(`/workspaces/${workspace?.id}/contexts/editor?id=${currentId}`, {
 					replaceState: true,
 					noScroll: true,
 					keepFocus: true,

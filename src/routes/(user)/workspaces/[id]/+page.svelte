@@ -5,13 +5,13 @@
 	import Icon from 'mdi-svelte';
 	import { mdiPlus } from '@mdi/js';
 	import { goto } from '$app/navigation';
-	import type { PageServerData } from './$types';
 	import Badge from '@/lib/components/ui/badge/badge.svelte';
+	import type { LayoutServerData } from './$types';
 
 	let loading: boolean = $state<boolean>(true);
 	let loadingContexts: boolean = $state<boolean>(true);
 
-	const { data }: { data: PageServerData } = $props();
+	const { data }: { data: LayoutServerData } = $props();
 	const workspace = $derived(data.workspace);
 	const contexts = $derived(data.contexts);
 
@@ -37,11 +37,14 @@
 		<div class="flex items-center justify-center size-full">
 			<Spinner />
 		</div>
-	{:else}
+	{:else if workspace}
 		<div class="mb-4 border-b border-neutral-200 pb-2">
 			<div class="block text-xs text-neutral-500">Workspace</div>
-			<div class="flex w-full justify-between items-center">
+			<div class="flex w-full justify-between items-center gap-2">
 				<h1 class="!mb-0 font-semibold">{workspace?.title}</h1>
+				<Badge variant={workspace?.scope === 'individual' ? 'default' : 'secondary'}>
+					{workspace?.scope === 'individual' ? 'Individual' : 'Group'}
+				</Badge>
 				<Button class="ml-auto" href={`/workspaces/editor?id=${workspace?.id}`} variant="outline">
 					Edit
 				</Button>
@@ -51,6 +54,22 @@
 		<div class="w-full md:w-3/6 text-sm whitespace-break-spaces">
 			{workspace?.description ? workspace.description : 'No description given.'}
 		</div>
+
+		{#if workspace.scope === 'group'}
+			<div class="w-full mt-6">
+				<div class="relative aspect-square w-32 bg-neutral-50 rounded-lg border border-neutral-200">
+					<div class="p-4 pb-2 flex items-center justify-center flex-col">
+						<div class="block text-center text-2xl">{workspace.memberCount}</div>
+						<div class="text-sm">Members</div>
+					</div>
+					<div class="mt-auto p-2 pb-0 border-t border-neutral-200">
+						<Button class="w-full" variant="link" href={`/workspaces/${workspace?.id}/members`}>
+							Manage
+						</Button>
+					</div>
+				</div>
+			</div>
+		{/if}
 
 		<div class="mb-4 mt-8 flex items-center border-b border-neutral-200 pb-2">
 			<span class="text-sm">Research Contexts</span>
@@ -109,5 +128,7 @@
 				</Card.Content>
 			</Card.Root>
 		</div>
+	{:else}
+		<div class="flex items-center justify-center size-full">Workspace not found.</div>
 	{/if}
 </div>

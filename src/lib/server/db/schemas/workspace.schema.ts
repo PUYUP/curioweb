@@ -1,5 +1,5 @@
-import { sql } from 'drizzle-orm';
-import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique, real } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique, real, uniqueIndex } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
 import { papers } from './paper.schema';
 
@@ -10,6 +10,7 @@ export const workspaces = pgTable('workspaces', {
     title: text('title').notNull(),
     description: text('description'),
     languageCode: text('language_code').notNull().default('en'),
+    scope: text('scope').notNull().default('individual'),
     createdAt: timestamp('created_at', { mode: 'date' })
         .defaultNow()
         .notNull(),
@@ -102,3 +103,40 @@ export const contextSimilarities = pgTable('context_similarities', {
     deletedAt: timestamp('deleted_at', { mode: 'date' })
         .default(sql`null`),
 });
+
+export const workspaceMembers = pgTable('workspace_members', {
+    id: uuid('id')
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    workspaceId: uuid('workspace_id')
+        .notNull()
+        .references(() => workspaces.id, { onDelete: 'cascade' }),
+    role: text('role').notNull().default('member'),
+    createdAt: timestamp('created_at', { mode: 'date' })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
+        .default(sql`null`),
+}, (table) => ({
+    uniqueMembership: uniqueIndex('unique_membership')
+        .on(table.userId, table.workspaceId),
+}));
+
+
+/*****
+ * Relationship
+ */
+
+export const usersWorkspaceRelations = relations(user, ({ many }) => ({
+    workspaceMembers: many(workspaceMembers),
+}));
+
+export const workspacesUserRelations = relations(workspaces, ({ many }) => ({
+    members: many(workspaceMembers),
+}));

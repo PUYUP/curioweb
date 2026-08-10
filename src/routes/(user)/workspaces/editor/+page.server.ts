@@ -16,8 +16,8 @@ export const load = async ({ locals, params, url }) => {
         const [result] = await db.select({ count: count() })
             .from(workspaces)
             .where(eq(workspaces.userId, locals.user.id));
-        const workspaceCount = result.count;
 
+        const workspaceCount = result.count;
         if (workspaceCount >= subscription.attributes.maxWorkspaces) {
             throw redirect(302, '/subscription?error=limit-exceeded');
         }
@@ -55,6 +55,7 @@ export const actions = {
         const title = formData.get('title');
         const description = formData.get('description');
         const languageCode = formData.get('languageCode');
+        const scope = formData.get('scope');
 
         if (!title || !languageCode) {
             return fail(400, {
@@ -68,6 +69,7 @@ export const actions = {
                 title: title as string,
                 description: description as string,
                 languageCode: languageCode as string,
+                scope: scope as string,
                 userId: user.id
             }).returning()
 
@@ -100,11 +102,12 @@ export const actions = {
         const title = formData.get('title');
         const description = formData.get('description');
         const languageCode = formData.get('languageCode');
+        const scope = formData.get('scope');
 
-        if (!title || !id || !languageCode) {
+        if (!title || !id || !languageCode || !scope) {
             return fail(400, {
                 success: false,
-                message: "Title and ID and language code are required"
+                message: "Title and ID and language code and scope are required"
             })
         }
 
@@ -114,6 +117,7 @@ export const actions = {
                     title: title as string,
                     description: description as string,
                     languageCode: languageCode as string,
+                    scope: scope as string,
                     userId: user.id,
                     updatedAt: new Date(),
                 })
