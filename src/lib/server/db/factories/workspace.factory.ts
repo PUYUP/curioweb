@@ -134,3 +134,17 @@ export const updateNote = async (noteId: string, payload: { title?: string, cont
         throw error;
     }
 }
+
+export const deleteNote = async (noteId: string, userId: string) => {
+    try {
+        const result = await db.delete(workspaceNotes)
+            .where(and(
+                eq(workspaceNotes.id, noteId),
+                eq(workspaceNotes.userId, userId)
+            ));
+        return result;
+    } catch (error) {
+        console.error("Error deleting note:", error);
+        throw error;
+    }
+}
