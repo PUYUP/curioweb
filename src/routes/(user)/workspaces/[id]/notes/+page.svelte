@@ -4,10 +4,10 @@
 	import Icon from 'mdi-svelte';
 	import { mdiPlus } from '@mdi/js';
 	import { format, isToday, isYesterday } from 'date-fns';
-	import { id as localeId } from 'date-fns/locale';
+	import { enUS as localeId } from 'date-fns/locale';
 
 	const { data } = $props();
-	const { workspace, notes, user } = $derived(data);
+	let { workspace, notes, user } = $derived(data);
 
 	function dayKey(dateInput: string | Date): string {
 		return format(new Date(dateInput), 'yyyy-MM-dd');
@@ -15,8 +15,8 @@
 
 	function formatDayHeader(dateInput: string | Date): string {
 		const date = new Date(dateInput);
-		if (isToday(date)) return 'Hari ini';
-		if (isYesterday(date)) return 'Kemarin';
+		if (isToday(date)) return 'Today';
+		if (isYesterday(date)) return 'Yesterday';
 		return format(date, 'EEEE, d MMMM yyyy', { locale: localeId });
 	}
 
@@ -38,6 +38,26 @@
 
 		return groups;
 	});
+
+	// delete note
+	const deleteHandler = async (item: any) => {
+		const confirmed = confirm('Are you sure you want to delete this note?');
+		if (!confirmed) {
+			return;
+		}
+
+		const res = await fetch(`/api/workspaces/${workspace?.id}/notes`, {
+			method: 'DELETE',
+			body: JSON.stringify({
+				noteId: item?.id,
+				userId: item?.userId
+			})
+		});
+
+		if (res.ok) {
+			notes = notes.filter((note) => note.id !== item.id);
+		}
+	};
 </script>
 
 <svelte:head>
@@ -73,7 +93,7 @@
 							<span class="text-xs font-semibold uppercase tracking-wide text-orange-600">
 								{group.label}
 							</span>
-							<div class="h-px flex-1 bg-neutral-200"></div>
+							<div class="h-px flex-1 border-b border-dashed border-orange-300"></div>
 						</div>
 
 						<div class="flex flex-col gap-4">
@@ -88,10 +108,21 @@
 											<Button
 												variant="link"
 												size="sm"
-												class="text-blue-600"
+												class="text-blue-600 !px-1"
 												href={`/workspaces/${workspace?.id}/notes/editor?id=${item?.id}`}
 											>
 												Edit
+											</Button>
+										{/if}
+										{#if workspace.currentUserRole === 'admin' || user.id === item.userId}
+											<span class="text-neutral-400">&bull;</span>
+											<Button
+												variant="link"
+												size="sm"
+												class="text-red-600 !px-1"
+												onclick={async () => deleteHandler(item)}
+											>
+												Delete
 											</Button>
 										{/if}
 									</div>

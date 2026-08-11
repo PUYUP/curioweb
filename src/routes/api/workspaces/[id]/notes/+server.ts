@@ -68,7 +68,7 @@ export async function DELETE({ params, locals, request }: RequestEvent) {
     }
 
     try {
-        await deleteNote(payload.noteId, user.id);
+        await deleteNote(payload.noteId, payload.userId);
         return json({
             success: true,
         }, { status: 200 });
