@@ -29,7 +29,7 @@ const countTodayNotesSubquery = db
         countTodayNotes: sql<number>`count(${workspaceNotes.id})`.as('count_today_notes'),
     })
     .from(workspaceNotes)
-    .where(sql`${workspaceNotes.createdAt}::date = CURRENT_DATE`) // see note below
+    .where(sql`${workspaceNotes.createdAt}::date = CURRENT_DATE`)
     .groupBy(workspaceNotes.workspaceId)
     .as('count_today_notes');
 

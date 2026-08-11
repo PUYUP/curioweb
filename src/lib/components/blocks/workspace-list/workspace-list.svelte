@@ -16,10 +16,15 @@
 						<Item.Content>
 							<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
 							{#if item.scope === 'group'}
-								<div class="flex items-center gap-3">
+								<div class="flex items-center gap-2">
 									<Badge variant="secondary">Group</Badge>
 									<span class="text-neutral-300">&bull;</span>
 									<span>{item.memberCount} members</span>
+									<span class="text-neutral-300">&bull;</span>
+									<span>
+										{item.noteCount} notes
+										<span class="text-green-600 italic">({item.countTodayNotes} today)</span>
+									</span>
 								</div>
 							{/if}
 							<Item.Description class="line-clamp-2">

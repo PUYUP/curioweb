@@ -3,7 +3,7 @@
 	import { Button } from '@/lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Icon from 'mdi-svelte';
-	import { mdiPlus, mdiCog, mdiArrowRight, mdiEye } from '@mdi/js';
+	import { mdiPlus, mdiCog, mdiEye } from '@mdi/js';
 	import { goto } from '$app/navigation';
 	import Badge from '@/lib/components/ui/badge/badge.svelte';
 	import type { LayoutServerData } from './$types';
@@ -13,9 +13,6 @@
 
 	const { data }: { data: LayoutServerData } = $props();
 	const { workspace, contexts } = $derived(data);
-
-	// svelte-ignore state_referenced_locally
-	console.log(workspace);
 
 	$effect(() => {
 		if (workspace) {
