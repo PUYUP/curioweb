@@ -9,6 +9,7 @@
 	const { workspace, note } = $props();
 	let user = $state<any | null>(null);
 	let content = $state<string>('');
+	let saveLoading = $state<boolean>(false);
 
 	$effect(() => {
 		(async () => {
@@ -25,14 +26,20 @@
 
 	const handleSubmit: SubmitFunction = ({ cancel }) => {
 		return async ({ result, update }) => {
+			saveLoading = true;
+
 			switch (result.type) {
 				case 'success':
-					await update();
+					await update({ reset: false });
 					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true });
 					break;
 				case 'error':
 					break;
+				default:
+					break;
 			}
+
+			saveLoading = false;
 		};
 	};
 
@@ -70,7 +77,9 @@
 			<input type="hidden" value={user?.id} name="user_id" />
 			<input type="hidden" value={note?.id} name="note_id" />
 			<div class="flex mt-6 gap-6">
-				<Button type="submit">{note ? 'Update' : 'Save'}</Button>
+				<Button type="submit" disabled={saveLoading}>
+					{saveLoading ? 'Saving...' : note ? 'Update' : 'Save'}
+				</Button>
 				{#if note}
 					<Separator orientation="vertical" />
 					<Button class="ml-auto" type="button" variant="destructive" onclick={handleDelete}>

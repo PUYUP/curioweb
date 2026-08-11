@@ -46,7 +46,7 @@
 			saving = false;
 
 			if (result.type === 'success') {
-				await update();
+				await update({ reset: false });
 
 				const workspaceId = result.data?.context?.workspaceId;
 				const entityId = result?.data?.context?.id;
@@ -69,7 +69,7 @@
 				return;
 			}
 
-			await update();
+			await update({ reset: false });
 		};
 	};
 

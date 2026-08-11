@@ -36,7 +36,7 @@
 		saving = true;
 
 		return async ({ result, update }) => {
-			await update();
+			await update({ reset: false });
 
 			saving = false;
 

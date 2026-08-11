@@ -181,7 +181,7 @@
 		form = null;
 		saving = true;
 		return async ({ update }) => {
-			await update();
+			await update({ reset: false });
 			saving = false;
 			lastSavedValue = textValue;
 			draftStatus = 'idle';

@@ -59,7 +59,7 @@
 				onclick={() => (isExpanded = !isExpanded)}
 			>
 				<div bind:this={contentEl} class="text-neutral-700 text-left line-clamp-{lineClamp}">
-					<span class="italic underline">Mathced chunk:</span>
+					<span class="italic underline font-semibold">Matched chunk:</span>
 					{item?.documentContent}
 				</div>
 
