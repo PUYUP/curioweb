@@ -125,7 +125,7 @@
 						<Item.Title>
 							{member.user.name}
 							{#if member.role === 'admin'}
-								<Badge>{member.role}</Badge>
+								<Badge variant="secondary">{member.role}</Badge>
 							{/if}
 						</Item.Title>
 						<Item.Description>{member.user.email}</Item.Description>

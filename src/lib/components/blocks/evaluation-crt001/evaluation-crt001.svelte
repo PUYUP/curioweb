@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { scaleBand } from 'd3-scale';
-	import { scalePoint } from 'd3-scale';
 	import { BarChart } from 'layerchart';
-	import Icon from 'mdi-svelte';
-	import { mdiTrendingUp } from '@mdi/js';
 	import * as Chart from '$lib/components/ui/chart/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { cubicInOut } from 'svelte/easing';

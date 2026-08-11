@@ -128,6 +128,28 @@ export const workspaceMembers = pgTable('workspace_members', {
         .on(table.userId, table.workspaceId),
 }));
 
+export const workspaceNotes = pgTable('workspace_notes', {
+    id: uuid('id')
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+        .notNull()
+        .references(() => user.id, { onDelete: 'cascade' }),
+    workspaceId: uuid('workspace_id')
+        .notNull()
+        .references(() => workspaces.id, { onDelete: 'cascade' }),
+    title: text('title'),
+    content: text('content').notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
+        .default(sql`null`),
+});
+
 
 /*****
  * Relationship

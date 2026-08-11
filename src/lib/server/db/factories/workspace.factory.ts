@@ -1,7 +1,8 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, desc, getTableColumns } from "drizzle-orm";
 import { db } from "..";
-import { workspaceMembers } from "../schemas/workspace.schema";
+import { workspaceMembers, workspaceNotes } from "../schemas/workspace.schema";
 import { getUserByEmail } from "./user.factory";
+import { user } from "../auth.schema";
 
 export type WorkspaceRole = 'member' | 'admin';
 
@@ -9,6 +10,13 @@ export interface AddMember {
     workspace_id: string;
     email_address: string;
     role: WorkspaceRole;
+}
+
+export interface AddNote {
+    workspace_id: string;
+    user_id: string;
+    title?: string;
+    content: string;
 }
 
 export const addMember = async (payload: AddMember) => {
@@ -61,6 +69,38 @@ export const removeMember = async (userId: string, workspaceId: string) => {
         return result;
     } catch (error) {
         console.error("Error removing member:", error);
+        throw error;
+    }
+}
+
+export const addNote = async (payload: AddNote) => {
+    try {
+        const result = await db.insert(workspaceNotes).values({
+            userId: payload.user_id,
+            workspaceId: payload.workspace_id,
+            title: payload.title,
+            content: payload.content,
+        });
+        return result;
+    } catch (error) {
+        console.error("Error adding note:", error);
+        throw error;
+    }
+}
+
+export const getNotes = async (workspaceId: string) => {
+    try {
+        const notes = await db.select({
+            ...getTableColumns(workspaceNotes),
+            user: getTableColumns(user),
+        })
+            .from(workspaceNotes)
+            .leftJoin(user, eq(workspaceNotes.userId, user.id))
+            .where(eq(workspaceNotes.workspaceId, workspaceId))
+            .orderBy(desc(workspaceNotes.createdAt));
+        return notes;
+    } catch (error) {
+        console.error("Error getting notes:", error);
         throw error;
     }
 }

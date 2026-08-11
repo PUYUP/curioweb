@@ -1,0 +1,1 @@
+export { default as EditorNote } from './editor-note.svelte';
