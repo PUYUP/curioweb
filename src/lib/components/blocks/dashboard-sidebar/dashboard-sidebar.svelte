@@ -45,15 +45,15 @@
 		// 	badge: ''
 		// },
 		{
-			title: 'Challenges',
-			url: '/challenges',
-			icon: mdiAccountSchoolOutline,
-			badge: ''
-		},
-		{
 			title: 'Workspaces',
 			url: '/workspaces',
 			icon: mdiNoteOutline,
+			badge: ''
+		},
+		{
+			title: 'Challenges',
+			url: '/challenges',
+			icon: mdiAccountSchoolOutline,
 			badge: ''
 		},
 		{

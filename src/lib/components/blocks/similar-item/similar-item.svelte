@@ -3,7 +3,6 @@
 	import { mdiFilePdfBox } from '@mdi/js';
 	import { Button } from '@/lib/components/ui/button';
 	import { authClient, checkout } from '@/lib/auth-client';
-	import { portal } from '@polar-sh/better-auth';
 
 	const { item, user } = $props();
 

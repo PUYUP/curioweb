@@ -7,12 +7,9 @@
 	import { mdiArrowRight, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
 	import type { PageServerData } from './$types';
 	import { SimilarItem } from '@/lib/components/blocks/similar-item';
-	import { authClient } from '@/lib/auth-client';
 
-	const { data }: { data: PageServerData } = $props();
-	let { context } = $derived(data);
-
-	let user = $state<any>(null);
+	const { data } = $props();
+	let { context, user } = $derived(data);
 
 	// chunks viewer
 	let chunkDrawerOpen = $state(false);
@@ -20,12 +17,7 @@
 		chunkDrawerOpen = !chunkDrawerOpen;
 	}
 
-	$effect(() => {
-		(async () => {
-			const { data: session } = await authClient.getSession();
-			user = session?.user ?? null;
-		})();
-	});
+	$effect(() => {});
 </script>
 
 <svelte:head>

@@ -3,8 +3,8 @@
 	import type { LayoutServerData } from '../../$types';
 	import { EditorNote } from '@/lib/components/blocks/editor-note';
 
-	const { data }: { data: LayoutServerData } = $props();
-	const workspace = $derived(data.workspace);
+	const { data } = $props();
+	const { workspace, note } = $derived(data);
 </script>
 
 <svelte:head>
@@ -24,7 +24,9 @@
 		</div>
 	</div>
 
-	<div class="block w-full xl:w-4/6">
-		<EditorNote {workspace} />
-	</div>
+	{#if workspace}
+		<div class="block w-full xl:w-4/6">
+			<EditorNote {workspace} {note} />
+		</div>
+	{/if}
 </div>

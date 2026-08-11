@@ -104,3 +104,33 @@ export const getNotes = async (workspaceId: string) => {
         throw error;
     }
 }
+
+export const getNoteById = async (noteId: string) => {
+    try {
+        const [note] = await db.select({
+            ...getTableColumns(workspaceNotes),
+            user: getTableColumns(user),
+        })
+            .from(workspaceNotes)
+            .leftJoin(user, eq(workspaceNotes.userId, user.id))
+            .where(eq(workspaceNotes.id, noteId))
+            .limit(1);
+        return note;
+    } catch (error) {
+        console.error("Error getting note by id:", error);
+        throw error;
+    }
+}
+
+export const updateNote = async (noteId: string, payload: { title?: string, content: string }) => {
+    try {
+        const result = await db.update(workspaceNotes).set({
+            title: payload.title,
+            content: payload.content,
+        }).where(eq(workspaceNotes.id, noteId));
+        return result;
+    } catch (error) {
+        console.error("Error updating note:", error);
+        throw error;
+    }
+}

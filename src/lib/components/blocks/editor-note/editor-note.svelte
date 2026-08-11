@@ -5,8 +5,9 @@
 	import { authClient } from '@/lib/auth-client';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
-	const { workspace } = $props();
+	const { workspace, note } = $props();
 	let user = $state<any | null>(null);
+	let content = $state<string>('');
 
 	$effect(() => {
 		(async () => {
@@ -15,6 +16,10 @@
 				user = session.user;
 			}
 		})();
+
+		if (note) {
+			content = note.content;
+		}
 	});
 
 	const handleSubmit: SubmitFunction = ({ cancel }) => {
@@ -33,12 +38,19 @@
 
 <div class="block">
 	{#if user}
-		<form use:enhance={handleSubmit} method="POST" action="?/addNote">
-			<Textarea name="content" required placeholder="Write your note here..." />
+		<form use:enhance={handleSubmit} method="POST" action={note ? `?/updateNote` : `?/addNote`}>
+			<Textarea
+				name="content"
+				class="!text-base"
+				required
+				placeholder="Write your note here..."
+				bind:value={content}
+			/>
 			<input type="hidden" value={workspace?.id} name="workspace_id" />
 			<input type="hidden" value={user?.id} name="user_id" />
+			<input type="hidden" value={note?.id} name="note_id" />
 			<div class="flex mt-6">
-				<Button type="submit">Save</Button>
+				<Button type="submit">{note ? 'Update' : 'Save'}</Button>
 			</div>
 		</form>
 	{/if}

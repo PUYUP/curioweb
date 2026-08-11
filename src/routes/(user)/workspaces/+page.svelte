@@ -3,23 +3,15 @@
 	import { Button } from '@/lib/components/ui/button';
 	import { mdiPlus } from '@mdi/js';
 	import Icon from 'mdi-svelte';
-	import type { PageServerData } from './$types';
-	import { authClient } from '@/lib/auth-client';
 
-	const { data }: { data: PageServerData } = $props();
-	const workspaceList = $derived(data.workspaces);
+	const { data } = $props();
+	const { workspaces: workspaceList, user } = $derived(data);
 	let subscription = $state<any>(null);
-	let subscriptionIsActive = $state<boolean>(false);
 
 	$effect(() => {
-		(async () => {
-			const { data: session } = await authClient.getSession();
-			if (session) {
-				const { user } = session;
-				subscription = (user as any)?.subscription;
-				subscriptionIsActive = subscription?.status === 'active';
-			}
-		})();
+		if (user) {
+			subscription = (user as any)?.subscription;
+		}
 	});
 </script>
 

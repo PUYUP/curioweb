@@ -32,3 +32,19 @@ export async function GET({ params, locals }: RequestEvent) {
         }, { status: 500 });
     }
 }
+
+export async function PATCH({ params, locals, request }: RequestEvent) {
+    const user = locals.user;
+    const payload = await request.json();
+
+    if (!user) {
+        return json({
+            success: false,
+            message: "Unauthorized"
+        }, { status: 401 });
+    }
+
+    return json({
+        success: true,
+    }, { status: 200 })
+}

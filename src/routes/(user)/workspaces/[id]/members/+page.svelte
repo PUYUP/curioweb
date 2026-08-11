@@ -9,14 +9,12 @@
 	import { Input } from '@/lib/components/ui/input/index.js';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { authClient } from '@/lib/auth-client';
 	import type { ActionData } from './$types';
 	import Icon from 'mdi-svelte';
 	import { mdiDeleteOutline, mdiLogout } from '@mdi/js';
 
 	let { data, form }: { data: any; form: ActionData } = $props();
-	let { workspaceId, members: membersResult, workspace } = $derived(data);
-	let user = $state<any>(null);
+	let { workspaceId, members: membersResult, workspace, user } = $derived(data);
 
 	// add member flow
 	let submitting = $state<boolean>(false);
@@ -81,11 +79,6 @@
 	};
 
 	$effect(() => {
-		(async () => {
-			const { data: session } = await authClient.getSession();
-			user = session?.user ?? null;
-		})();
-
 		if (!addMemberOpen) {
 			form = null;
 			email = '';
