@@ -50,9 +50,9 @@
 	</div>
 
 	<div class="w-full md:w-3/6 text-sm">
-		Collections of workspaces where papers are
-		<strong>retrieved using sentence-level contexts</strong>, enabling more precise discovery than
-		abstract and citation based search.
+		Workspaces where people work together, organize notes and research contexts, and discover papers
+		using sentence-level contexts — turning daily notes into new learning material, enriched by
+		relevant papers.
 	</div>
 
 	<div class="mt-6">
