@@ -4,8 +4,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import Icon from 'mdi-svelte';
-	import { mdiArrowRight, mdiFileDocument, mdiFilePdfBox } from '@mdi/js';
-	import type { PageServerData } from './$types';
+	import { mdiArrowRight } from '@mdi/js';
 	import { SimilarItem } from '@/lib/components/blocks/similar-item';
 
 	const { data } = $props();
@@ -16,8 +15,6 @@
 	function viewChunkHandler() {
 		chunkDrawerOpen = !chunkDrawerOpen;
 	}
-
-	$effect(() => {});
 </script>
 
 <svelte:head>
@@ -60,7 +57,7 @@
 
 					{#if context?.hasSimilarity}
 						<div class="block mt-6">
-							<div class="mt-2 mb-4">Found Related Papers</div>
+							<div class="mt-2 mb-4">Relevant Papers</div>
 
 							{#each context.matchResults as chunk, idx}
 								<Separator class="my-4" />

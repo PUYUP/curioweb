@@ -12,8 +12,10 @@
 	let loadingContexts: boolean = $state<boolean>(true);
 
 	const { data }: { data: LayoutServerData } = $props();
-	const workspace = $derived(data.workspace);
-	const contexts = $derived(data.contexts);
+	const { workspace, contexts } = $derived(data);
+
+	// svelte-ignore state_referenced_locally
+	console.log(workspace);
 
 	$effect(() => {
 		if (workspace) {
@@ -85,10 +87,16 @@
 					class="flex items-center justify-center flex-col h-26 w-full sm:w-42 bg-neutral-50 rounded-lg border border-neutral-200"
 				>
 					<div class="mb-1 flex items-center justify-center flex-col">
-						<div class="block font-semibold text-center text-xl xl:text-2xl">39</div>
+						<div class="block font-semibold text-center text-xl xl:text-2xl">
+							{workspace?.noteCount}
+						</div>
 						<div class="text-sm flex items-center gap-2">
 							<span>Notes</span>
-							<span class="text-xs pt-0.5 text-green-600 italic">(4 today)</span>
+							{#if workspace?.countTodayNotes && workspace?.countTodayNotes > 0}
+								<span class="text-xs pt-0.5 text-green-600 italic">
+									({workspace.countTodayNotes} today)
+								</span>
+							{/if}
 						</div>
 					</div>
 					<div class="w-full flex justify-center gap-1">
