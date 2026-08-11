@@ -1,5 +1,6 @@
 import { db } from "$lib/server/db/index.js";
 import { workspaces } from "$lib/server/db/schemas/workspace.schema.js";
+import { addMember } from "@/lib/server/db/factories/workspace.factory.js";
 import { fail, redirect } from "@sveltejs/kit";
 import { count, eq } from "drizzle-orm";
 
@@ -71,7 +72,14 @@ export const actions = {
                 languageCode: languageCode as string,
                 scope: scope as string,
                 userId: user.id
-            }).returning()
+            }).returning();
+
+            // make creator as first member
+            await addMember({
+                workspace_id: result.id,
+                email_address: user.email!,
+                role: 'admin'
+            });
 
             return {
                 success: true,
