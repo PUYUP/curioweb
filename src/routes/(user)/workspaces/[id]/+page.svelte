@@ -3,7 +3,7 @@
 	import { Button } from '@/lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Icon from 'mdi-svelte';
-	import { mdiPlus } from '@mdi/js';
+	import { mdiPlus, mdiCog } from '@mdi/js';
 	import { goto } from '$app/navigation';
 	import Badge from '@/lib/components/ui/badge/badge.svelte';
 	import type { LayoutServerData } from './$types';
@@ -64,6 +64,7 @@
 					</div>
 					<div class="mt-auto p-2 pb-0 border-t border-neutral-200">
 						<Button class="w-full" variant="link" href={`/workspaces/${workspace?.id}/members`}>
+							<Icon path={mdiCog} size={0.65} />
 							Manage
 						</Button>
 					</div>

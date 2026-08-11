@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Item from '$lib/components/ui/item/index.js';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Icon from 'mdi-svelte';
 	import { mdiChevronRight } from '@mdi/js';
 
@@ -14,6 +15,13 @@
 					<a href="/workspaces/{item.id}" class="flex items-center" {...props}>
 						<Item.Content>
 							<Item.Title class="!mb-0 text-sm">{item.title}</Item.Title>
+							{#if item.scope === 'group'}
+								<div class="flex items-center gap-3">
+									<Badge variant="secondary">Group</Badge>
+									<span class="text-neutral-300">&bull;</span>
+									<span>{item.memberCount} members</span>
+								</div>
+							{/if}
 							<Item.Description class="line-clamp-2">
 								{item.description ? item.description : 'No description given.'}
 							</Item.Description>
