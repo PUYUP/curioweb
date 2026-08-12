@@ -1,5 +1,5 @@
-import { db } from "$lib/server/db";
-import { workspaceMembers, workspaceNotes, workspaces } from "$lib/server/db/schemas/workspace.schema";
+import { db } from "@/lib/server/db";
+import { workspaceMembers, workspaceNotes, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { json } from "@sveltejs/kit";
 import { count, desc, eq, getTableColumns, inArray, or, and, sql } from "drizzle-orm";
 import type { RequestEvent } from "./$types";

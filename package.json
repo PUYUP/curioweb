@@ -60,6 +60,7 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@google-cloud/storage": "^7.22.0",
 		"@libsql/client": "^0.17.4",
 		"@mdi/js": "^7.4.47",
 		"@neondatabase/serverless": "^1.1.0",

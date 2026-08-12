@@ -1,7 +1,7 @@
-import { db } from "$lib/server/db";
+import { db } from "@/lib/server/db";
 import { eq, desc, getTableColumns, count, and, sql } from "drizzle-orm";
 import { redirect } from "@sveltejs/kit";
-import { researchContexts, workspaceMembers, workspaceNotes, workspaces } from "$lib/server/db/schemas/workspace.schema.js";
+import { researchContexts, workspaceMembers, workspaceNotes, workspaces } from "@/lib/server/db/schemas/workspace.schema.js";
 import { alias } from "drizzle-orm/pg-core";
 
 const currentUserMembership = alias(workspaceMembers, "current_user_membership");

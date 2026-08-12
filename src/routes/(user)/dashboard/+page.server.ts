@@ -1,7 +1,7 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getProfileByUserId } from '@/lib/server/db/factories/profle.factory';
-import { auth } from '$lib/server/auth';
+import { auth } from '@/lib/server/auth';
 
 export const load: PageServerLoad = async ({ locals, fetch }) => {
     if (locals.user?.id) {

@@ -1,8 +1,8 @@
-import { db } from "$lib/server/db";
+import { db } from "@/lib/server/db";
 import { eq, and, getTableColumns, exists, sql, desc, asc } from "drizzle-orm";
-import { workspaceMembers } from "$lib/server/db/schemas/workspace.schema.js";
+import { workspaceMembers } from "@/lib/server/db/schemas/workspace.schema.js";
 import { json, type RequestEvent } from "@sveltejs/kit";
-import { user as authUser } from "$lib/server/db/auth.schema";
+import { user as authUser } from "@/lib/server/db/auth.schema";
 
 export async function GET({ params, locals }: RequestEvent) {
     const user = locals.user;

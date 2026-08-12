@@ -25,6 +25,7 @@ export const actions = {
         if (!content) {
             return fail(400, {
                 success: false,
+                data: null,
                 message: 'Content is required'
             });
         }
@@ -32,6 +33,7 @@ export const actions = {
         if (!workspaceId) {
             return fail(400, {
                 success: false,
+                data: null,
                 message: 'Workspace ID is required'
             });
         }
@@ -39,25 +41,24 @@ export const actions = {
         if (!userId) {
             return fail(400, {
                 success: false,
+                data: null,
                 message: 'User ID is required'
             });
         }
 
         try {
-            await addNote({
+            const result = await addNote({
                 workspace_id: workspaceId,
                 content: content,
                 user_id: userId
             });
 
-            return {
-                success: true,
-                message: 'Note added successfully'
-            };
+            return result;
         } catch (error) {
             console.error('Error adding note:', error);
             return fail(500, {
                 success: false,
+                data: null,
                 message: 'Failed to add note'
             });
         }
@@ -78,22 +79,21 @@ export const actions = {
             if (!noteId) {
                 return fail(400, {
                     success: false,
+                    data: null,
                     message: 'Note ID is required'
                 });
             }
 
-            await updateNote(noteId, {
+            const result = await updateNote(noteId, {
                 content: content
             });
 
-            return {
-                success: true,
-                message: 'Note updated successfully'
-            };
+            return result;
         } catch (error) {
             console.error('Error update note:', error);
             return fail(500, {
                 success: false,
+                data: null,
                 message: 'Failed to update note'
             });
         }

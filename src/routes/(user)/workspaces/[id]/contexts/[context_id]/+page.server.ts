@@ -1,4 +1,4 @@
-import { db } from "$lib/server/db";
+import { db } from "@/lib/server/db";
 import { papers } from "@/lib/server/db/schemas/paper.schema.js";
 import { contextChunks, contextSimilarities, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { redirect } from "@sveltejs/kit";

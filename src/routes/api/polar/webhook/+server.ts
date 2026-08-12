@@ -1,6 +1,6 @@
 import { Webhooks } from "@polar-sh/sveltekit";
 import { env } from '$env/dynamic/private';
-import { subscriptionFactory } from '$lib/server/db/factories/subscription.factory';
+import { subscriptionFactory } from '@/lib/server/db/factories/subscription.factory';
 import { updateProfile } from "@/lib/server/db/factories/profle.factory";
 import { addHours } from "date-fns";
 

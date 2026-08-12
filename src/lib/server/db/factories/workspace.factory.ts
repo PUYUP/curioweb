@@ -75,12 +75,12 @@ export const removeMember = async (userId: string, workspaceId: string) => {
 
 export const addNote = async (payload: AddNote) => {
     try {
-        const result = await db.insert(workspaceNotes).values({
+        const [result] = await db.insert(workspaceNotes).values({
             userId: payload.user_id,
             workspaceId: payload.workspace_id,
             title: payload.title,
             content: payload.content,
-        });
+        }).returning();
         return result;
     } catch (error) {
         console.error("Error adding note:", error);
@@ -124,10 +124,13 @@ export const getNoteById = async (noteId: string) => {
 
 export const updateNote = async (noteId: string, payload: { title?: string, content: string }) => {
     try {
-        const result = await db.update(workspaceNotes).set({
-            title: payload.title,
-            content: payload.content,
-        }).where(eq(workspaceNotes.id, noteId));
+        const [result] = await db.update(workspaceNotes)
+            .set({
+                title: payload.title,
+                content: payload.content,
+            })
+            .where(eq(workspaceNotes.id, noteId))
+            .returning();
         return result;
     } catch (error) {
         console.error("Error updating note:", error);

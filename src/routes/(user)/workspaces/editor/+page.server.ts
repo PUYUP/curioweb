@@ -1,5 +1,5 @@
-import { db } from "$lib/server/db/index.js";
-import { workspaces } from "$lib/server/db/schemas/workspace.schema.js";
+import { db } from "@/lib/server/db/index.js";
+import { workspaces } from "@/lib/server/db/schemas/workspace.schema.js";
 import { addMember } from "@/lib/server/db/factories/workspace.factory.js";
 import { fail, redirect } from "@sveltejs/kit";
 import { count, eq } from "drizzle-orm";
