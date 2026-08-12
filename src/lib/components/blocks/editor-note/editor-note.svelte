@@ -49,7 +49,7 @@
 			switch (result.type) {
 				case 'success':
 					await update({ reset: false });
-					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true });
+					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true, invalidateAll: true });
 
 					// save attachments
 					if (fileResults.filter((file) => !(file as any)?.attachmentId).length > 0) {
