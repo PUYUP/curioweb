@@ -42,14 +42,56 @@ export const load = async ({ locals, params }) => {
             const similarsByChunk = similarities.filter((s: any) => s.contextChunkId === c.id);
             const top3Ids = new Set(similarsByChunk.slice(0, 3).map((s: any) => s.id));
 
+            // Map untuk mengelompokkan data berdasarkan paperId
+            const paperMap = new Map<string, any>();
+
+            for (const item of similarsByChunk) {
+                const { paper, paperId, id, documentContent, similarityScore, createdAt, updatedAt } = item;
+
+                // Logika masking paper sesuai status langganan
+                const resolvedPaper = (!subscriptionActive && top3Ids.has(id)) ? null : paper;
+
+                if (!paperMap.has(paperId)) {
+                    paperMap.set(paperId, {
+                        paperId,
+                        paper: resolvedPaper,
+                        totalSimilarityScore: 0, // Akumulator untuk sum
+                        documentChunks: [],
+                    });
+                }
+
+                const currentGroup = paperMap.get(paperId);
+
+                // Tambahkan skor ke total
+                currentGroup.totalSimilarityScore += similarityScore;
+
+                // Masukkan detail chunk ke dalam array
+                currentGroup.documentChunks.push({
+                    id,
+                    documentContent,
+                    similarityScore,
+                    createdAt,
+                    updatedAt,
+                });
+            }
+
+            // Proses map untuk mengubah object dan menghitung rata-rata
+            const groupedSimilarities = Array.from(paperMap.values()).map(group => {
+                return {
+                    paperId: group.paperId,
+                    paper: group.paper,
+                    // Hitung rata-rata: total skor dibagi jumlah chunk
+                    averageSimilarityScore: group.totalSimilarityScore / group.documentChunks.length,
+                    documentChunks: group.documentChunks
+                };
+            });
+
+            // (Opsional) Urutkan dari rata-rata similarity score tertinggi ke terendah
+            groupedSimilarities.sort((a, b) => b.averageSimilarityScore - a.averageSimilarityScore);
+
             return {
                 ...c,
-                similarities: similarsByChunk.map((item: any) => {
-                    return {
-                        ...item,
-                        paper: (!subscriptionActive && top3Ids.has(item.id)) ? null : item.paper,
-                    }
-                }),
+                similarities: groupedSimilarities,
             };
         });
 

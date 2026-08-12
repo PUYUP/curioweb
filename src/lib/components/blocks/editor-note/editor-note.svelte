@@ -48,9 +48,6 @@
 
 			switch (result.type) {
 				case 'success':
-					await update({ reset: false, invalidateAll: false });
-					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true, invalidateAll: true });
-
 					// save attachments
 					fileResults = fileResults.filter((file) => {
 						return !Object.hasOwn(file as any, 'attachmentId');
@@ -78,6 +75,9 @@
 							body: JSON.stringify({ ids: deletedAttachmentIds })
 						});
 					}
+
+					await update({ reset: false });
+					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true, invalidateAll: true });
 					break;
 				case 'error':
 					cancel();

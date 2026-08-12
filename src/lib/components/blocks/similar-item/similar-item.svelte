@@ -34,9 +34,9 @@
 				<a
 					href={item?.paper?.pdfUrl}
 					target="_blank"
-					class="flex w-full justify-between text-base font-semibold"
+					class="flex w-full justify-between text-lg font-semibold"
 				>
-					<span class="flex-1 text-blue-600 text-sm">
+					<span class="flex-1 text-blue-600 text-base">
 						{item?.paper?.title}
 					</span>
 					<span class="ml-auto text-red-600">
@@ -45,11 +45,12 @@
 				</a>
 
 				<div class="mt-0 flex gap-2 items-center text-sm">
-					<span class="text-orange-500">Similarity Score:</span>
+					<span class="text-orange-500">Similarity average:</span>
 					<span class="text-orange-600 font-bold underline">
-						{(item?.similarityScore * 100).toFixed(1)}%
+						{(item?.averageSimilarityScore * 100).toFixed(1)}%
 					</span>
-					<span class="text-xs">({item?.similarityScore})</span>
+					<span>({item?.averageSimilarityScore.toFixed(8)})</span>
+					<span class="underline">of {item?.documentChunks.length} chunks</span>
 				</div>
 			</div>
 
@@ -59,8 +60,12 @@
 				onclick={() => (isExpanded = !isExpanded)}
 			>
 				<div bind:this={contentEl} class="text-neutral-700 text-left line-clamp-{lineClamp}">
-					<span class="italic underline font-semibold">Matched chunk:</span>
-					{item?.documentContent}
+					<span class="font-semibold underline">Matched chunks:</span>
+					<ol class="list-decimal pl-6 my-2">
+						{#each item?.documentChunks as chunk}
+							<li class="mt-2">{chunk?.documentContent}</li>
+						{/each}
+					</ol>
 				</div>
 
 				{#if isTruncated || isExpanded}
