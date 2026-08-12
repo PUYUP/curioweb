@@ -1,4 +1,4 @@
-import { eq, and, isNull, asc } from "drizzle-orm";
+import { eq, and, isNull, asc, inArray } from "drizzle-orm";
 import { db } from "../index";
 import { files, attachments, type NewFileRow, type NewAttachmentRow } from "../schemas/attachment.schema";
 
@@ -54,6 +54,11 @@ export const createAttachments = async (data: NewAttachmentRow[]) => {
     if (data.length === 0) return [];
     return await db.insert(attachments).values(data).returning();
 };
+
+export const deleteAttachments = async (ids: string[]) => {
+    if (ids.length === 0) return [];
+    return await db.delete(attachments).where(inArray(attachments.id, ids));
+}
 
 export const getAttachmentsByEntity = async (entityType: string, entityId: string) => {
     return await db.select()

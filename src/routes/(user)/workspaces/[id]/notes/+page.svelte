@@ -9,6 +9,8 @@
 	const { data } = $props();
 	let { workspace, notes, user } = $derived(data);
 
+	console.log(notes);
+
 	function dayKey(dateInput: string | Date): string {
 		return format(new Date(dateInput), 'yyyy-MM-dd');
 	}
@@ -126,7 +128,29 @@
 											</Button>
 										{/if}
 									</div>
-									<div class="block text-sm whitespace-break-spaces">{item.content}</div>
+									<div class="block">
+										<div class="block text-sm whitespace-break-spaces">
+											{item.content}
+										</div>
+
+										{#if item.attachments.length > 0}
+											<div class="mt-4 text-xs text-neutral-500">Attachments:</div>
+											<div class="flex gap-2 w-full">
+												{#each item.attachments as attachment}
+													<div class="block text-xs">
+														<a
+															href={attachment.file?.mediaLink}
+															target="_blank"
+															rel="noreferrer"
+															class="text-blue-600"
+														>
+															{attachment.file?.originalFilename}
+														</a>
+													</div>
+												{/each}
+											</div>
+										{/if}
+									</div>
 								</div>
 							{/each}
 						</div>

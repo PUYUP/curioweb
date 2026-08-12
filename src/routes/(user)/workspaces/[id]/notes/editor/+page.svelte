@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Badge from '@/lib/components/ui/badge/badge.svelte';
-	import type { LayoutServerData } from '../../$types';
 	import { EditorNote } from '@/lib/components/blocks/editor-note';
 
 	const { data } = $props();

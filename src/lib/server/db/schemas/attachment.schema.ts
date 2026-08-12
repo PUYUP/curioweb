@@ -97,10 +97,16 @@ export const filesRelations = relations(files, ({ many }) => ({
     attachments: many(attachments)
 }));
 
+import { workspaceNotes } from './workspace.schema';
+
 export const attachmentsRelations = relations(attachments, ({ one }) => ({
     file: one(files, {
         fields: [attachments.fileId],
         references: [files.id]
+    }),
+    workspaceNote: one(workspaceNotes, {
+        fields: [attachments.entityId],
+        references: [workspaceNotes.id]
     })
 }));
 

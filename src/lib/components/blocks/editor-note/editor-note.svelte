@@ -31,6 +31,14 @@
 
 		if (note) {
 			content = note.content;
+			if (note.attachments.length > 0) {
+				fileResults = note.attachments.map((item: any) => {
+					return {
+						...item.file,
+						attachmentId: item.id
+					};
+				});
+			}
 		}
 	});
 
@@ -43,8 +51,8 @@
 					await update({ reset: false });
 					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true });
 
-					// save attachment
-					if (fileResults.length > 0) {
+					// save attachments
+					if (fileResults.filter((file) => !(file as any)?.attachmentId).length > 0) {
 						// update entity id with note id
 						const attachments = fileResults.map((file) => ({
 							fileId: file.id,
@@ -56,6 +64,14 @@
 						await fetch('/api/files/attachments', {
 							method: 'POST',
 							body: JSON.stringify({ attachments: attachments })
+						});
+					}
+
+					// delete attachments
+					if (deletedAttachmentIds.length > 0) {
+						await fetch('/api/files/attachments', {
+							method: 'DELETE',
+							body: JSON.stringify({ ids: deletedAttachmentIds })
 						});
 					}
 					break;
@@ -97,6 +113,7 @@
 	let metadata = $state<FileMetadata | null>(null);
 	let errorMsg = $state('');
 	let fileResults = $state<NewFileRow[]>([]);
+	let deletedAttachmentIds = $state<string[]>([]);
 
 	function triggerFileSelect() {
 		fileInputElement.click();
@@ -175,6 +192,13 @@
 			errorMsg = err instanceof Error ? err.message : 'Upload gagal';
 		}
 	}
+
+	function removeFile(fileId: string, attachmentId?: string) {
+		fileResults = fileResults.filter((f) => f.id !== fileId);
+		if (attachmentId) {
+			deletedAttachmentIds.push(attachmentId);
+		}
+	}
 </script>
 
 <div class="block">
@@ -239,9 +263,7 @@
 								variant="outline"
 								size="icon"
 								class="text-red-600"
-								onclick={() => {
-									fileResults = fileResults.filter((f) => f.id !== file.id);
-								}}
+								onclick={() => (file.id ? removeFile(file.id, (file as any)?.attachmentId) : '')}
 							>
 								<Icon path={mdiClose} size={0.65} />
 							</Button>

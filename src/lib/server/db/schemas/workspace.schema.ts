@@ -2,6 +2,7 @@ import { relations, sql } from 'drizzle-orm';
 import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique, real, uniqueIndex } from 'drizzle-orm/pg-core';
 import { user } from '../auth.schema';
 import { papers } from './paper.schema';
+import { attachments } from './attachment.schema';
 
 export const workspaces = pgTable('workspaces', {
     id: uuid('id')
@@ -157,8 +158,22 @@ export const workspaceNotes = pgTable('workspace_notes', {
 
 export const usersWorkspaceRelations = relations(user, ({ many }) => ({
     workspaceMembers: many(workspaceMembers),
+    workspaceNotes: many(workspaceNotes),
 }));
 
 export const workspacesUserRelations = relations(workspaces, ({ many }) => ({
     members: many(workspaceMembers),
+    notes: many(workspaceNotes),
+}));
+
+export const workspaceNotesRelations = relations(workspaceNotes, ({ one, many }) => ({
+    user: one(user, {
+        fields: [workspaceNotes.userId],
+        references: [user.id],
+    }),
+    workspace: one(workspaces, {
+        fields: [workspaceNotes.workspaceId],
+        references: [workspaces.id],
+    }),
+    attachments: many(attachments),
 }));

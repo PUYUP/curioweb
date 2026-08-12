@@ -3,6 +3,7 @@ import { db } from "..";
 import { workspaceMembers, workspaceNotes } from "../schemas/workspace.schema";
 import { getUserByEmail } from "./user.factory";
 import { user } from "../auth.schema";
+import { attachments } from "../schemas/attachment.schema";
 
 export type WorkspaceRole = 'member' | 'admin';
 
@@ -90,14 +91,19 @@ export const addNote = async (payload: AddNote) => {
 
 export const getNotes = async (workspaceId: string) => {
     try {
-        const notes = await db.select({
-            ...getTableColumns(workspaceNotes),
-            user: getTableColumns(user),
-        })
-            .from(workspaceNotes)
-            .leftJoin(user, eq(workspaceNotes.userId, user.id))
-            .where(eq(workspaceNotes.workspaceId, workspaceId))
-            .orderBy(desc(workspaceNotes.createdAt));
+        const notes = await db.query.workspaceNotes.findMany({
+            where: eq(workspaceNotes.workspaceId, workspaceId),
+            orderBy: desc(workspaceNotes.createdAt),
+            with: {
+                user: true,
+                attachments: {
+                    with: {
+                        file: true,
+                    }
+                },
+            },
+        });
+
         return notes;
     } catch (error) {
         console.error("Error getting notes:", error);
@@ -107,14 +113,17 @@ export const getNotes = async (workspaceId: string) => {
 
 export const getNoteById = async (noteId: string) => {
     try {
-        const [note] = await db.select({
-            ...getTableColumns(workspaceNotes),
-            user: getTableColumns(user),
-        })
-            .from(workspaceNotes)
-            .leftJoin(user, eq(workspaceNotes.userId, user.id))
-            .where(eq(workspaceNotes.id, noteId))
-            .limit(1);
+        const note = await db.query.workspaceNotes.findFirst({
+            where: eq(workspaceNotes.id, noteId),
+            with: {
+                user: true,
+                attachments: {
+                    with: {
+                        file: true,
+                    }
+                },
+            },
+        });
         return note;
     } catch (error) {
         console.error("Error getting note by id:", error);
