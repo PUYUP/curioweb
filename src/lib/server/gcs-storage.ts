@@ -10,6 +10,23 @@ if (!env.GCS_BUCKET_NAME) {
 	throw new Error('Env GCS_BUCKET_NAME belum di-set');
 }
 
+let credentials;
+
+if (!env.GCP_KEY_FILE && env.GCP_SERVICE_ACCOUNT_KEY) {
+	try {
+		// Parse isi JSON yang di-copy-paste ke env variable Vercel
+		const parsed = JSON.parse(env.GCP_SERVICE_ACCOUNT_KEY);
+
+		credentials = {
+			client_email: parsed.client_email,
+			// Penting: Vercel sering me-escape newline, jadi kita kembalikan ke format aslinya
+			private_key: parsed.private_key.replace(/\\n/g, '\n'),
+		};
+	} catch (error) {
+		console.error('Gagal melakukan parse GCP_SERVICE_ACCOUNT_KEY:', error);
+	}
+}
+
 // Opsi 1: pakai Application Default Credentials (ADC)
 // - Di Cloud Run / GKE / Compute Engine, ini otomatis pakai service account bawaan.
 // - Di lokal, jalankan `gcloud auth application-default login` dulu.
@@ -18,7 +35,8 @@ if (!env.GCS_BUCKET_NAME) {
 // lebih gampang kalau butuh signed URL tanpa akses IAM signBlob (lihat README).
 export const storage = new Storage({
 	projectId: env.GOOGLE_CLOUD_PROJECT,
-	...(env.GCP_KEY_FILE ? { keyFilename: env.GCP_KEY_FILE } : {})
+	...(env.GCP_KEY_FILE ? { keyFilename: env.GCP_KEY_FILE } : {}),
+	...(!env.GCP_KEY_FILE && credentials ? { credentials } : {})
 });
 
 export const bucket = storage.bucket(env.GCS_BUCKET_NAME);

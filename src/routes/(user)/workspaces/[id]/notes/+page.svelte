@@ -134,10 +134,10 @@
 										</div>
 
 										{#if item.attachments.length > 0}
-											<div class="mt-4 text-xs text-neutral-500">Attachments:</div>
-											<div class="flex gap-2 w-full">
+											<div class="mt-4 text-xs text-neutral-500 mb-1">Attachments:</div>
+											<ol class="w-full list-decimal list-inside">
 												{#each item.attachments as attachment}
-													<div class="block text-xs">
+													<li class="text-xs">
 														<a
 															href={attachment.file?.mediaLink}
 															target="_blank"
@@ -146,9 +146,9 @@
 														>
 															{attachment.file?.originalFilename}
 														</a>
-													</div>
+													</li>
 												{/each}
-											</div>
+											</ol>
 										{/if}
 									</div>
 								</div>

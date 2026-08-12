@@ -48,11 +48,15 @@
 
 			switch (result.type) {
 				case 'success':
-					await update({ reset: false });
+					await update({ reset: false, invalidateAll: false });
 					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true, invalidateAll: true });
 
 					// save attachments
-					if (fileResults.filter((file) => !(file as any)?.attachmentId).length > 0) {
+					fileResults = fileResults.filter((file) => {
+						return !Object.hasOwn(file as any, 'attachmentId');
+					});
+
+					if (fileResults.length > 0) {
 						// update entity id with note id
 						const attachments = fileResults.map((file) => ({
 							fileId: file.id,
@@ -183,6 +187,8 @@
 
 				if (data.success) {
 					fileResults.push(data.data);
+
+					console.log(fileResults);
 				}
 			}
 
