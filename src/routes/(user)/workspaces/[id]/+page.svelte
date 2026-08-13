@@ -154,6 +154,19 @@
 		<div
 			class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
 		>
+			<Card.Root
+				class="cursor-pointer bg-neutral-50 hover:bg-neutral-100"
+				onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
+			>
+				<Card.Content class="flex flex-col items-center justify-center h-full">
+					<Icon path={mdiPlus} size="1.5rem" />
+					<p class="text-sm mb-2">Add New</p>
+					<p class="text-xs text-neutral-500 text-center">
+						Retrieve papers using sentence-level contextual search
+					</p>
+				</Card.Content>
+			</Card.Root>
+
 			{#if contexts.length > 0}
 				{#each contexts as context}
 					<Card.Root>
@@ -193,18 +206,6 @@
 					</Card.Root>
 				{/each}
 			{/if}
-			<Card.Root
-				class="cursor-pointer bg-neutral-50 hover:bg-neutral-100"
-				onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
-			>
-				<Card.Content class="flex flex-col items-center justify-center h-full">
-					<Icon path={mdiPlus} size="1.5rem" />
-					<p class="text-sm mb-2">Add New</p>
-					<p class="text-xs text-neutral-500 text-center">
-						Retrieve papers using sentence-level contextual search
-					</p>
-				</Card.Content>
-			</Card.Root>
 		</div>
 	{:else}
 		<div class="flex items-center justify-center size-full">Workspace not found.</div>

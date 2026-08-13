@@ -4,6 +4,7 @@
 	import { mdiFilePdfBox } from '@mdi/js';
 	import { Button } from '@/lib/components/ui/button';
 	import { authClient, checkout } from '@/lib/auth-client';
+	import Spinner from '../../ui/spinner/spinner.svelte';
 
 	const { item, user } = $props();
 
@@ -68,11 +69,18 @@
 				</div>
 			</div>
 
-			{#if contentSummary && contentSummary != ''}
-				<div class="block my-4 py-4 block-content border-y border-neutral-300">
+			<div class="block my-4 py-4 block-content border-y border-neutral-300">
+				{#if contentSummary && contentSummary != ''}
 					<SvelteMarkdown source={fixMarkdownHeadings(contentSummary)} />
-				</div>
-			{/if}
+				{:else}
+					<div class="flex items-center gap-2">
+						<Spinner />
+						<div class="text-xs text-neutral-500">
+							Chunks summary are being retrieved... refresh this page simultanously
+						</div>
+					</div>
+				{/if}
+			</div>
 
 			<button
 				type="button"
