@@ -14,31 +14,28 @@ export const load = async ({ locals, params }) => {
     const subscriptionActive = subscription?.status === "active";
 
     try {
-        const [context] = await db.select({
-            ...getTableColumns(researchContexts),
-            workspace: workspaces,
-        })
-            .from(researchContexts)
-            .leftJoin(workspaces, eq(researchContexts.workspaceId, workspaces.id))
-            .where(eq(researchContexts.id, contextId))
-            .limit(1);
+        const result = await db.query.researchContexts.findFirst({
+            where: eq(researchContexts.id, contextId),
+            with: {
+                workspace: true,
+                paperSummaries: {
+                    with: {
+                        paper: true,
+                    }
+                },
+                contextSimilarities: {
+                    with: {
+                        paper: true,
+                        contextChunk: true,
+                    }
+                },
+                chunks: true,
+            },
+        });
 
-        const chunks = await db.select()
-            .from(contextChunks)
-            .where(eq(contextChunks.contextId, contextId))
-            .orderBy(asc(contextChunks.chunkIndex));
-
-        const similarities = await db.select({
-            ...getTableColumns(contextSimilarities),
-            paper: papers,
-        })
-            .from(contextSimilarities)
-            .leftJoin(papers, eq(papers.id, contextSimilarities.paperId))
-            .where(eq(contextSimilarities.contextId, contextId))
-            .orderBy(desc(contextSimilarities.similarityScore));
-
-
-        const matchResults = chunks.map((c: any) => {
+        const summaries = result?.paperSummaries ?? [];
+        const similarities = result?.contextSimilarities ?? [];
+        const matchResults = result?.chunks?.map((c: any) => {
             const similarsByChunk = similarities.filter((s: any) => s.contextChunkId === c.id);
             const top3Ids = new Set(similarsByChunk.slice(0, 3).map((s: any) => s.id));
 
@@ -82,12 +79,13 @@ export const load = async ({ locals, params }) => {
                     paper: group.paper,
                     // Hitung rata-rata: total skor dibagi jumlah chunk
                     averageSimilarityScore: group.totalSimilarityScore / group.documentChunks.length,
-                    documentChunks: group.documentChunks
+                    documentChunks: group.documentChunks,
+                    summaryContent: summaries.find((s: any) => s.paperId === group.paperId)?.content,
                 };
             });
 
             // (Opsional) Urutkan dari rata-rata similarity score tertinggi ke terendah
-            groupedSimilarities.sort((a, b) => b.averageSimilarityScore - a.averageSimilarityScore);
+            groupedSimilarities.sort((a: any, b: any) => b.averageSimilarityScore - a.averageSimilarityScore);
 
             return {
                 ...c,
@@ -97,8 +95,8 @@ export const load = async ({ locals, params }) => {
 
         return {
             context: {
-                ...context,
-                chunks: chunks,
+                ...result,
+                chunks: result?.chunks,
                 matchResults: matchResults,
                 hasSimilarity: similarities && similarities.length > 0,
             },

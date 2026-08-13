@@ -1,9 +1,7 @@
-import { and, eq, desc, getTableColumns } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 import { db } from "..";
 import { workspaceMembers, workspaceNotes } from "../schemas/workspace.schema";
 import { getUserByEmail } from "./user.factory";
-import { user } from "../auth.schema";
-import { attachments } from "../schemas/attachment.schema";
 
 export type WorkspaceRole = 'member' | 'admin';
 

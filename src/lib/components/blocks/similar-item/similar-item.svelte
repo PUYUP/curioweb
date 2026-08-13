@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 	import Icon from 'mdi-svelte';
 	import { mdiFilePdfBox } from '@mdi/js';
 	import { Button } from '@/lib/components/ui/button';
@@ -6,11 +7,24 @@
 
 	const { item, user } = $props();
 
+	const contentSummary = $derived(item?.summaryContent || '');
 	let isExpanded = $state(false);
 	let isTruncated = $state(false);
 	let contentEl: HTMLDivElement | undefined = $state();
 
 	let lineClamp = $derived(isExpanded ? 100 : 3);
+
+	function fixMarkdownHeadings(markdownText: string) {
+		// Langkah 1: Memastikan heading turun ke paragraf baru (jika menempel dengan teks sebelumnya)
+		let fixed = markdownText.replace(/([^\n])\s*(#{1,6})\s+/g, '$1\n\n$2 ');
+
+		// Langkah 2: Memindahkan teks setelah titik dua (:) pada judul heading menjadi baris baru
+		// Regex mencari baris yang diawali dengan '#', lalu mencari teks sampai ketemu ':',
+		// dan memotong spasi setelah ':' untuk diganti dengan enter (\n)
+		fixed = fixed.replace(/^(#{1,6}\s+[^:\n]+:)\s*(?=\S)/gm, '$1\n');
+
+		return fixed;
+	}
 
 	function checkTruncation() {
 		if (contentEl) {
@@ -44,9 +58,9 @@
 					</span>
 				</a>
 
-				<div class="mt-0 flex gap-2 items-center text-sm">
-					<span class="text-orange-500">Similarity average:</span>
-					<span class="text-orange-600 font-bold underline">
+				<div class="mt-1 flex gap-2 items-center text-sm">
+					<span class="text-orange-700">Similarity average:</span>
+					<span class="text-orange-700 font-bold underline">
 						{(item?.averageSimilarityScore * 100).toFixed(1)}%
 					</span>
 					<span>({item?.averageSimilarityScore.toFixed(8)})</span>
@@ -54,16 +68,27 @@
 				</div>
 			</div>
 
+			{#if contentSummary && contentSummary != ''}
+				<div class="block my-4 py-4 block-content border-y border-neutral-300">
+					<SvelteMarkdown source={fixMarkdownHeadings(contentSummary)} />
+				</div>
+			{/if}
+
 			<button
 				type="button"
 				class="block w-full cursor-pointer text-left"
 				onclick={() => (isExpanded = !isExpanded)}
 			>
 				<div bind:this={contentEl} class="text-neutral-700 text-left line-clamp-{lineClamp}">
-					<span class="font-semibold underline">Matched chunks:</span>
+					<span class="font-semibold underline">Matched {item?.documentChunks.length} chunks:</span>
 					<ol class="list-decimal pl-6 my-2">
 						{#each item?.documentChunks as chunk}
-							<li class="mt-2">{chunk?.documentContent}</li>
+							<li class="mt-2">
+								<div class="block text-green-600 underline font-semibold mb-1">
+									Similarity score: {chunk?.similarityScore.toFixed(8)}
+								</div>
+								{chunk?.documentContent}
+							</li>
 						{/each}
 					</ol>
 				</div>
@@ -105,3 +130,39 @@
 		{/if}
 	</li>
 {/if}
+
+<style>
+	.block-content :global(h2),
+	.block-content :global(h3),
+	.block-content :global(h4) {
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
+
+	.block-content :global(p) {
+		margin-bottom: 10px;
+		white-space: pre-line;
+	}
+
+	.block-content :global(ul) {
+		margin-top: 6px;
+		margin-bottom: 10px;
+		white-space: pre-line;
+		list-style-type: disc;
+		padding-left: 24px;
+	}
+
+	.block-content :global(li) {
+		margin-bottom: 10px;
+	}
+
+	.block-content :global(a) {
+		text-decoration: underline;
+	}
+
+	.block-content :global(blockquote) {
+		padding: 10px;
+		background: #f8f9fa;
+		margin-bottom: 10px;
+	}
+</style>

@@ -105,6 +105,30 @@ export const contextSimilarities = pgTable('context_similarities', {
         .default(sql`null`),
 });
 
+export const contextPaperSummaries = pgTable('context_papers_summaries', {
+    id: uuid('id')
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    workspaceId: uuid('workspace_id')
+        .notNull()
+        .references(() => workspaces.id, { onDelete: 'cascade' }),
+    contextId: uuid('context_id')
+        .notNull()
+        .references(() => researchContexts.id, { onDelete: 'cascade' }),
+    paperId: uuid('paper_id')
+        .notNull()
+        .references(() => papers.id, { onDelete: 'cascade' }),
+    content: text('content').notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
+        .default(sql`null`),
+});
+
 export const workspaceMembers = pgTable('workspace_members', {
     id: uuid('id')
         .primaryKey()
@@ -176,4 +200,59 @@ export const workspaceNotesRelations = relations(workspaceNotes, ({ one, many })
         references: [workspaces.id],
     }),
     attachments: many(attachments),
+}));
+
+export const workspaceContextsRelations = relations(researchContexts, ({ one, many }) => ({
+    workspace: one(workspaces, {
+        fields: [researchContexts.workspaceId],
+        references: [workspaces.id],
+    }),
+    paperSummaries: many(contextPaperSummaries),
+    contextSimilarities: many(contextSimilarities),
+    chunks: many(contextChunks),
+}));
+
+export const contextPaperSummariesRelations = relations(contextPaperSummaries, ({ one }) => ({
+    workspace: one(workspaces, {
+        fields: [contextPaperSummaries.workspaceId],
+        references: [workspaces.id],
+    }),
+    context: one(researchContexts, {
+        fields: [contextPaperSummaries.contextId],
+        references: [researchContexts.id],
+    }),
+    paper: one(papers, {
+        fields: [contextPaperSummaries.paperId],
+        references: [papers.id],
+    }),
+}));
+
+export const contextSimilaritiesRelations = relations(contextSimilarities, ({ one }) => ({
+    user: one(user, {
+        fields: [contextSimilarities.userId],
+        references: [user.id],
+    }),
+    paper: one(papers, {
+        fields: [contextSimilarities.paperId],
+        references: [papers.id],
+    }),
+    context: one(researchContexts, {
+        fields: [contextSimilarities.contextId],
+        references: [researchContexts.id],
+    }),
+    contextChunk: one(contextChunks, {
+        fields: [contextSimilarities.contextChunkId],
+        references: [contextChunks.id],
+    }),
+}));
+
+export const contextChunksRelations = relations(contextChunks, ({ one, many }) => ({
+    user: one(user, {
+        fields: [contextChunks.userId],
+        references: [user.id],
+    }),
+    context: one(researchContexts, {
+        fields: [contextChunks.contextId],
+        references: [researchContexts.id],
+    }),
 }));
