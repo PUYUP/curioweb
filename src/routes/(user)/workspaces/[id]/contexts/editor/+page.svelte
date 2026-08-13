@@ -197,7 +197,7 @@
 		{/if}
 	</div>
 
-	<div class="w-full xl:w-3/7">
+	<div class="w-full xl:w-4/7 2xl:w-3/7">
 		{#if errorMessage}
 			<div
 				class="mb-4 flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
