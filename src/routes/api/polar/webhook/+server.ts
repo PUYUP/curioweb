@@ -37,9 +37,9 @@ export const POST = Webhooks({
             if (actionType === 'subscription.active' || actionType === 'subscription.uncanceled') {
                 if (email && userId) {
                     await subscriptionFactory.insert(subsData);
-                    // update profile next_processed_at
+                    // update profile next_processing_at
                     await updateProfile(userId, {
-                        nextProcessedAt: addHours(new Date(), 48),
+                        nextProcessingAt: addHours(new Date(), 48),
                     });
                 }
             }
@@ -61,9 +61,9 @@ export const POST = Webhooks({
                             }
                         );
 
-                        // update profile next_processed_at
+                        // update profile next_processing_at
                         await updateProfile(userId, {
-                            nextProcessedAt: addHours(new Date(), 168),
+                            nextProcessingAt: addHours(new Date(), 168),
                         });
                     }
                 }
