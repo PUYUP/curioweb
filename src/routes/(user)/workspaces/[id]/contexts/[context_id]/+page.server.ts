@@ -1,6 +1,6 @@
 import { db } from "@/lib/server/db";
 import { papers } from "@/lib/server/db/schemas/paper.schema.js";
-import { contextChunks, contextSimilarities, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
+import { contextChunks, contextDocuments, researchContexts, workspaces } from "@/lib/server/db/schemas/workspace.schema";
 import { redirect } from "@sveltejs/kit";
 import { eq, getTableColumns, asc, desc } from "drizzle-orm";
 
@@ -23,7 +23,7 @@ export const load = async ({ locals, params }) => {
                         paper: true,
                     }
                 },
-                contextSimilarities: {
+                contextDocuments: {
                     with: {
                         paper: true,
                         contextChunk: true,
@@ -34,9 +34,9 @@ export const load = async ({ locals, params }) => {
         });
 
         const summaries = result?.paperSummaries ?? [];
-        const similarities = result?.contextSimilarities ?? [];
+        const documents = result?.contextDocuments ?? [];
         const matchResults = result?.chunks?.map((c: any) => {
-            const similarsByChunk = similarities.filter((s: any) => s.contextChunkId === c.id);
+            const similarsByChunk = documents.filter((s: any) => s.contextChunkId === c.id);
             const top3Ids = new Set(similarsByChunk.slice(0, 3).map((s: any) => s.id));
 
             // Map untuk mengelompokkan data berdasarkan paperId
@@ -98,7 +98,7 @@ export const load = async ({ locals, params }) => {
                 ...result,
                 chunks: result?.chunks,
                 matchResults: matchResults,
-                hasSimilarity: similarities && similarities.length > 0,
+                hasSimilarity: documents && documents.length > 0,
             },
         };
     } catch (error) {

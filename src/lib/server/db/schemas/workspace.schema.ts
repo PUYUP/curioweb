@@ -77,7 +77,7 @@ export const contextChunks = pgTable('context_chunks', {
     uniqueChunk: unique().on(table.userId, table.workspaceId, table.contextId, table.chunkIndex),
 }));
 
-export const contextSimilarities = pgTable('context_similarities', {
+export const contextDocuments = pgTable('context_documents', {
     id: uuid('id')
         .primaryKey()
         .default(sql`gen_random_uuid()`),
@@ -208,7 +208,7 @@ export const workspaceContextsRelations = relations(researchContexts, ({ one, ma
         references: [workspaces.id],
     }),
     paperSummaries: many(contextPaperSummaries),
-    contextSimilarities: many(contextSimilarities),
+    contextDocuments: many(contextDocuments),
     chunks: many(contextChunks),
 }));
 
@@ -227,21 +227,21 @@ export const contextPaperSummariesRelations = relations(contextPaperSummaries, (
     }),
 }));
 
-export const contextSimilaritiesRelations = relations(contextSimilarities, ({ one }) => ({
+export const contextDocumentsRelations = relations(contextDocuments, ({ one }) => ({
     user: one(user, {
-        fields: [contextSimilarities.userId],
+        fields: [contextDocuments.userId],
         references: [user.id],
     }),
     paper: one(papers, {
-        fields: [contextSimilarities.paperId],
+        fields: [contextDocuments.paperId],
         references: [papers.id],
     }),
     context: one(researchContexts, {
-        fields: [contextSimilarities.contextId],
+        fields: [contextDocuments.contextId],
         references: [researchContexts.id],
     }),
     contextChunk: one(contextChunks, {
-        fields: [contextSimilarities.contextChunkId],
+        fields: [contextDocuments.contextChunkId],
         references: [contextChunks.id],
     }),
 }));
