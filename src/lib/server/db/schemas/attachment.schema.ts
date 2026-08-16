@@ -68,7 +68,7 @@ export const attachments = pgTable('attachments', {
         .references(() => files.id, { onDelete: 'cascade' }),
 
     entityType: varchar('entity_type', { length: 50 }).notNull(), // 'users', 'products', 'articles'
-    entityId: uuid('entity_id').notNull(),
+    entityId: varchar('entity_id').notNull(),
     purpose: varchar('purpose', { length: 50 }).default('default'), // 'avatar', 'cover', 'gallery'
     sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
