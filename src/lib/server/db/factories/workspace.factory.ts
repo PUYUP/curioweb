@@ -96,6 +96,11 @@ export const getNotes = async (workspaceId: string) => {
             orderBy: desc(workspaceNotes.createdAt),
             with: {
                 user: true,
+                notePapers: {
+                    with: {
+                        paper: true,
+                    },
+                },
             },
         });
 

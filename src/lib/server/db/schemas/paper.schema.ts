@@ -1,5 +1,6 @@
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
+import { workspaceNotes } from './workspace.schema';
 
 export const papers = pgTable('papers', {
     id: uuid('id')

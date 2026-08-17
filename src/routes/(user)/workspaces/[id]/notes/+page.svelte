@@ -148,6 +148,26 @@
 												{/each}
 											</ol>
 										{/if}
+
+										{#if item.notePapers.length > 0}
+											<div class="mt-2">
+												<div class="mt-4 text-xs text-neutral-500 mb-1">Related papers:</div>
+												<ul class="w-full list-decimal list-inside">
+													{#each item.notePapers.slice(0, 3) as notePaper}
+														<li class="text-xs">
+															<a
+																href={notePaper.paper?.pdfUrl}
+																target="_blank"
+																rel="noreferrer"
+																class="text-blue-600"
+															>
+																{notePaper.paper?.title}
+															</a>
+														</li>
+													{/each}
+												</ul>
+											</div>
+										{/if}
 									</div>
 								</div>
 							{/each}

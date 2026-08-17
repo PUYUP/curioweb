@@ -175,6 +175,25 @@ export const workspaceNotes = pgTable('workspace_notes', {
         .default(sql`null`),
 });
 
+export const notePapers = pgTable('workspace_notes_papers', {
+    id: uuid('id')
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    noteId: uuid('note_id')
+        .notNull()
+        .references(() => workspaceNotes.id, { onDelete: 'cascade' }),
+    paperId: uuid('paper_id')
+        .notNull()
+        .references(() => papers.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { mode: 'date' })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date' })
+        .default(sql`null`),
+});
 
 /*****
  * Relationship
@@ -200,6 +219,22 @@ export const workspaceNotesRelations = relations(workspaceNotes, ({ one, many })
         references: [workspaces.id],
     }),
     attachments: many(attachments),
+    notePapers: many(notePapers),
+}));
+
+export const notePapersRelations = relations(notePapers, ({ one }) => ({
+    workspaceNote: one(workspaceNotes, {
+        fields: [notePapers.noteId],
+        references: [workspaceNotes.id],
+    }),
+    paper: one(papers, {
+        fields: [notePapers.paperId],
+        references: [papers.id],
+    }),
+}));
+
+export const papersRelations = relations(papers, ({ many }) => ({
+    notePapers: many(notePapers),
 }));
 
 export const workspaceContextsRelations = relations(researchContexts, ({ one, many }) => ({
