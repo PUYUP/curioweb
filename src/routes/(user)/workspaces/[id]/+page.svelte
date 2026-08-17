@@ -103,10 +103,16 @@
 					class="flex items-center justify-center flex-col h-26 w-full bg-neutral-50 rounded-lg border border-neutral-200"
 				>
 					<div class="mb-1 flex items-center justify-center flex-col">
-						<div class="block font-semibold text-center text-xl xl:text-2xl">21</div>
+						<div class="block font-semibold text-center text-xl xl:text-2xl">
+							{workspace?.materialCount}
+						</div>
 						<div class="text-sm flex items-center gap-2">
 							<span class="text-xs">PDF Materials</span>
-							<span class="text-xs pt-0.5 text-green-600 italic"> (1 today) </span>
+							{#if workspace?.countTodayMaterials && workspace?.countTodayMaterials > 0}
+								<span class="text-xs pt-0.5 text-green-600 italic">
+									({workspace.countTodayMaterials} today)
+								</span>
+							{/if}
 						</div>
 					</div>
 					<div class="w-full flex justify-center gap-1">
@@ -114,7 +120,7 @@
 							variant="link"
 							class="text-xs text-blue-500 flex items-center"
 							size="sm"
-							href={`/workspaces/${workspace?.id}/notes`}
+							href={`/workspaces/${workspace?.id}/materials`}
 						>
 							<Icon path={mdiEye} size={0.65} />
 							<span class="!text-xs">View all</span>

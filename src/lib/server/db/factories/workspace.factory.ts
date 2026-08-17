@@ -99,14 +99,13 @@ export const getNotes = async (workspaceId: string) => {
         });
 
         if (notes.length === 0) {
-            return notes;
+            return notes.map((note) => ({ ...note, attachments: [] }));
         }
 
         const noteIds = notes.map((note) => note.id);
 
         const noteAttachments = await db.query.attachments.findMany({
             where: and(
-                eq(attachments.entityType, "workspace_note"),
                 inArray(attachments.entityId, noteIds)
             ),
             with: {
@@ -137,19 +136,31 @@ export const getNoteById = async (noteId: string) => {
             where: eq(workspaceNotes.id, noteId),
             with: {
                 user: true,
-                attachments: {
-                    with: {
-                        file: true,
-                    }
-                },
             },
         });
-        return note;
+
+        if (!note) {
+            return note;
+        }
+
+        const noteAttachments = await db.query.attachments.findMany({
+            where: and(
+                eq(attachments.entityId, noteId)
+            ),
+            with: {
+                file: true,
+            },
+        });
+
+        return {
+            ...note,
+            attachments: noteAttachments,
+        };
     } catch (error) {
         console.error("Error getting note by id:", error);
         throw error;
     }
-}
+};
 
 export const updateNote = async (noteId: string, payload: { title?: string, content: string }) => {
     try {

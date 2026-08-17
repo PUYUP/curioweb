@@ -9,8 +9,6 @@
 	const { data } = $props();
 	let { workspace, notes, user } = $derived(data);
 
-	console.log(notes);
-
 	function dayKey(dateInput: string | Date): string {
 		return format(new Date(dateInput), 'yyyy-MM-dd');
 	}
