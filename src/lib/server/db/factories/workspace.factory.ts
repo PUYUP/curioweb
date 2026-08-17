@@ -1,7 +1,8 @@
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, inArray } from "drizzle-orm";
 import { db } from "..";
 import { workspaceMembers, workspaceNotes } from "../schemas/workspace.schema";
 import { getUserByEmail } from "./user.factory";
+import { attachments } from "../schemas/attachment.schema";
 
 export type WorkspaceRole = 'member' | 'admin';
 
@@ -94,20 +95,41 @@ export const getNotes = async (workspaceId: string) => {
             orderBy: desc(workspaceNotes.createdAt),
             with: {
                 user: true,
-                attachments: {
-                    with: {
-                        file: true,
-                    }
-                },
             },
         });
 
-        return notes;
+        if (notes.length === 0) {
+            return notes;
+        }
+
+        const noteIds = notes.map((note) => note.id);
+
+        const noteAttachments = await db.query.attachments.findMany({
+            where: and(
+                eq(attachments.entityType, "workspace_note"),
+                inArray(attachments.entityId, noteIds)
+            ),
+            with: {
+                file: true,
+            },
+        });
+
+        const attachmentsByNoteId = new Map<string, typeof noteAttachments>();
+        for (const attachment of noteAttachments) {
+            const list = attachmentsByNoteId.get(attachment.entityId) ?? [];
+            list.push(attachment);
+            attachmentsByNoteId.set(attachment.entityId, list);
+        }
+
+        return notes.map((note) => ({
+            ...note,
+            attachments: attachmentsByNoteId.get(note.id) ?? [],
+        }));
     } catch (error) {
         console.error("Error getting notes:", error);
         throw error;
     }
-}
+};
 
 export const getNoteById = async (noteId: string) => {
     try {

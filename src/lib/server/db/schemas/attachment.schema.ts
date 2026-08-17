@@ -104,10 +104,10 @@ export const attachmentsRelations = relations(attachments, ({ one }) => ({
         fields: [attachments.fileId],
         references: [files.id]
     }),
-    workspaceNote: one(workspaceNotes, {
-        fields: [attachments.entityId],
-        references: [workspaceNotes.id]
-    })
+    // workspaceNote: one(workspaceNotes, {
+    //     fields: [attachments.entityId],
+    //     references: [workspaceNotes.id]
+    // })
 }));
 
 // -----------------------------------------------------------------------------
