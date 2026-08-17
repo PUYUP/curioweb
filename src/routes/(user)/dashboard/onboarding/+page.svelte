@@ -27,7 +27,7 @@
 	});
 </script>
 
-<div class="p-4 w-full md:w-12/12 lg:w-7/12 xl:w-6/12 mx-auto">
+<div class="p-4 w-full md:w-12/12 lg:w-12/12 xl:w-8/12 2xl:w-7/12 mx-auto">
 	{#if !profile || profile.interest.trim() === ''}
 		<div class="block text-lg font-bold">Last step! Complete your interests.</div>
 		<div class="mt-0 text-sm text-neutral-600">

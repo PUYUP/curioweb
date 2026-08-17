@@ -21,9 +21,18 @@ export const load: LayoutServerLoad = async ({ locals, fetch }) => {
         }
     });
 
+    // getting materials
+    const materials = await fetch(`/api/materials?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
     return {
         user: locals.user,
         profile: profile,
         challenges: await challenges.json(),
+        materials: await materials.json(),
     };
 };

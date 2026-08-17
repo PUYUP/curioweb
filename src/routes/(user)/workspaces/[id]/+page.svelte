@@ -107,7 +107,7 @@
 							{workspace?.materialCount}
 						</div>
 						<div class="text-sm flex items-center gap-2">
-							<span class="text-xs">PDF Materials</span>
+							<span class="text-xs">Learn Materials</span>
 							{#if workspace?.countTodayMaterials && workspace?.countTodayMaterials > 0}
 								<span class="text-xs pt-0.5 text-green-600 italic">
 									({workspace.countTodayMaterials} today)

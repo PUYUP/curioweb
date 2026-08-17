@@ -11,7 +11,9 @@
 		mdiCreditCardOutline,
 		mdiNoteOutline,
 		mdiFolder,
-		mdiAccountSchoolOutline
+		mdiAccountSchoolOutline,
+		mdiFolderAccount,
+		mdiFolderAccountOutline
 	} from '@mdi/js';
 
 	let { user }: { user: any } = $props();
@@ -47,7 +49,7 @@
 		{
 			title: 'Workspaces',
 			url: '/workspaces',
-			icon: mdiNoteOutline,
+			icon: mdiFolderAccountOutline,
 			badge: ''
 		},
 		{

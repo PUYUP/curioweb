@@ -27,6 +27,6 @@ export const actions: Actions = {
 
         await upsertProfile(locals.user.id, { interest, languageCode });
 
-        return redirect(302, '/dashboard');
+        return redirect(302, '/challenges');
     }
 };

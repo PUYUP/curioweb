@@ -2,18 +2,16 @@
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import * as Item from '$lib/components/ui/item/index.js';
 
-	import { Button } from '@/lib/components/ui/button';
-	import languages from '@/lib/assets/data/ISO-639-1-language.json';
 	import ChallengeItem from '@/lib/components/blocks/challenge-item/challenge-item.svelte';
 	import type { LayoutServerData } from '../$types';
 	import EvaluationCrt001 from '@/lib/components/blocks/evaluation-crt001/evaluation-crt001.svelte';
 	import EvaluationCrt005 from '@/lib/components/blocks/evaluation-crt005/evaluation-crt005.svelte';
+	import MaterialItem from '@/lib/components/blocks/material-item/material-item.svelte';
 
 	const { data }: { data: LayoutServerData } = $props();
 
-	const profile = $derived(data ? data.profile : null);
-	const language = $derived(languages.find((l) => l.code === profile?.languageCode)?.name);
 	const challenges = $derived(data ? data?.challenges : []);
+	const materials = $derived(data ? data?.materials : []);
 </script>
 
 <svelte:head>
@@ -22,24 +20,24 @@
 
 <div class="py-2 pb-4 md:py-4">
 	<div class="px-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
-		<div class="block order-2 xl:order-1">
-			<div class="block">
-				<div class="flex w-full mb-4 justify-between">
-					<div class="flex flex-col gap-1">
-						<span class="font-semibold">Your Interests</span>
-						<span class="text-xs text-neutral-500">Prefered language: {language}</span>
+		<div class="block">
+			<div class="flex justify-between items-center mb-4">
+				<span class="text-sm font-semibold">Learning Materials</span>
+			</div>
+
+			<div class="flex flex-col gap-4">
+				{#each materials as material}
+					<MaterialItem {material} />
+				{:else}
+					<div class="flex w-full flex-col gap-4 [--radius:1rem]">
+						Your learning materials are currently unavailable. Add study notes to a workspace, and
+						learning materials will be generated automatically.
 					</div>
-
-					<Button variant="outline" href="/dashboard/onboarding" size="sm">Change</Button>
-				</div>
-
-				<div class="text-base whitespace-break-spaces">
-					{profile?.interest || 'No interests added'}
-				</div>
+				{/each}
 			</div>
 		</div>
 
-		<div class="block order-1 xl:order-2">
+		<div class="block">
 			<div class="flex justify-between items-center mb-4">
 				<span class="text-sm font-semibold">Newest Challenges</span>
 			</div>
