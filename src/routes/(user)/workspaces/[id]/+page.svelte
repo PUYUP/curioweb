@@ -1,26 +1,69 @@
 <script lang="ts">
 	import { Spinner } from '@/lib/components/ui/spinner';
 	import { Button } from '@/lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import Icon from 'mdi-svelte';
 	import { mdiPlus, mdiCog, mdiEye } from '@mdi/js';
-	import { goto } from '$app/navigation';
 	import Badge from '@/lib/components/ui/badge/badge.svelte';
-	import type { LayoutServerData } from './$types';
+	import { format, isToday, isYesterday } from 'date-fns';
 
 	let loading: boolean = $state<boolean>(true);
-	let loadingContexts: boolean = $state<boolean>(true);
 
-	const { data }: { data: LayoutServerData } = $props();
-	const { workspace, contexts } = $derived(data);
+	const { data } = $props();
+	let { notes, workspace, user } = $derived(data);
+
+	function dayKey(dateInput: string | Date): string {
+		return format(new Date(dateInput), 'yyyy-MM-dd');
+	}
+
+	function formatDayHeader(dateInput: string | Date): string {
+		const date = new Date(dateInput);
+		if (isToday(date)) return 'Today';
+		if (isYesterday(date)) return 'Yesterday';
+		return format(date, 'EEEE, d MMMM yyyy');
+	}
+
+	// Kelompokkan notes berdasarkan hari. Dihitung dari `notes` milik halaman
+	// saat ini saja, jadi kalau halaman 2 dimulai dari hari yang berbeda,
+	// separator tanggal baru otomatis muncul di paling atas halaman itu.
+	const groupedNotes = $derived.by(() => {
+		const groups: { key: string; label: string; items: typeof notes }[] = [];
+		const indexByKey = new Map<string, number>();
+
+		for (const item of notes ?? []) {
+			const key = dayKey(item.createdAt);
+			if (!indexByKey.has(key)) {
+				indexByKey.set(key, groups.length);
+				groups.push({ key, label: formatDayHeader(item.createdAt), items: [] });
+			}
+			groups[indexByKey.get(key)!].items.push(item);
+		}
+
+		return groups;
+	});
+
+	// delete note
+	const deleteHandler = async (item: any) => {
+		const confirmed = confirm('Are you sure you want to delete this note?');
+		if (!confirmed) {
+			return;
+		}
+
+		const res = await fetch(`/api/workspaces/${workspace?.id}/notes`, {
+			method: 'DELETE',
+			body: JSON.stringify({
+				noteId: item?.id,
+				userId: item?.userId
+			})
+		});
+
+		if (res.ok) {
+			notes = notes.filter((note) => note.id !== item.id);
+		}
+	};
 
 	$effect(() => {
 		if (workspace) {
 			loading = false;
-		}
-
-		if (contexts) {
-			loadingContexts = false;
 		}
 	});
 </script>
@@ -76,16 +119,6 @@
 						</div>
 					</div>
 					<div class="w-full flex justify-center gap-1">
-						<Button
-							variant="link"
-							class="text-xs text-blue-500 flex items-center"
-							size="sm"
-							href={`/workspaces/${workspace?.id}/notes`}
-						>
-							<Icon path={mdiEye} size={0.65} />
-							<span class="!text-xs">View</span>
-						</Button>
-
 						<Button
 							variant="outline"
 							class="text-xs text-blue-500 flex items-center pl-1"
@@ -154,64 +187,108 @@
 		{/if}
 
 		<div class="mb-4 mt-8 flex items-center border-b border-neutral-200 pb-2">
-			<span class="text-sm">Research Contexts</span>
+			<span class="text-sm">Notes</span>
+
+			<Button
+				variant="outline"
+				class="ml-auto"
+				size="sm"
+				href={`/workspaces/${workspace?.id}/notes`}
+			>
+				<span class="!text-xs">View all</span>
+			</Button>
 		</div>
 
-		<div
-			class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
-		>
-			<Card.Root
-				class="cursor-pointer bg-neutral-50 hover:bg-neutral-100"
-				onclick={() => goto(`/workspaces/${workspace?.id}/contexts/editor`)}
-			>
-				<Card.Content class="flex flex-col items-center justify-center h-full">
-					<Icon path={mdiPlus} size="1.5rem" />
-					<p class="text-sm mb-2">Add New</p>
-					<p class="text-xs text-neutral-500 text-center">
-						Retrieve papers using sentence-level contextual search
-					</p>
-				</Card.Content>
-			</Card.Root>
+		<div class="w-full xl:w-4/6">
+			<div class="flex flex-col gap-6">
+				{#each groupedNotes as group (group.key)}
+					<div class="flex flex-col gap-3">
+						<div class="flex items-center gap-3">
+							<span class="text-xs font-semibold uppercase tracking-wide text-orange-600">
+								{group.label}
+							</span>
+							<div class="h-px flex-1 border-b border-dashed border-orange-300"></div>
+						</div>
 
-			{#if contexts.length > 0}
-				{#each contexts as context}
-					<Card.Root>
-						<Card.Content>
-							<div class="text-sm">{context.content}</div>
-						</Card.Content>
-						<Card.Footer class="mt-auto grid grid-cols-2 gap-4 w-full border-t border-neutral-200">
-							<div class="block">
-								{#if context.status === 'draft'}
-									<Badge variant="outline" class="uppercase">{context.status}</Badge>
-								{:else if context.status === 'retrieved'}
-									<Badge variant="default" class="uppercase">{context.status}</Badge>
-								{/if}
-							</div>
-							<div class="block">
-								{#if context?.status === 'draft'}
-									<Button
-										variant="outline"
-										class="w-full bg-neutral-50"
-										onclick={() =>
-											goto(`/workspaces/${context?.workspaceId}/contexts/editor?id=${context?.id}`)}
-									>
-										Continue Editing
-									</Button>
-								{:else}
-									<Button
-										variant="outline"
-										class="w-full bg-neutral-50"
-										onclick={() =>
-											goto(`/workspaces/${context?.workspaceId}/contexts/${context?.id}`)}
-									>
-										View Papers
-									</Button>
-								{/if}
-							</div>
-						</Card.Footer>
-					</Card.Root>
+						<div class="flex flex-col gap-4">
+							{#each group.items as item (item.id)}
+								<div class="p-3 border border-neutral-200 rounded-lg">
+									<div class="flex items-center gap-2 mb-2 text-xs text-neutral-500">
+										<span class="font-semibold underline">{item.user?.name}</span>
+										<span class="text-neutral-400">&bull;</span>
+										<span>{format(item.createdAt, 'HH:mm')}</span>
+										{#if user.id === item.userId}
+											<span class="text-neutral-400">&bull;</span>
+											<Button
+												variant="link"
+												size="sm"
+												class="text-blue-600 !px-1"
+												href={`/workspaces/${workspace?.id}/notes/editor?id=${item?.id}`}
+											>
+												Edit
+											</Button>
+										{/if}
+										{#if workspace.currentUserRole === 'admin' || user.id === item.userId}
+											<span class="text-neutral-400">&bull;</span>
+											<Button
+												variant="link"
+												size="sm"
+												class="text-red-600 !px-1"
+												onclick={async () => deleteHandler(item)}
+											>
+												Delete
+											</Button>
+										{/if}
+									</div>
+									<div class="block">
+										<div class="block text-sm whitespace-break-spaces">
+											{item.content}
+										</div>
+
+										{#if item.attachments.length > 0}
+											<div class="mt-4 text-xs text-neutral-500 mb-1">Attachments:</div>
+											<ol class="w-full list-decimal list-inside">
+												{#each item.attachments as attachment}
+													<li class="text-xs">
+														<a
+															href={attachment.file?.mediaLink}
+															target="_blank"
+															rel="noreferrer"
+															class="text-blue-600"
+														>
+															{attachment.file?.originalFilename}
+														</a>
+													</li>
+												{/each}
+											</ol>
+										{/if}
+
+										{#if item.notePapers.length > 0}
+											<div class="mt-2">
+												<div class="mt-4 text-xs text-neutral-500 mb-1">Related papers:</div>
+												<ul class="w-full list-decimal list-inside">
+													{#each item.notePapers.slice(0, 3) as notePaper}
+														<li class="text-xs">
+															<a
+																href={notePaper.paper?.pdfUrl}
+																target="_blank"
+																rel="noreferrer"
+																class="text-blue-600"
+															>
+																{notePaper.paper?.title}
+															</a>
+														</li>
+													{/each}
+												</ul>
+											</div>
+										{/if}
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
 				{/each}
-			{/if}
+			</div>
 		</div>
 	{:else}
 		<div class="flex items-center justify-center size-full">Workspace not found.</div>

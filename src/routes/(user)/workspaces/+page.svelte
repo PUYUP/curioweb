@@ -50,9 +50,8 @@
 	</div>
 
 	<div class="w-full md:w-3/6 text-sm">
-		Workspaces where people work together, organize notes and research contexts, and discover papers
-		using sentence-level contexts — turning daily notes into new learning material, enriched by
-		relevant papers.
+		Where people collaborate and organize notes, while AI connects those notes to relevant papers —
+		turning everyday learning into enriched study material.
 	</div>
 
 	<div class="mt-6">

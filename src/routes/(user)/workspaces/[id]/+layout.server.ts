@@ -4,6 +4,7 @@ import { redirect } from "@sveltejs/kit";
 import { researchContexts, workspaceMembers, workspaceNotes, workspaces } from "@/lib/server/db/schemas/workspace.schema.js";
 import { alias } from "drizzle-orm/pg-core";
 import { learningMaterials } from "@/lib/server/db/schemas/material.schema.js";
+import { getNotes } from "@/lib/server/db/factories/workspace.factory";
 
 const currentUserMembership = alias(workspaceMembers, "current_user_membership");
 const memberCountSubquery = db
@@ -61,47 +62,36 @@ export const load = async ({ locals, params }) => {
         return redirect(302, '/auth/login');
     }
 
-    try {
-        const [workspace] = await db
-            .select({
-                ...getTableColumns(workspaces),
-                memberCount: sql<number>`coalesce(${memberCountSubquery.memberCount}, 0)`,
-                noteCount: sql<number>`coalesce(${noteCountSubquery.noteCount}, 0)`,
-                countTodayNotes: sql<number>`coalesce(${countTodayNotesSubquery.countTodayNotes}, 0)`,
-                currentUserRole: currentUserMembership.role,
-                materialCount: sql<number>`coalesce(${materialCountSubquery.materialCount}, 0)`,
-                countTodayMaterials: sql<number>`coalesce(${countTodayMaterialsSubquery.countTodayMaterials}, 0)`,
-            })
-            .from(workspaces)
-            .leftJoin(memberCountSubquery, eq(workspaces.id, memberCountSubquery.workspaceId))
-            .leftJoin(noteCountSubquery, eq(workspaces.id, noteCountSubquery.workspaceId))
-            .leftJoin(countTodayNotesSubquery, eq(workspaces.id, countTodayNotesSubquery.workspaceId))
-            .leftJoin(materialCountSubquery, eq(workspaces.id, materialCountSubquery.workspaceId))
-            .leftJoin(countTodayMaterialsSubquery, eq(workspaces.id, countTodayMaterialsSubquery.workspaceId))
-            .leftJoin(
-                currentUserMembership,
-                and(
-                    eq(currentUserMembership.workspaceId, workspaces.id),
-                    eq(currentUserMembership.userId, userId)
-                )
+    const [workspace] = await db
+        .select({
+            ...getTableColumns(workspaces),
+            memberCount: sql<number>`coalesce(${memberCountSubquery.memberCount}, 0)`,
+            noteCount: sql<number>`coalesce(${noteCountSubquery.noteCount}, 0)`,
+            countTodayNotes: sql<number>`coalesce(${countTodayNotesSubquery.countTodayNotes}, 0)`,
+            currentUserRole: currentUserMembership.role,
+            materialCount: sql<number>`coalesce(${materialCountSubquery.materialCount}, 0)`,
+            countTodayMaterials: sql<number>`coalesce(${countTodayMaterialsSubquery.countTodayMaterials}, 0)`,
+        })
+        .from(workspaces)
+        .leftJoin(memberCountSubquery, eq(workspaces.id, memberCountSubquery.workspaceId))
+        .leftJoin(noteCountSubquery, eq(workspaces.id, noteCountSubquery.workspaceId))
+        .leftJoin(countTodayNotesSubquery, eq(workspaces.id, countTodayNotesSubquery.workspaceId))
+        .leftJoin(materialCountSubquery, eq(workspaces.id, materialCountSubquery.workspaceId))
+        .leftJoin(countTodayMaterialsSubquery, eq(workspaces.id, countTodayMaterialsSubquery.workspaceId))
+        .leftJoin(
+            currentUserMembership,
+            and(
+                eq(currentUserMembership.workspaceId, workspaces.id),
+                eq(currentUserMembership.userId, userId)
             )
-            .where(eq(workspaces.id, workspaceId))
-            .limit(1);
+        )
+        .where(eq(workspaces.id, workspaceId))
+        .limit(1);
 
-        const contexts = await db.select()
-            .from(researchContexts)
-            .where(eq(researchContexts.workspaceId, workspaceId))
-            .orderBy(desc(researchContexts.createdAt));
+    const notes = await getNotes(workspaceId);
 
-        return {
-            workspace: workspace,
-            contexts: contexts
-        };
-    } catch (error) {
-        console.error("Error fetching workspace:", error);
-        return {
-            workspace: null,
-            contexts: []
-        };
-    }
+    return {
+        workspace: workspace,
+        notes: notes
+    };
 };

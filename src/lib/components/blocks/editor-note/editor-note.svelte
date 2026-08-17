@@ -77,7 +77,7 @@
 					}
 
 					await update({ reset: false });
-					goto(`/workspaces/${workspace?.id}/notes`, { replaceState: true, invalidateAll: true });
+					goto(`/workspaces/${workspace?.id}`, { replaceState: true, invalidateAll: true });
 					break;
 				case 'error':
 					cancel();
