@@ -1,23 +1,16 @@
 import { relations, sql } from 'drizzle-orm';
-import { pgTable, text, timestamp, vector, uuid, integer, jsonb, unique, real, uniqueIndex } from 'drizzle-orm/pg-core';
-import { user } from '../auth.schema';
-import { papers } from './paper.schema';
-import { attachments } from './attachment.schema';
+import { pgTable, text, timestamp, uuid, date } from 'drizzle-orm/pg-core';
 import { workspaces } from './workspace.schema';
-
 
 export const learningMaterials = pgTable('learning_materials', {
     id: uuid('id')
         .primaryKey()
         .default(sql`gen_random_uuid()`),
-    userId: uuid('user_id')
-        .notNull()
-        .references(() => user.id, { onDelete: 'cascade' }),
     workspaceId: uuid('workspace_id')
         .notNull()
         .references(() => workspaces.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
-    generatedDate: timestamp('generated_date', { mode: 'date' })
+    generatedDate: date('generated_date')
         .defaultNow()
         .notNull(),
     createdAt: timestamp('created_at', { mode: 'date' })
@@ -29,3 +22,10 @@ export const learningMaterials = pgTable('learning_materials', {
     deletedAt: timestamp('deleted_at', { mode: 'date' })
         .default(sql`null`),
 });
+
+export const learningMaterialsRelations = relations(learningMaterials, ({ one }) => ({
+    workspace: one(workspaces, {
+        fields: [learningMaterials.workspaceId],
+        references: [workspaces.id],
+    })
+}));

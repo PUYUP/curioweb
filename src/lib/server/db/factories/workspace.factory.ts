@@ -3,6 +3,7 @@ import { db } from "..";
 import { workspaceMembers, workspaceNotes } from "../schemas/workspace.schema";
 import { getUserByEmail } from "./user.factory";
 import { attachments } from "../schemas/attachment.schema";
+import { learningMaterials } from "../schemas/material.schema";
 
 export type WorkspaceRole = 'member' | 'admin';
 
@@ -188,6 +189,47 @@ export const deleteNote = async (noteId: string, userId: string) => {
         return result;
     } catch (error) {
         console.error("Error deleting note:", error);
+        throw error;
+    }
+}
+
+export const getMaterials = async (workspaceId: string) => {
+    try {
+        const materials = await db.query.learningMaterials.findMany({
+            where: eq(learningMaterials.workspaceId, workspaceId),
+            with: {
+                workspace: true
+            }
+        });
+
+        if (materials.length === 0) {
+            return materials.map((material) => ({ ...material, attachments: [] }));
+        }
+
+        const materialIds = materials.map((material) => material.id);
+
+        const materialAttachments = await db.query.attachments.findMany({
+            where: and(
+                inArray(attachments.entityId, materialIds)
+            ),
+            with: {
+                file: true,
+            },
+        });
+
+        const attachmentsByMaterialId = new Map<string, typeof materialAttachments>();
+        for (const attachment of materialAttachments) {
+            const list = attachmentsByMaterialId.get(attachment.entityId) ?? [];
+            list.push(attachment);
+            attachmentsByMaterialId.set(attachment.entityId, list);
+        }
+
+        return materials.map((material) => ({
+            ...material,
+            attachments: attachmentsByMaterialId.get(material.id) ?? [],
+        }));
+    } catch (error) {
+        console.error("Error getting materials:", error);
         throw error;
     }
 }
